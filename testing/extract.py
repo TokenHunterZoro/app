@@ -97,9 +97,7 @@ def extract_video_data(video_element):
     try:
         data = {}
         
-        # [Previous video data extraction code remains the same until the end]
-        
-        # Extract the base video data
+        # Get posted time
         temp_posted_time = ""
         temp_posted_datetime = datetime.min
 
@@ -132,10 +130,131 @@ def extract_video_data(video_element):
         else: 
             print("Video is not posted in the last 24 hours")
             return None
-
-        # [Rest of the video data extraction code remains the same]
         
-        # After extracting video URL, get comments
+        # Get video link - try multiple selectors
+        try:
+            link_selectors = [
+                "a.css-1g95xhm-AVideoContainer",
+                "a[href*='/video/']",
+                "a[class*='AVideoContainer']"
+            ]
+            for selector in link_selectors:
+                try:
+                    link = video_element.find_element(By.CSS_SELECTOR, selector)
+                    url = link.get_attribute("href")
+                    if url and '/video/' in url:
+                        data['video_url'] = url
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting video URL: {e}")
+            data['video_url'] = ""
+            
+        # Get thumbnail - try multiple selectors
+        try:
+            thumbnail_selectors = [
+                "img[alt][src*='tiktokcdn']",
+                "img[src*='tiktokcdn']",
+                "img[class*='poster']"
+            ]
+            for selector in thumbnail_selectors:
+                try:
+                    thumbnail = video_element.find_element(By.CSS_SELECTOR, selector)
+                    thumb_url = thumbnail.get_attribute("src")
+                    if thumb_url:
+                        data['thumbnail_url'] = thumb_url
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting thumbnail: {e}")
+            data['thumbnail_url'] = ""
+            
+        # Get description - try multiple selectors
+        try:
+            desc_selectors = [
+                "span.css-j2a19r-SpanText",
+                "div[data-e2e='search-card-desc'] span",
+                "div[class*='desc'] span"
+            ]
+            for selector in desc_selectors:
+                try:
+                    desc_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    for element in desc_elements:
+                        text = element.text.strip()
+                        if text and not text.startswith('#'):
+                            data['description'] = text
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting description: {e}")
+            data['description'] = ""
+            
+        # Get hashtags - try multiple selectors
+        try:
+            hashtag_selectors = [
+                "strong.css-1qkxi8e-StrongText",
+                "a[href*='/tag/'] strong",
+                "strong[color*='rgb']"
+            ]
+            hashtags = set()
+            for selector in hashtag_selectors:
+                try:
+                    elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    for element in elements:
+                        tag = element.text.strip()
+                        if tag.startswith('#'):
+                            hashtags.add(tag)
+                        else:
+                            hashtags.add(f"#{tag}")
+                except:
+                    continue
+            data['hashtags'] = list(hashtags)
+        except Exception as e:
+            print(f"Error getting hashtags: {e}")
+            data['hashtags'] = []
+            
+        # Get author - try multiple selectors
+        try:
+            author_selectors = [
+                "p.css-2zn17v-PUniqueId",
+                "a[data-e2e='search-card-user-link']",
+                "div[class*='UserInfo'] p"
+            ]
+            for selector in author_selectors:
+                try:
+                    author = video_element.find_element(By.CSS_SELECTOR, selector)
+                    author_text = author.text.strip()
+                    if author_text:
+                        data['author'] = author_text
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting author: {e}")
+            data['author'] = ""
+            
+        # Get views - try multiple selectors
+        try:
+            view_selectors = [
+                "strong.css-ws4x78-StrongVideoCount",
+                "strong[class*='VideoCount']",
+                "div[class*='PlayIcon'] strong"
+            ]
+            for selector in view_selectors:
+                try:
+                    views = video_element.find_element(By.CSS_SELECTOR, selector)
+                    view_count = views.text.strip()
+                    if view_count:
+                        data['stats'] = {'views': view_count}
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting views: {e}")
+            data['stats'] = {'views': ""}
+        
         if 'video_url' in data:
             print(f"Extracting comments for video: {data['video_url']}")
             data['comments'] = extract_comments(data['video_url'])
@@ -148,6 +267,7 @@ def extract_video_data(video_element):
     except Exception as e:
         print(f"Error extracting video data: {e}")
         return None
+    
 
 def save_combined_results(all_results):
     """Save all results to a single JSON file with search terms as keys"""
@@ -239,9 +359,9 @@ def main():
     # Define your search terms array
     search_terms = [
         "memecoin",
-        "solana",
-        "crypto",
-        "pumpfun"
+        # "solana",
+        # "crypto",
+        # "pumpfun"
     ]
     
     # List and select profile

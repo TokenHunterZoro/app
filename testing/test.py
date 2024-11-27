@@ -1,6 +1,6 @@
-import requests,json
+import requests, json
 
-post_url = 'https://www.tiktok.com/@simoncrypto45/video/7314070830789463302'
+post_url = 'https://www.tiktok.com/@wifi.woke/video/7441229847394864406'
 
 post_id = post_url.split('/')[-1]
 
