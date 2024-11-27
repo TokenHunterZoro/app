@@ -21,46 +21,190 @@ def list_chrome_profiles():
     return profiles
 
 def extract_video_data(video_element):
-    """Extract data from a video element"""
+    """Extract data from a video element with multiple selector attempts"""
     try:
         data = {}
-        
-        # Get video link
+
+        # Get video link - try multiple selectors
         try:
-            link = video_element.find_element(By.TAG_NAME, "a")
-            data['video_url'] = link.get_attribute("href")
-        except:
+            link_selectors = [
+                "a.css-1g95xhm-AVideoContainer",
+                "a[href*='/video/']",
+                "a[class*='AVideoContainer']"
+            ]
+            for selector in link_selectors:
+                try:
+                    link = video_element.find_element(By.CSS_SELECTOR, selector)
+                    url = link.get_attribute("href")
+                    if url and '/video/' in url:
+                        data['video_url'] = url
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting video URL: {e}")
             data['video_url'] = ""
             
-        # Get description
+        # Get thumbnail - try multiple selectors
         try:
-            desc = video_element.find_element(By.CSS_SELECTOR, "div[class*='video-desc']")
-            data['description'] = desc.text
-        except:
+            thumbnail_selectors = [
+                "img[alt][src*='tiktokcdn']",
+                "img[src*='tiktokcdn']",
+                "img[class*='poster']"
+            ]
+            for selector in thumbnail_selectors:
+                try:
+                    thumbnail = video_element.find_element(By.CSS_SELECTOR, selector)
+                    thumb_url = thumbnail.get_attribute("src")
+                    if thumb_url:
+                        data['thumbnail_url'] = thumb_url
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting thumbnail: {e}")
+            data['thumbnail_url'] = ""
+            
+        # Get description - try multiple selectors
+        try:
+            desc_selectors = [
+                "span.css-j2a19r-SpanText",
+                "div[data-e2e='search-card-desc'] span",
+                "div[class*='desc'] span"
+            ]
+            for selector in desc_selectors:
+                try:
+                    desc_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    for element in desc_elements:
+                        text = element.text.strip()
+                        if text and not text.startswith('#'):
+                            data['description'] = text
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting description: {e}")
             data['description'] = ""
             
-        # Get author
+        # Get hashtags - try multiple selectors
         try:
-            author = video_element.find_element(By.CSS_SELECTOR, "a[class*='author-nickname']")
-            data['author'] = author.text
-        except:
+            hashtag_selectors = [
+                "strong.css-1qkxi8e-StrongText",
+                "a[href*='/tag/'] strong",
+                "strong[color*='rgb']"
+            ]
+            hashtags = set()
+            for selector in hashtag_selectors:
+                try:
+                    elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    for element in elements:
+                        tag = element.text.strip()
+                        if tag.startswith('#'):
+                            hashtags.add(tag)
+                        else:
+                            hashtags.add(f"#{tag}")
+                except:
+                    continue
+            data['hashtags'] = list(hashtags)
+        except Exception as e:
+            print(f"Error getting hashtags: {e}")
+            data['hashtags'] = []
+            
+        # Get author - try multiple selectors
+        try:
+            author_selectors = [
+                "p.css-2zn17v-PUniqueId",
+                "a[data-e2e='search-card-user-link']",
+                "div[class*='UserInfo'] p"
+            ]
+            for selector in author_selectors:
+                try:
+                    author = video_element.find_element(By.CSS_SELECTOR, selector)
+                    author_text = author.text.strip()
+                    if author_text:
+                        data['author'] = author_text
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting author: {e}")
             data['author'] = ""
             
-        # Get engagement stats
-        data['stats'] = {}
+        # Get views - try multiple selectors
         try:
-            stats = video_element.find_elements(By.CSS_SELECTOR, "strong[class*='video-count']")
-            if len(stats) >= 2:
-                data['stats']['likes'] = stats[0].text
-                data['stats']['comments'] = stats[1].text
-        except:
-            pass
+            view_selectors = [
+                "strong.css-ws4x78-StrongVideoCount",
+                "strong[class*='VideoCount']",
+                "div[class*='PlayIcon'] strong"
+            ]
+            for selector in view_selectors:
+                try:
+                    views = video_element.find_element(By.CSS_SELECTOR, selector)
+                    view_count = views.text.strip()
+                    if view_count:
+                        data['stats'] = {'views': view_count}
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting views: {e}")
+            data['stats'] = {'views': ""}
         
-        data['scraped_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # Get posted time
+        try:
+            time_selectors = [
+                "div.css-dennn6-DivTimeTag",
+                "div[class*='TimeTag']"
+            ]
+            for selector in time_selectors:
+                try:
+                    time_element = video_element.find_element(By.CSS_SELECTOR, selector)
+                    posted_time = time_element.text.strip()
+                    if posted_time:
+                        data['posted_time'] = posted_time
+                        break
+                except:
+                    continue
+        except Exception as e:
+            print(f"Error getting posted time: {e}")
+            data['posted_time'] = ""
+        
+        data['extracted_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         return data
+        
     except Exception as e:
         print(f"Error extracting video data: {e}")
         return None
+
+def save_results(results, keyword):
+    """Save results to a JSON file with automatic versioning"""
+    try:
+        version = 1
+        filename = f"{keyword}_v{version}.json"
+        
+        # Check if file exists and increment version if needed
+        while os.path.exists(filename):
+            version += 1
+            filename = f"{keyword}_v{version}.json"
+        
+        # Create results directory if it doesn't exist
+        os.makedirs('results', exist_ok=True)
+        filepath = os.path.join('results', filename)
+        
+        # Save the results
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump({
+                'keyword': keyword,
+                'total_videos': len(results),
+                'extraction_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'videos': results
+            }, f, ensure_ascii=False, indent=2)
+        
+        print(f"\nResults saved to: {filepath}")
+        return filepath
+    except Exception as e:
+        print(f"Error saving results: {e}")
+        return None
+
 
 def main():
     # List and select profile
@@ -90,7 +234,7 @@ def main():
     
     # Get search keyword and max results
     keyword = input("Enter search keyword: ")
-    max_results = int(input("Enter maximum number of videos to scrape (default 50): ") or "50")
+    max_results = int(input("Enter maximum number of videos to extract (default 50): ") or "50")
     search_url = f"https://www.tiktok.com/search?q={keyword}"
     
     # Start browser and navigate
@@ -103,7 +247,7 @@ def main():
         
         print(f"Navigating to: {search_url}")
         driver.get(search_url)
-        time.sleep(10)  # Increased wait time for page load
+        time.sleep(10)  # Wait for initial load
         
         print("\nWaiting for video feed...")
         
@@ -115,8 +259,8 @@ def main():
         print("\nStarting video collection...")
         while len(results) < max_results:
             try:
-                # Find all video elements with a more general selector
-                video_elements = driver.find_elements(By.CSS_SELECTOR, "div[data-e2e*='video']")
+                # Find all video elements with the correct container class
+                video_elements = driver.find_elements(By.CSS_SELECTOR, "div.css-1soki6-DivItemContainerForSearch")
                 
                 if not video_elements:
                     print("No video elements found. Waiting...")
@@ -136,6 +280,10 @@ def main():
                 
                 # Break if we have enough videos
                 if len(results) >= max_results:
+                    print("\nReached target number of videos.")
+                    saved_path = save_results(results, keyword)
+                    if saved_path:
+                        print(f"Successfully saved {len(results)} videos to: {saved_path}")
                     break
                 
                 # Scroll to load more
@@ -146,28 +294,31 @@ def main():
                 # Check if we've reached the bottom
                 new_height = driver.execute_script("return document.documentElement.scrollHeight")
                 if new_height == last_height:
-                    print("Reached end of feed.")
+                    print("\nReached end of feed.")
+                    saved_path = save_results(results, keyword)
+                    if saved_path:
+                        print(f"Successfully saved {len(results)} videos to: {saved_path}")
                     break
                     
             except Exception as e:
-                print(f"Error during scraping: {e}")
+                print(f"\nError during scraping: {e}")
+                if results:
+                    saved_path = save_results(results, keyword)
+                    if saved_path:
+                        print(f"Successfully saved {len(results)} videos to: {saved_path}")
                 time.sleep(2)
         
-        # Save results
-        if results:
-            filename = f"tiktok_search_{keyword}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(results, f, ensure_ascii=False, indent=2)
-            print(f"\nFound {len(results)} videos")
-            print(f"Results saved to {filename}")
-        else:
-            print("\nNo videos found")
-        
-        print("\nPress Enter to close browser...")
-        input()
-        
+        print("\nScraping completed!")
+        if 'driver' in locals():
+            print("Press Enter to close browser...")
+            input()
+            
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"\nError: {str(e)}")
+        if results:
+            saved_path = save_results(results, keyword)
+            if saved_path:
+                print(f"Successfully saved {len(results)} videos to: {saved_path}")
     
     finally:
         if 'driver' in locals():
