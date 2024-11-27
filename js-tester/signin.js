@@ -268,6 +268,6 @@ async function monitorKeywords(
 // Usage
 const KEYWORDS = ["memecoin", "solana", "pumpfun"];
 const USERNAME = "loganfernando69@gmail.com";
-const PASSWORD = "WhatTheSigma@69";
+const PASSWORD = "xxxx";
 
 monitorKeywords(USERNAME, PASSWORD, KEYWORDS);

@@ -10,7 +10,7 @@ const puppeteer = require("puppeteer");
 
   // Enter username and password
   await page.type("input[name='username']", "loganfernando69", { delay: 100 });
-  await page.type("input[name='password']", "WhatTheSigma@69", { delay: 100 });
+  await page.type("input[name='password']", "xxxx", { delay: 100 });
 
   // Click the login button
   await page.click("button[type='submit']");
