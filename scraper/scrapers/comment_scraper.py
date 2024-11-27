@@ -32,9 +32,6 @@ def extract_comments(post_id):
             print('no comments available')
             break
 
-    with open('output.json', 'w', encoding='utf-8') as f:
-        json.dump(comments, f, ensure_ascii=False, indent=4)
-
     print("\nFetched all comments!")
     return comments
 

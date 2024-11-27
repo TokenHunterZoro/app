@@ -5,13 +5,14 @@ from scrapers.video_scraper import VideoScraper
 from storage.result_handler import save_combined_results
 from selenium.webdriver.common.by import By
 from config import CHROME_USER_DATA_DIR
-from test import extract_comments
+from scrapers.comment_scraper import extract_comments
+
+processed_urls = set()
 
 def process_search_term(driver, keyword, max_results=50):
     """Process a single search term and return results"""
     search_url = f"https://www.tiktok.com/search?q={keyword}"
     results = []
-    processed_urls = set()
     scroll_pause_time = 2
     
     try:
@@ -37,10 +38,17 @@ def process_search_term(driver, keyword, max_results=50):
                         
                     video_data = VideoScraper.extract_video_data(video_element)
                     if video_data and video_data['video_url'] and video_data['video_url'] not in processed_urls:
-                        results.append(video_data)
-                        processed_urls.add(video_data['video_url'])
                         print(f"Found video {len(results)}/{max_results}: {video_data['video_url']}")
-                
+                        if 'video_url' in video_data:
+                            print(f"Extracting comments for video: {video_data['video_url']}")
+                            post_id = video_data['video_url'].split('/')[-1]
+                            video_data['comments'] = extract_comments(post_id)
+                            print(f"Found {len(video_data['comments'])} comments")
+                        processed_urls.add(video_data['video_url'])
+                        results.append(video_data)
+                    else:
+                        if video_data and  video_data['video_url'] and video_data['video_url'] in processed_urls:
+                            print(f"Duplicate video. Skipping...")
                 if len(results) >= max_results:
                     print(f"\nReached target number of videos for '{keyword}'")
                     break
@@ -76,22 +84,26 @@ def main():
     profiles = list_chrome_profiles()
     for i, profile in enumerate(profiles):
         print(f"{i+1}. {profile}")
-    
-    while True:
-        try:
-            profile_index = int(input("\nEnter the number of the profile where you're logged into TikTok: ")) - 1
-            if 0 <= profile_index < len(profiles):
-                selected_profile = profiles[profile_index]
-                break
-            else:
-                print("Invalid selection. Please try again.")
-        except ValueError:
-            print("Please enter a valid number.")
+
+    print("Using Chrome Profile index 2") 
+    selected_profile = profiles[2]  
+
+    # while True:
+    #     try:
+    #         profile_index = int(input("\nEnter the number of the profile where you're logged into TikTok: ")) - 1
+    #         if 0 <= profile_index < len(profiles):
+    #             selected_profile = profiles[profile_index]
+    #             break
+    #         else:
+    #             print("Invalid selection. Please try again.")
+    #     except ValueError:
+    #         print("Please enter a valid number.")
     
     print(f"\nUsing Chrome profile: {selected_profile}")
     
-    max_results = int(input("Enter maximum number of videos to extract per search term (default 50): ") or "50")
-    
+    # max_results = int(input("Enter maximum number of videos to extract per search term (default 50): ") or "50")
+    print("Using max results 10 for now")
+    max_results = 10
     options = uc.ChromeOptions()
     options.add_argument(f'--user-data-dir={CHROME_USER_DATA_DIR}')
     options.add_argument(f'--profile-directory={selected_profile}')

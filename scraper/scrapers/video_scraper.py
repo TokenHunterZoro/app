@@ -25,15 +25,7 @@ class VideoScraper:
             data.update(VideoScraper._extract_author(video_element))
             data.update(VideoScraper._extract_views(video_element))
             
-            # Extract comments if video URL is available
-            if 'video_url' in data:
-                print(f"Extracting comments for video: {data['video_url']}")
-                post_id = data['video_url'].split('/')[-1]
-                data['comments'] = extract_comments(post_id)
-                print(f"Found {len(data['comments'])} comments")
-            
             data['extracted_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            
             return data
             
         except Exception as e:
