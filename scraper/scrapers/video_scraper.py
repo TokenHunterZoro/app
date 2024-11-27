@@ -86,41 +86,44 @@ class VideoScraper:
         except Exception as e:
             print(f"Error getting video URL: {e}")
         return {'video_url': ""}
-    
+   
     @staticmethod
     def _extract_thumbnail(video_element):
-        """Extract video thumbnail"""
+        """Extract thumbnail URL"""
         try:
             thumbnail_selectors = [
-                "img.css-1dbjc4n",
-                "img[src*='webp']"
+                "img[alt][src*='tiktokcdn']",
+                "img[src*='tiktokcdn']",
+                "img[class*='poster']"
             ]
             for selector in thumbnail_selectors:
                 try:
                     thumbnail = video_element.find_element(By.CSS_SELECTOR, selector)
-                    url = thumbnail.get_attribute("src")
-                    if url and '.webp' in url:
-                        return {'thumbnail': url}
+                    thumb_url = thumbnail.get_attribute("src")
+                    if thumb_url:
+                        return {'thumbnail_url': thumb_url}
                 except:
                     continue
         except Exception as e:
             print(f"Error getting thumbnail: {e}")
-        return {'thumbnail': ""}
-    
+        return {'thumbnail_url': ""}
+
     @staticmethod
     def _extract_description(video_element):
         """Extract video description"""
         try:
-            description_selectors = [
-                "div.css-1dbjc4n",
-                "div[class*='Description']"
+            desc_selectors = [
+                "span.css-j2a19r-SpanText",
+                "div[data-e2e='search-card-desc'] span",
+                "div[class*='desc'] span"
             ]
-            for selector in description_selectors:
+            for selector in desc_selectors:
                 try:
-                    description_element = video_element.find_element(By.CSS_SELECTOR, selector)
-                    description = description_element.text.strip()
-                    if description:
-                        return {'description': description}
+                    desc_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    for element in desc_elements:
+                        text = element.text.strip()
+                        if text and not text.startswith('#'):
+                            return {'description': text}
                 except:
                     continue
         except Exception as e:

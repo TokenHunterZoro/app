@@ -22,7 +22,7 @@ def find_crypto_tickers(text):
     word_pattern = r'\b([A-Z]{2,10})\b'
     
     # Common words to exclude (add more as needed)
-    common_words = {'THE', 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG'}
+    common_words = {'THE', 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT'}
     
     tickers = []
     

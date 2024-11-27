@@ -1,11 +1,12 @@
 ## TODO
 
-1. AI filtering with Captions and comments
-2. Get all Pumpfun coins from Bitquery.
-3. Get last 24 hour coins from Bitquery
-4. Try pattern matching the last 24 hour crypto with scraped data
-5. Display in the UI.
-6. Analyze running time, can be faster?
+1. Fetch videos by hashtag too
+2. AI filtering with Captions and comments
+3. Get all Pumpfun coins from Bitquery.
+4. Get last 24 hour coins from Bitquery
+5. Try pattern matching the last 24 hour crypto with scraped data
+6. Display in the UI.
+7. Analyze running time, can be faster?
 
 ## DONE
 

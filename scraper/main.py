@@ -43,7 +43,9 @@ def process_search_term(driver, keyword, max_results=50):
                             print(f"Extracting comments for video: {video_data['video_url']}")
                             post_id = video_data['video_url'].split('/')[-1]
                             video_data['comments'] = extract_comments(post_id)
-                            print(f"Found {len(video_data['comments'].data)} comments")
+                            # print(video_data['comments'])
+                            # print(video_data['comments']['data'])
+                            print(f"Found {len(video_data['comments']['data'])} comments")
                         processed_urls.add(video_data['video_url'])
                         results.append(video_data)
                     else:
@@ -74,10 +76,10 @@ def process_search_term(driver, keyword, max_results=50):
 
 def main():
     search_terms = [
-        "memecoin",
+        # "memecoin",
         # "solana",
         # "crypto",
-        # "pumpfun"
+        "pumpfun"
     ]
     
     print("Available Chrome profiles:")
