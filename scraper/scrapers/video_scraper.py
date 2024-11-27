@@ -13,6 +13,7 @@ class VideoScraper:
             # Extract posted time
             time_data = VideoScraper._extract_posted_time(video_element)
             if not time_data:
+                print('Video older than 24 hours. Skipping...')
                 return None
             data.update(time_data)
             
@@ -27,7 +28,8 @@ class VideoScraper:
             # Extract comments if video URL is available
             if 'video_url' in data:
                 print(f"Extracting comments for video: {data['video_url']}")
-                data['comments'] = extract_comments(data['video_url'])
+                post_id = data['video_url'].split('/')[-1]
+                data['comments'] = extract_comments(post_id)
                 print(f"Found {len(data['comments'])} comments")
             
             data['extracted_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

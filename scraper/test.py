@@ -9,7 +9,7 @@ def req(post_id,curs):
     print(f'we are on {curs} curser')
     return raw_data
 
-def extract_comments(post_id):
+def extract_comments(post_id,curs):
     comments = []
     curs = 0
     while 1:

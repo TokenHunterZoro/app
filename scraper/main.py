@@ -3,7 +3,9 @@ import undetected_chromedriver as uc
 from utils.chrome import list_chrome_profiles
 from scrapers.video_scraper import VideoScraper
 from storage.result_handler import save_combined_results
+from selenium.webdriver.common.by import By
 from config import CHROME_USER_DATA_DIR
+from test import extract_comments
 
 def process_search_term(driver, keyword, max_results=50):
     """Process a single search term and return results"""
@@ -133,5 +135,14 @@ def main():
         if 'driver' in locals():
             driver.quit()
 
+
+# def fetch_comments():
+#     post_url = 'https://www.tiktok.com/@wifi.woke/video/7441229847394864406'
+
+#     post_id = post_url.split('/')[-1]
+#     curs = 0
+#     extract_comments(post_id, curs)
+
 if __name__ == "__main__":
+    # fetch_comments()
     main()
