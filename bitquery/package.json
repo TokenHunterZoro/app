@@ -1,0 +1,19 @@
+{
+  "name": "bitquery",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^22.10.1",
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2"
+  }
+}

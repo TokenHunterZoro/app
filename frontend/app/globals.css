@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&family=Sen:wght@400..800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +10,16 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .nouns {
+    font-family: "Londrina Solid", serif;
+  }
+
+  .sen {
+    font-family: "Sen", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
   }
 }
 
