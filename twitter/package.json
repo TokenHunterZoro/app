@@ -1,0 +1,23 @@
+{
+  "name": "twitter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "got": "^14.4.5",
+    "oauth-1.0a": "^2.2.6",
+    "openai": "^4.73.1",
+    "querystring": "^0.2.1",
+    "readline": "^1.3.0",
+    "twitter-api-v2": "^1.18.2"
+  }
+}

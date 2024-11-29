@@ -19,4 +19,4 @@
 
 1. Get active creations
 2. Get active trades that happen currently
-3.
+3. Get all memecoin creations
