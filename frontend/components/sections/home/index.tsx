@@ -1,10 +1,9 @@
 "use client";
 import { Separator } from "@/components/ui/separator";
 import HeroTable from "./hero-table";
-import MemecoinDashboard from "./dashboard";
 import UnlockNow from "@/components/unlock-now";
 import { useEnvironmentStore } from "@/components/context";
-import MemecoinsTreemap from "./heat-treemap";
+import TimeSeriesChart from "./time-series-chart";
 
 export default function Home() {
   const { paid } = useEnvironmentStore((store) => store);
@@ -20,8 +19,7 @@ export default function Home() {
       <div className="max-w-[1000px] mx-auto">
         <HeroTable />
       </div>
-      {/* <MemecoinDashboard /> */}
-      {/* <MemecoinsTreemap /> */}
+      {/* <TimeSeriesChart /> */}
       {!paid && <UnlockNow />}
     </div>
   );
