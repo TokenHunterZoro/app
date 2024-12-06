@@ -13,126 +13,21 @@ import Image from "next/image";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SortableTableHeader from "./hero-table/sortable-table-header";
+import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
+import { SortConfig, SortKey, TokenData } from "@/lib/types";
+import TableWrapper from "./hero-table/wrapper";
 
 export default function HeroTable() {
   const router = useRouter();
-  const ITEMS_PER_PAGE = 7;
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: null,
+    direction: "asc",
+  });
 
-  const data = [
-    {
-      position: 1,
-      image: "https://via.placeholder.com/40",
-      ticker: "SAMO",
-      price: "$0.0021",
-      age: "11hr",
-      volume: "$21.0M",
-      views: "2.5k",
-      mentions: "100k",
-      marketCap: "$50.2M",
-    },
-    {
-      position: 2,
-      image: "https://via.placeholder.com/40",
-      ticker: "DOGE",
-      price: "$0.0013",
-      age: "2d",
-      volume: "$10.4M",
-      views: "1.8k",
-      mentions: "80k",
-      marketCap: "$30.1M",
-    },
-    {
-      position: 3,
-      image: "https://via.placeholder.com/40",
-      ticker: "INU",
-      price: "$0.0009",
-      age: "3d",
-      volume: "$5.2M",
-      views: "1.2k",
-      mentions: "60k",
-      marketCap: "$15.0M",
-    },
-    {
-      position: 4,
-      image: "https://via.placeholder.com/40",
-      ticker: "KISHU",
-      price: "$0.0001",
-      age: "5hr",
-      volume: "$3.7M",
-      views: "950",
-      mentions: "45k",
-      marketCap: "$10.5M",
-    },
-    {
-      position: 5,
-      image: "https://via.placeholder.com/40",
-      ticker: "ELON",
-      price: "$0.0004",
-      age: "1d",
-      volume: "$7.1M",
-      views: "1.3k",
-      mentions: "70k",
-      marketCap: "$25.8M",
-    },
-    {
-      position: 6,
-      image: "https://via.placeholder.com/40",
-      ticker: "CINU",
-      price: "$0.0029",
-      age: "3hr",
-      volume: "$15.4M",
-      views: "2.9k",
-      mentions: "110k",
-      marketCap: "$40.3M",
-    },
-    {
-      position: 7,
-      image: "https://via.placeholder.com/40",
-      ticker: "HOGE",
-      price: "$0.0017",
-      age: "12hr",
-      volume: "$4.9M",
-      views: "1.7k",
-      mentions: "55k",
-      marketCap: "$18.6M",
-    },
-    {
-      position: 8,
-      image: "https://via.placeholder.com/40",
-      ticker: "SHIB",
-      price: "$0.0007",
-      age: "2d",
-      volume: "$12.0M",
-      views: "3.2k",
-      mentions: "150k",
-      marketCap: "$60.4M",
-    },
-    {
-      position: 9,
-      image: "https://via.placeholder.com/40",
-      ticker: "FLOKI",
-      price: "$0.0032",
-      age: "8hr",
-      volume: "$8.5M",
-      views: "1.6k",
-      mentions: "90k",
-      marketCap: "$22.7M",
-    },
-    {
-      position: 10,
-      image: "https://via.placeholder.com/40",
-      ticker: "PEPE",
-      price: "$0.0005",
-      age: "4d",
-      volume: "$6.8M",
-      views: "1.1k",
-      mentions: "65k",
-      marketCap: "$14.9M",
-    },
-  ];
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(DUMMY_HERO_TABLE_DATA.length / ITEMS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -143,36 +38,90 @@ export default function HeroTable() {
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return data.slice(startIndex, endIndex);
+    return DUMMY_HERO_TABLE_DATA.slice(startIndex, endIndex);
   };
 
   const pageData = getCurrentPageData();
 
   const [paid, setPaid] = useState(false);
-
+  const handleSort = (key: SortKey) => {
+    setSortConfig((current) => ({
+      key,
+      direction:
+        current.key === key && current.direction === "asc" ? "desc" : "asc",
+    }));
+  };
   return (
     <>
-      <div className="relative max-h-[400px] overflow-hidden text-white">
+      <TableWrapper showWrapper={!paid}>
         <Table className="w-full border mt-10">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>#</TableHead>
-              <TableHead>TOKEN</TableHead>
-              <TableHead>PRICE</TableHead>
-              <TableHead>AGE</TableHead>
-              <TableHead>VOLUME</TableHead>
-              <TableHead>VIEWS</TableHead>
-              <TableHead>MENTIONS</TableHead>
-              <TableHead>MCAP</TableHead>
+              <SortableTableHeader
+                onClick={() => handleSort("position")}
+                sorted={sortConfig.key === "position"}
+                direction={sortConfig.direction}
+              >
+                #
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("ticker")}
+                sorted={sortConfig.key === "ticker"}
+                direction={sortConfig.direction}
+              >
+                TOKEN
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("price")}
+                sorted={sortConfig.key === "price"}
+                direction={sortConfig.direction}
+              >
+                PRICE
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("age")}
+                sorted={sortConfig.key === "age"}
+                direction={sortConfig.direction}
+              >
+                AGE
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("volume")}
+                sorted={sortConfig.key === "volume"}
+                direction={sortConfig.direction}
+              >
+                VOLUME
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("views")}
+                sorted={sortConfig.key === "views"}
+                direction={sortConfig.direction}
+              >
+                VIEWS
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("mentions")}
+                sorted={sortConfig.key === "mentions"}
+                direction={sortConfig.direction}
+              >
+                MENTIONS
+              </SortableTableHeader>
+              <SortableTableHeader
+                onClick={() => handleSort("marketCap")}
+                sorted={sortConfig.key === "marketCap"}
+                direction={sortConfig.direction}
+              >
+                MCAP
+              </SortableTableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pageData.map((coin) => (
+            {pageData.map((coin: any) => (
               <TableRow
                 key={coin.position}
                 className="cursor-pointer"
                 onClick={() => {
-                  router.push("/token/" + coin.ticker);
+                  router.push(`/token/${coin.ticker}`);
                 }}
               >
                 <TableCell>{coin.position}</TableCell>
@@ -194,14 +143,13 @@ export default function HeroTable() {
             ))}
           </TableBody>
         </Table>
-        <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background via-background/50 to-transparent pointer-events-none"></div>
-      </div>
+      </TableWrapper>
       {!paid && (
         <div className="w-full flex flex-col justify-center items-center">
           <p className="sen text-muted-foreground font-semibold mt-6 mb-2">
             Unlock all features at just 0.1 SOL/week
           </p>
-          <Separator className="w-[300px] mb-3 border-muted-foreground" />
+          <Separator className="w-[120px] mb-3 border-muted-foreground" />
           <Button
             className="flex bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
             onClick={() => {
