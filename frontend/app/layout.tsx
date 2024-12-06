@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import Layout from "@/components/sections/layout";
+import { EnvironmentStoreProvider } from "@/components/context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,7 +17,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ZoroX - Memecoin Hunter",
+  title: "ZoroX | World's Best Memecoin Hunter",
   description: "An autonomous AI agent that hunts for new memecoins in Tiktok.",
 };
 
@@ -26,19 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    <EnvironmentStoreProvider>
+      <html lang="en">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          disableTransitionOnChange
         >
-          <Layout>{children}</Layout>
-        </body>
-      </ThemeProvider>
-    </html>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Layout>{children}</Layout>
+          </body>
+        </ThemeProvider>
+      </html>
+    </EnvironmentStoreProvider>
   );
 }

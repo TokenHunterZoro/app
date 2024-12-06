@@ -1,8 +1,8 @@
 import TikTokVideoGrid from "@/components/Grid";
-import Hero from "@/components/sections/hero";
+import Home from "@/components/sections/home";
 import { pumpfunSample } from "@/lib/constants";
 import Image from "next/image";
 
-export default function Home() {
-  return <Hero />;
+export default function HomePage() {
+  return <Home />;
 }
