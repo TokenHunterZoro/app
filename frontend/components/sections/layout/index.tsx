@@ -15,8 +15,8 @@ export default function Layout({
     useEnvironmentStore((store) => store);
   const router = useRouter();
   return (
-    <div className="w-full p-6">
-      <div className="flex justify-between items-center">
+    <div className="w-full py-6">
+      <div className="flex justify-between items-center px-6">
         <div
           className="flex items-center space-x-4 select-none cursor-pointer"
           onClick={() => {

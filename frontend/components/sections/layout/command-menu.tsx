@@ -119,7 +119,7 @@ export function CommandMenu({ ...props }: DialogProps) {
           </>
         ) : (
           <div className="h-[300px] flex flex-col justify-center">
-            <UnlockNow />
+            <UnlockNow text="Search and analyze all memecoins" />
           </div>
         )}
       </CommandDialog>

@@ -3,12 +3,14 @@ import { Separator } from "@/components/ui/separator";
 import HeroTable from "./hero-table";
 import UnlockNow from "@/components/unlock-now";
 import { useEnvironmentStore } from "@/components/context";
-import TimeSeriesChart from "./time-series-chart";
+import TimeSeriesChart from "../ticker/time-series-chart";
+import TiktokPreview from "./tiktok-preview";
+import GraphPreview from "./graph-preview";
 
 export default function Home() {
   const { paid } = useEnvironmentStore((store) => store);
   return (
-    <div className="w-screen mx-auto">
+    <div className="w-full">
       <p className="text-center nouns tracking-widest font-bold text-3xl text-[#F8D12E] mt-16">
         The Ultimate TikTok Memecoin Hunter
       </p>
@@ -19,8 +21,13 @@ export default function Home() {
       <div className="max-w-[1000px] mx-auto">
         <HeroTable />
       </div>
+      {!paid && <UnlockNow text="View the realtime dashboard" />}
       {/* <TimeSeriesChart /> */}
-      {!paid && <UnlockNow />}
+      <TiktokPreview />
+      <GraphPreview />
+      <Separator className="my-8" />
+      {!paid && <UnlockNow text="Unlock All ZoroX features now" />}
+      <div className="my-12" />
     </div>
   );
 }
