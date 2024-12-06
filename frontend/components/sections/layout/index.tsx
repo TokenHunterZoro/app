@@ -11,12 +11,8 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const {
-    showConnectModal,
-    showPayModal,
-    showSupportModal,
-    setShowSupportModal,
-  } = useEnvironmentStore((store) => store);
+  const { showConnectModal, showPayModal, showSupportModal } =
+    useEnvironmentStore((store) => store);
   const router = useRouter();
   return (
     <div className="w-full p-6">
@@ -44,15 +40,6 @@ export default function Layout({
             variant="ghost"
             className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
             onClick={() => {
-              setShowSupportModal(true);
-            }}
-          >
-            <HandHelping className="h-24 w-24" />
-            <p className="sen text-md">Support us</p>
-          </Button>
-          <Button
-            className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-            onClick={() => {
               window.open("https://x.com/TokenHunterZoro", "_blank");
             }}
           >
@@ -64,6 +51,16 @@ export default function Layout({
               height={20}
               className="rounded-full"
             />
+          </Button>
+          <Button className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105">
+            <Image
+              src={"/phantom.jpg"}
+              width={25}
+              height={25}
+              className="rounded-full"
+              alt="phantom"
+            />
+            <p className="sen text-md font-bold ">Connect Phantom</p>
           </Button>
         </div>
       </div>

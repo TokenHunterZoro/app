@@ -1,15 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,6 +14,7 @@ import SortableTableHeader from "./hero-table/sortable-table-header";
 import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
 import { SortConfig, SortKey, TokenData } from "@/lib/types";
 import TableWrapper from "./hero-table/wrapper";
+import { useEnvironmentStore } from "@/components/context";
 
 export default function HeroTable() {
   const router = useRouter();
@@ -43,7 +41,8 @@ export default function HeroTable() {
 
   const pageData = getCurrentPageData();
 
-  const [paid, setPaid] = useState(false);
+  const { paid } = useEnvironmentStore((store) => store);
+
   const handleSort = (key: SortKey) => {
     setSortConfig((current) => ({
       key,
@@ -54,7 +53,7 @@ export default function HeroTable() {
   return (
     <>
       <TableWrapper showWrapper={!paid}>
-        <Table className="w-full border mt-10">
+        <Table className="w-full border mt-8">
           <TableHeader>
             <TableRow className="bg-muted/50">
               <SortableTableHeader
@@ -144,29 +143,7 @@ export default function HeroTable() {
           </TableBody>
         </Table>
       </TableWrapper>
-      {!paid && (
-        <div className="w-full flex flex-col justify-center items-center">
-          <p className="sen text-muted-foreground font-semibold mt-6 mb-2">
-            Unlock all features at just 0.1 SOL/week
-          </p>
-          <Separator className="w-[120px] mb-3 border-muted-foreground" />
-          <Button
-            className="flex bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-            onClick={() => {
-              setPaid(true);
-            }}
-          >
-            <Image
-              src={"/phantom.jpg"}
-              width={25}
-              height={25}
-              className="rounded-full"
-              alt="phantom"
-            />
-            <p className="sen font-semibold text-md">Pay with Phantom</p>{" "}
-          </Button>
-        </div>
-      )}
+
       {paid && (
         <div className="flex justify-between items-center mt-4">
           <Button
