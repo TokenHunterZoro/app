@@ -4,7 +4,7 @@ import HeroTable from "./hero-table";
 import UnlockNow from "@/components/unlock-now";
 import { useEnvironmentStore } from "@/components/context";
 import TimeSeriesChart from "../ticker/time-series-chart";
-import TiktokPreview from "./tiktok-preview";
+import TiktokSection from "./tiktok";
 import GraphPreview from "./graph-preview";
 
 export default function Home() {
@@ -23,7 +23,7 @@ export default function Home() {
       </div>
       {!paid && <UnlockNow text="View the realtime dashboard" />}
       {/* <TimeSeriesChart /> */}
-      <TiktokPreview />
+      <TiktokSection />
       <GraphPreview />
       <Separator className="my-8" />
       {!paid && <UnlockNow text="Unlock All ZoroX features now" />}
