@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { HandHelping } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
+import { CommandMenu } from "./command-menu";
+import { useRouter } from "next/navigation";
 
 export default function Layout({
   children,
@@ -15,10 +17,16 @@ export default function Layout({
     showSupportModal,
     setShowSupportModal,
   } = useEnvironmentStore((store) => store);
+  const router = useRouter();
   return (
     <div className="w-full p-6">
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4 select-none">
+        <div
+          className="flex items-center space-x-4 select-none cursor-pointer"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
           <Image
             src="/logo.jpg"
             alt="logo"
@@ -30,6 +38,7 @@ export default function Layout({
             ZoroX
           </p>
         </div>
+        <CommandMenu />
         <div className="flex space-x-4">
           <Button
             variant="ghost"

@@ -1,3 +1,4 @@
+"use client";
 import { Separator } from "@/components/ui/separator";
 import HeroTable from "./hero-table";
 
@@ -10,7 +11,6 @@ export default function Home() {
       <div className="max-w-[1000px] mx-auto">
         <HeroTable />
       </div>
-      <Separator className="my-8" />
     </div>
   );
 }

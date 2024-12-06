@@ -25,6 +25,11 @@ interface SortableTableHeaderProps {
   direction: SortDirection;
 }
 
+export interface DocsConfig {
+  mainNav: any[];
+  sidebarNav: any[];
+  chartsNav: any[];
+}
 export type {
   TokenData,
   SortKey,
