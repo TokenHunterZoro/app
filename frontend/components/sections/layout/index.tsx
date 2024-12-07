@@ -5,6 +5,8 @@ import { HandHelping } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import { CommandMenu } from "./command-menu";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { shortenAddress } from "@/lib/utils";
 
 export default function Layout({
   children,
@@ -14,6 +16,7 @@ export default function Layout({
   const { showConnectModal, showPayModal, showSupportModal } =
     useEnvironmentStore((store) => store);
   const router = useRouter();
+  const [walletAddress, setWalletAddress] = useState("");
   return (
     <div className="w-full py-6">
       <div className="flex justify-between items-center px-6">
@@ -52,7 +55,12 @@ export default function Layout({
               className="rounded-full"
             />
           </Button>
-          <Button className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105">
+          <Button
+            className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
+            onClick={() => {
+              setWalletAddress("5pj7QiUhJyqeYQv64pCNzVs2X8LfU2fGpBAKAE3c718p");
+            }}
+          >
             <Image
               src={"/phantom.jpg"}
               width={25}
@@ -60,7 +68,11 @@ export default function Layout({
               className="rounded-full"
               alt="phantom"
             />
-            <p className="sen text-md font-bold ">Connect Phantom</p>
+            <p className="sen text-md font-bold ">
+              {walletAddress == ""
+                ? "Connect Phantom"
+                : shortenAddress(walletAddress)}
+            </p>
           </Button>
         </div>
       </div>
