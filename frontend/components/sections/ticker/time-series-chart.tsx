@@ -18,7 +18,10 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   ReferenceLine,
+  TooltipProps,
 } from "recharts";
+import Image from "next/image";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface DataPoint {
   timestamp: string;
@@ -71,9 +74,10 @@ const generateTimeData = (timeframe: TimeframeType): DataPoint[] => {
   }
 };
 
-const TimeSeriesChart: React.FC = () => {
+export default function TimeSeriesChart({ ticker }: { ticker: string }) {
   const [showPrice, setShowPrice] = useState<boolean>(true);
-  const [showEngagement, setShowEngagement] = useState<boolean>(true);
+  const [showViews, setShowViews] = useState<boolean>(true);
+  const [showMentions, setShowMentions] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<TimeframeType>("24h");
   const [engagementMetric, setEngagementMetric] = useState<
     "mentions" | "views"
@@ -81,6 +85,13 @@ const TimeSeriesChart: React.FC = () => {
   const [data, setData] = useState<DataPoint[]>(generateTimeData("24h"));
 
   // Determine if price is up or down compared to start of timeframe
+  const priceChange = useMemo(() => {
+    if (data.length < 2) return true;
+    return (
+      ((data[data.length - 1].price - data[0].price) / data[0].price) *
+      100
+    ).toFixed(3);
+  }, [data]);
   const isPriceUp = useMemo(() => {
     if (data.length < 2) return true;
     return data[data.length - 1].price > data[0].price;
@@ -120,24 +131,38 @@ const TimeSeriesChart: React.FC = () => {
   }, [data]);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full sen">
       <CardHeader>
-        <div className="flex items-center justify-between mb-4">
-          <CardTitle className="text-xl font-bold">
-            Price & Engagement Analysis
+        <div className="flex items-center justify-start ">
+          <Image
+            src={"https://picsum.photos/200"}
+            width={32}
+            height={32}
+            alt={ticker}
+            className="rounded-full mr-2"
+          />
+          <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
+            {ticker + ""}
+            <span className="text-muted-foreground text-sm font-medium sen tracking-normal ">
+              /SOL
+            </span>
           </CardTitle>
-          <Select value={timeframe} onValueChange={handleTimeframeChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Timeframe" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="30m">30 Minutes</SelectItem>
-              <SelectItem value="1h">1 Hour</SelectItem>
-              <SelectItem value="3h">3 Hours</SelectItem>
-              <SelectItem value="24h">24 Hours</SelectItem>
-              <SelectItem value="7d">7 Days</SelectItem>
-            </SelectContent>
-          </Select>
+        </div>
+        <div className="flex items-center justify-start mb-4">
+          <p className="font-semibold text-3xl">
+            ${data[data.length - 1].price.toFixed(5)}
+          </p>
+          {isPriceUp ? (
+            <span className="flex items-center text-green-500 ml-2 text-md">
+              <ChevronUp className="text-md w-4 h-4" />
+              <span className="ml- ">+{priceChange}%</span>
+            </span>
+          ) : (
+            <span className="flex items-center text-red-500 ml-2">
+              <ChevronDown className="text-xl w-4 h-4" />
+              <span className="ml-1">{priceChange}%</span>
+            </span>
+          )}
         </div>
 
         <div className="flex items-center space-x-8">
@@ -148,6 +173,12 @@ const TimeSeriesChart: React.FC = () => {
               id="price-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
+
+            <div
+              className={`w-4 h-4 rounded-full ${
+                isPriceUp ? "bg-[#10B981]" : "bg-[#EF4444]"
+              }`}
+            ></div>
             <Label htmlFor="price-toggle" className="text-sm font-medium">
               Coin Price
             </Label>
@@ -155,32 +186,42 @@ const TimeSeriesChart: React.FC = () => {
 
           <div className="flex items-center space-x-2">
             <Switch
-              checked={showEngagement}
-              onCheckedChange={setShowEngagement}
-              id="engagement-toggle"
+              checked={showViews}
+              onCheckedChange={setShowViews}
+              id="views-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
-            <Label htmlFor="engagement-toggle" className="text-sm font-medium">
-              TikTok Engagement
+            <div className={`w-4 h-4 rounded-full bg-[#800080]`}></div>
+            <Label htmlFor="views-toggle" className="text-sm font-medium">
+              TikTok Views
             </Label>
           </div>
-
-          {showEngagement && (
-            <Select
-              value={engagementMetric}
-              onValueChange={(value) => {
-                setEngagementMetric(value as "mentions" | "views");
-              }}
-            >
+          <div className="flex items-center space-x-2">
+            <Switch
+              checked={showMentions}
+              onCheckedChange={setShowMentions}
+              id="mentions-toggle"
+              className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
+            />
+            <div className={`w-4 h-4 rounded-full bg-[#2563EB]`}></div>
+            <Label htmlFor="mentions-toggle" className="text-sm font-medium">
+              TikTok Mentions
+            </Label>
+          </div>
+          <div className="flex-1 flex justify-end">
+            <Select value={timeframe} onValueChange={handleTimeframeChange}>
               <SelectTrigger className="w-32">
-                <SelectValue placeholder="Metric" />
+                <SelectValue placeholder="Timeframe" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="mentions">Mentions</SelectItem>
-                <SelectItem value="views">Views</SelectItem>
+                <SelectItem value="30m">30 Minutes</SelectItem>
+                <SelectItem value="1h">1 Hour</SelectItem>
+                <SelectItem value="3h">3 Hours</SelectItem>
+                <SelectItem value="24h">24 Hours</SelectItem>
+                <SelectItem value="7d">7 Days</SelectItem>
               </SelectContent>
             </Select>
-          )}
+          </div>
         </div>
       </CardHeader>
 
@@ -189,7 +230,7 @@ const TimeSeriesChart: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={data}
-              margin={{ top: 5, right: 20, left: 50, bottom: 5 }}
+              margin={{ top: 5, right: 0, left: 20, bottom: 5 }}
             >
               <ReferenceLine
                 y={startingPrice}
@@ -198,7 +239,8 @@ const TimeSeriesChart: React.FC = () => {
                 strokeDasharray="3 3"
                 label={{
                   value: `$${startingPrice.toFixed(2)}`,
-                  position: "left",
+                  position: "center",
+
                   fill: "#6B7280",
                   fontSize: 12,
                 }}
@@ -223,12 +265,34 @@ const TimeSeriesChart: React.FC = () => {
                 tick={{ fill: "#6B7280" }}
               />
               <Tooltip
-                formatter={formatTooltipValue}
-                labelFormatter={(label) => `Time: ${label}`}
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #E5E7EB",
-                  borderRadius: "6px",
+                content={({
+                  active,
+                  payload,
+                  label,
+                }: TooltipProps<number, string>) => {
+                  if (!active || !payload || payload.length === 0) return null;
+
+                  return (
+                    <div
+                      className="p-4 bg-black border border-gray-700 rounded-lg text-gray-100 shadow-md"
+                      style={{ maxWidth: "200px" }}
+                    >
+                      {payload.map((entry, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between text-sm"
+                        >
+                          <span className="font-medium ">{entry.name}:</span>
+                          <span className="ml-5">
+                            {entry.name == "Price"
+                              ? entry.value?.toFixed(4)
+                              : entry.value}
+                          </span>
+                        </div>
+                      ))}
+                      <p className="text-sm font-medium text-gray-400 mt-1 text-center">{`${label}`}</p>
+                    </div>
+                  );
                 }}
               />
 
@@ -246,30 +310,28 @@ const TimeSeriesChart: React.FC = () => {
                 />
               )}
 
-              {showEngagement && (
-                <>
-                  {engagementMetric === "mentions" ? (
-                    <Line
-                      yAxisId="price"
-                      type="linear"
-                      dataKey="mentions"
-                      stroke="#2563EB"
-                      strokeWidth={2}
-                      dot={false}
-                      name="Mentions"
-                    />
-                  ) : (
-                    <Line
-                      yAxisId="price"
-                      type="linear"
-                      dataKey="views"
-                      stroke="#F8D12E"
-                      strokeWidth={2}
-                      dot={false}
-                      name="Views"
-                    />
-                  )}
-                </>
+              {showViews && (
+                <Line
+                  yAxisId="price"
+                  type="linear"
+                  dataKey="views"
+                  stroke="#800080"
+                  strokeWidth={2}
+                  dot={false}
+                  name="Views"
+                />
+              )}
+
+              {showMentions && (
+                <Line
+                  yAxisId="price"
+                  type="linear"
+                  dataKey="mentions"
+                  stroke="#2563EB"
+                  strokeWidth={2}
+                  dot={false}
+                  name="Mentions"
+                />
               )}
             </LineChart>
           </ResponsiveContainer>
@@ -277,6 +339,4 @@ const TimeSeriesChart: React.FC = () => {
       </CardContent>
     </Card>
   );
-};
-
-export default TimeSeriesChart;
+}

@@ -1165,7 +1165,7 @@ const ITEMS_PER_PAGE = 7;
 const DUMMY_HERO_TABLE_DATA = [
   {
     position: 1,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "SAMO",
     price: "$0.0021",
     age: "11hr",
@@ -1176,7 +1176,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 2,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "DOGE",
     price: "$0.0013",
     age: "2d",
@@ -1187,7 +1187,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 3,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "INU",
     price: "$0.0009",
     age: "3d",
@@ -1198,7 +1198,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 4,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "KISHU",
     price: "$0.0001",
     age: "5hr",
@@ -1209,7 +1209,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 5,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "ELON",
     price: "$0.0004",
     age: "1d",
@@ -1220,7 +1220,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 6,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "CINU",
     price: "$0.0029",
     age: "3hr",
@@ -1231,7 +1231,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 7,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "HOGE",
     price: "$0.0017",
     age: "12hr",
@@ -1242,7 +1242,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 8,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "SHIB",
     price: "$0.0007",
     age: "2d",
@@ -1253,7 +1253,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 9,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "FLOKI",
     price: "$0.0032",
     age: "8hr",
@@ -1264,7 +1264,7 @@ const DUMMY_HERO_TABLE_DATA = [
   },
   {
     position: 10,
-    image: "https://via.placeholder.com/40",
+    image: "https://picsum.photos/40",
     ticker: "PEPE",
     price: "$0.0005",
     age: "4d",

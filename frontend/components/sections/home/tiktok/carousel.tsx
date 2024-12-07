@@ -52,7 +52,7 @@ const TikTokCarousel = () => {
                 className="overflow-hidden transition-transform hover:scale-105 mb-3 rounded-lg"
               >
                 <img
-                  src={src}
+                  src={"https://picsum.photos/200/400"}
                   alt={`Thumbnail ${i}`}
                   className="w-full h-56 object-cover rounded-lg"
                 />

@@ -1,3 +1,5 @@
+import Ticker from "@/components/sections/ticker";
+
 export default function Page({ params }: { params: { ticker: string } }) {
-  return <div></div>;
+  return <Ticker params={params} />;
 }
