@@ -84,6 +84,7 @@ def main():
     
     print("Available Chrome profiles:")
     profiles = list_chrome_profiles()
+    print(profiles)
     for i, profile in enumerate(profiles):
         print(f"{i+1}. {profile}")
 

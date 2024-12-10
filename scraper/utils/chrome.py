@@ -3,7 +3,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, 'results')
-CHROME_USER_DATA_DIR = os.path.expanduser('~\\AppData\\Local\\Google\\Chrome\\User Data')
+CHROME_USER_DATA_DIR = os.path.expanduser('~/Library/Application Support/Google/Chrome')
+
 
 DEFAULT_HEADERS = {
     'accept': '*/*',
@@ -29,7 +30,9 @@ def list_chrome_profiles():
     """List available Chrome profiles"""
     profiles = []
     try:
+        print(os.listdir(CHROME_USER_DATA_DIR))
         for item in os.listdir(CHROME_USER_DATA_DIR):
+
             if item.startswith('Profile ') or item == 'Default':
                 profiles.append(item)
     except Exception as e:

@@ -11,7 +11,7 @@ import requests, json
 
 def list_chrome_profiles():
     """List available Chrome profiles"""
-    base_path = os.path.expanduser('~\\AppData\\Local\\Google\\Chrome\\User Data')
+    base_path = os.path.expanduser('~/Library/Application Support/Google/Chrome')
     profiles = []
     try:
         for item in os.listdir(base_path):
@@ -387,7 +387,7 @@ def main():
     
     # Setup Chrome options
     options = uc.ChromeOptions()
-    user_data_dir = os.path.expanduser('~\\AppData\\Local\\Google\\Chrome\\User Data')
+    user_data_dir = os.path.expanduser('~/Library/Application Support/Google/Chrome')
     options.add_argument(f'--user-data-dir={user_data_dir}')
     options.add_argument(f'--profile-directory={selected_profile}')
     
