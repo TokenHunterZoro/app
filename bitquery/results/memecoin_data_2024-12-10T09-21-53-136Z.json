@@ -1,0 +1,99 @@
+{
+  "timeSlice": {
+    "start": "2024-12-10T09:21:53.136Z",
+    "end": "2024-12-10T09:21:54.636Z"
+  },
+  "data": [
+    {
+      "token": {
+        "name": "New Shiba inu",
+        "symbol": "wild ",
+        "mintAddress": "Ak16em4d9Lw2dTmKBUpzn4xfb3cr94QnKL917LsCpump"
+      },
+      "price": {
+        "current": 1.9702215169534117e-7,
+        "usd": 0.00004291956935990835
+      },
+      "marketCap": {
+        "sol": 197.02215169534117,
+        "usd": 42919.569359908346
+      }
+    },
+    {
+      "token": {
+        "name": "Yumi ",
+        "symbol": "Yumi",
+        "mintAddress": "BnjDQ3mqe5YYvbVTd2Rr9cruRp1bJLDTrBXVJfmupump"
+      },
+      "price": {
+        "current": 3.122365473839819e-7,
+        "usd": 0.00006801802760162427
+      },
+      "marketCap": {
+        "sol": 312.23654738398193,
+        "usd": 68018.02760162427
+      }
+    },
+    {
+      "token": {
+        "name": "New Doge's Owner",
+        "symbol": "Erika",
+        "mintAddress": "5Qaubk4dUGLANk8rmvEAD1tJLbpuweBo5BqPbK1fpump"
+      },
+      "price": {
+        "current": 8.404312527008626e-8,
+        "usd": 0.000018308066951936692
+      },
+      "marketCap": {
+        "sol": 84.04312527008626,
+        "usd": 18308.066951936693
+      }
+    },
+    {
+      "token": {
+        "name": "BEBOP SOL",
+        "symbol": "BEBOP",
+        "mintAddress": "9s2tfzEvVADFMNqvkQVduVedhov2wYkq4utaM7PLxAhY"
+      },
+      "price": {
+        "current": 2.534126100414037e-7,
+        "usd": 0.000055203742319116176
+      },
+      "marketCap": {
+        "sol": 253.4126100414037,
+        "usd": 55203.74231911617
+      }
+    },
+    {
+      "token": {
+        "name": "KRABY",
+        "symbol": "KRABY",
+        "mintAddress": "frkEjYuzwYsjbdeNxgxoDwf4LLHdm55gNyNaVb2pump"
+      },
+      "price": {
+        "current": 2.9891022393196037e-7,
+        "usd": 0.00006511500345540521
+      },
+      "marketCap": {
+        "sol": 298.9102239319604,
+        "usd": 65115.00345540521
+      }
+    },
+    {
+      "token": {
+        "name": "Dog the RIZZLER",
+        "symbol": "RIZZDOG",
+        "mintAddress": "5tQxEjyUPAGs7KVu2dTN1FbFZPWoMWw15CLMzLywpump"
+      },
+      "price": {
+        "current": 3.2798578999381325e-8,
+        "usd": 0.000007144886370173912
+      },
+      "marketCap": {
+        "sol": 32.79857899938133,
+        "usd": 7144.886370173912
+      }
+    }
+  ],
+  "fetchedAt": "2024-12-10T09:21:55.375Z"
+}
