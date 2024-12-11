@@ -8,15 +8,13 @@ const data = JSON.stringify({
   query: `{
   Solana {
     Instructions(
-      where: {Instruction: {Program: {Method: {is: "create"}, Name: {is: "pump"}}}}
+      where: {Instruction: {Program: {Method: {is: "create"}, Name: {is: "pump"}}}, Block: {Time: {till: "2024-12-10T22:11:22Z"}}}
       orderBy: {descending: Block_Time}
     ) {
       Instruction {
         Program {
           Address
           Arguments {
-            Name
-            Type
             Value {
               ... on Solana_ABI_Json_Value_Arg {
                 json
@@ -54,7 +52,8 @@ const data = JSON.stringify({
       }
     }
   }
-  }`,
+}
+`,
   variables: "{}",
 });
 
@@ -75,7 +74,7 @@ axios
   .then((response) => {
     // Save the response data as a JSON file
     fs.writeFileSync(
-      "results/all-memecoins.json",
+      "results/next-memecoins-1.json",
       JSON.stringify(response.data, null, 2),
       "utf-8"
     );

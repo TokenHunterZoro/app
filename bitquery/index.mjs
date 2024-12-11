@@ -63,6 +63,7 @@ class MemecoinFetcher {
           name: trade.Trade.Buy.Currency.Name,
           symbol: trade.Trade.Buy.Currency.Symbol,
           mintAddress: trade.Trade.Buy.Currency.MintAddress,
+          uri: trade.Trade.Buy.Currency.Uri,
         },
         price: {
           current: currentPrice,

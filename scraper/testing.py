@@ -9,9 +9,11 @@ import logging
 import urllib3
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
+from scrapers.video_scraper import VideoScraper
 from storage.result_handler import save_combined_results
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from scrapers.comment_scraper import extract_comments
 from pathlib import Path
 
 # Disable SSL warnings
@@ -106,7 +108,7 @@ def process_search_term(driver, keyword, max_results=50):
             
             while len(results) < max_results:
                 try:
-                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div.css-1soki6-DivItemContainerForSearch")
+                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainer']")
                     
                     if not video_elements:
                         print("No video elements found. Waiting...")
@@ -145,9 +147,9 @@ def process_search_term(driver, keyword, max_results=50):
                         print(f"\nReached end of feed for '{keyword}'")
                         break
                         
-            except Exception as e:
-                print(f"\nError during scraping '{keyword}': {e}")
-                break
+                except Exception as e:
+                    print(f"\nError during scraping '{keyword}': {e}")
+                    break
         else:
             print(f"\nFailed to load search term: {keyword}")
 
@@ -158,14 +160,89 @@ def process_search_term(driver, keyword, max_results=50):
         return results
 
 
+def process_hashtag_term(driver, keyword, max_results=50):
+    """Process a single search term and return results"""
+    search_url = f"https://www.tiktok.com/tag/{keyword}"
+    results = []
+    scroll_pause_time = 2
+    
+    try:
+        print(f"\nProcessing search term: {keyword}")
+        print(f"Navigating to: {search_url}")
+        # driver.get(search_url)
+        # time.sleep(10)
+
+        if verify_page_loaded(driver, search_url):
+            print("\nWaiting for video feed...")
+            
+            while len(results) < max_results:
+                try:
+                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainer']")
+                    
+                    if not video_elements:
+                        print("No video elements found. Waiting...")
+                        time.sleep(5)
+                        continue
+                    
+                    for video_element in video_elements:
+                        if len(results) >= max_results:
+                            break
+                            
+                        video_data = VideoScraper.extract_video_data(video_element)
+                        if video_data and video_data['video_url'] and video_data['video_url'] not in processed_urls:
+                            print(f"Found video {len(results)}/{max_results}: {video_data['video_url']}")
+                            if 'video_url' in video_data:
+                                print(f"Extracting comments for video: {video_data['video_url']}")
+                                post_id = video_data['video_url'].split('/')[-1]
+                                video_data['comments'] = extract_comments(post_id)
+                                # print(video_data['comments'])
+                                # print(video_data['comments']['data'])
+                                print(f"Found {len(video_data['comments']['data'])} comments")
+                            processed_urls.add(video_data['video_url'])
+                            results.append(video_data)
+                        else:
+                            if video_data and  video_data['video_url'] and video_data['video_url'] in processed_urls:
+                                print(f"Duplicate video. Skipping...")
+                    if len(results) >= max_results:
+                        print(f"\nReached target number of videos for '{keyword}'")
+                        break
+                    
+                    last_height = driver.execute_script("return document.documentElement.scrollHeight")
+                    driver.execute_script(f"window.scrollTo(0, {last_height});")
+                    time.sleep(scroll_pause_time)
+                    
+                    new_height = driver.execute_script("return document.documentElement.scrollHeight")
+                    if new_height == last_height:
+                        print(f"\nReached end of feed for '{keyword}'")
+                        break
+                        
+                except Exception as e:
+                    print(f"\nError during scraping '{keyword}': {e}")
+                    break
+        else:
+            print(f"\nFailed to load search term: {keyword}")
+
+        return results
+        
+    except Exception as e:
+        print(f"\nError processing search term '{keyword}': {str(e)}")
+        return results
+
+
+
 def main():
 
     search_terms = [
-        # "memecoin",
-        # "solana",
-        # "crypto",
-        "pumpfun"
+        "memecoin",
+        "solana",
+        "crypto",
+        "pumpfun", 
     ]
+
+    hashtag_terms =[  "memecoin",
+        "solana",
+        "crypto",
+        "pumpfun"]
     selected_profile = "Profile 3"
     logger.info(f"Using Chrome profile: {selected_profile}")
     
@@ -183,15 +260,20 @@ def main():
             
         logger.info("Chrome started successfully")
         
+        all_results = {}
+        
         for search in search_terms:
             results = process_search_term(driver, search, 10)
             if results:
-                all_results[search_term] = {
+                all_results[search] = {
                     'total_videos': len(results),
                     'videos': results
                 }
-                print(f"Successfully processed {len(results)} videos for '{search_term}'")
+                print(f"Successfully processed {len(results)} videos for '{search}'")
             time.sleep(5)
+
+        for hashtag in hashtag_terms:
+            results 
 
         if all_results:
             saved_path = save_combined_results(all_results)
