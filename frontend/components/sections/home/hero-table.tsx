@@ -154,7 +154,7 @@ export default function HeroTable() {
                 <TableCell>
                   {coin.market_cap
                     ? formatMarketcap(coin.market_cap)
-                    : formatMarketcap(Math.floor(Math.random() * 999999999999))}
+                    : formatMarketcap(Math.floor(Math.random() * 9999999))}
                 </TableCell>
               </TableRow>
             ))}
