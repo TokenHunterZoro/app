@@ -1,0 +1,81 @@
+{
+  "extraction_time": "2024-11-27 20:45:18",
+  "total_searches": 8,
+  "results": [
+    {
+      "search": "solana",
+      "videos": [
+        {
+          "posted_time": "1d ago",
+          "posted_timestamp": 1732634095.294546,
+          "video_url": "https://www.tiktok.com/@solana.memecoins.degen/video/7441332798390078742",
+          "thumbnail_url": "https://p16-pu-sign-no.tiktokcdn-eu.com/obj/tos-no1a-p-0037-no/ocjYJApfOkBu7EQnSRFfFBgKu2sdyyI9RLDkE6?lk3s=b59d6b55&x-expires=1732892400&x-signature=qaUgZc%2Bg5z%2FI4x6akllafc5ZPDc%3D&shp=b59d6b55&shcp=-",
+          "description": "POV: Solana Meme Coins making Millionaires 🚀💎🤯🤑",
+          "hashtags": [],
+          "author": "",
+          "views": "",
+          "extracted_time": "2024-11-27 20:44:55",
+          "comments": {
+            "count": 226,
+            "tickers": {
+              "SMELLYJAR": 2,
+              "OG": 1,
+              "APOLLO": 2,
+              "SANTAHAT": 2
+            },
+            "data": [
+              {
+                "data": "BUY SANTAHAT",
+                "timestamp": 1702383165
+              },
+              {
+                "data": "$APOLLO to the moon🚀",
+                "timestamp": 1702383165
+              }
+            ]
+          }
+        },
+        {
+          "posted_time": "1d ago",
+          "posted_timestamp": 1732634109.92776,
+          "video_url": "https://www.tiktok.com/@tommy.crypto12/video/7441603564440440086",
+          "thumbnail_url": "https://p16-pu-sign-no.tiktokcdn-eu.com/obj/tos-no1a-p-0037-no/o0EiwBZibMhcYrLEqXE0BBP0BAFoiyBN41ZXI?lk3s=b59d6b55&x-expires=1732892400&x-signature=23XYih7RWNCHbxK7H5WSKP7YK3c%3D&shp=b59d6b55&shcp=-",
+          "description": "",
+          "hashtags": [
+            "#bitcoin",
+            "#btc",
+            "#solana",
+            "#meme",
+            "#trading",
+            "#pumpfun"
+          ],
+          "author": "",
+          "views": "",
+          "extracted_time": "2024-11-27 20:45:10",
+          "comments": {
+            "count": 64,
+            "tickers": {
+              "CHILLFLIX": 1,
+              "NETFLIX": 1,
+
+              "TURKEY": 1,
+
+              "ROT": 4,
+              "JAK": 1
+            },
+            "data": [
+              {
+                "data": "BUY SANTAHAT",
+                "timestamp": 1702383165
+              },
+              {
+                "data": "$APOLLO to the moon🚀",
+                "timestamp": 1702383165
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

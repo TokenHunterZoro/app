@@ -45,3 +45,27 @@ create_tx VARCHAR,
 mentions NUMERIC DEFAULT '0'::NUMERIC,
 views NUMERIC DEFAULT '0'::NUMERIC
 );
+
+-- Create tiktoks table first since it's referenced by mentions
+CREATE TABLE tiktoks (
+id BIGINT PRIMARY KEY,
+varchar_column VARCHAR, -- Unnamed varchar column
+text_column1 TEXT, -- First unnamed text column
+text_column2 TEXT, -- Second unnamed text column
+created_at TIMESTAMPTZ,
+updated_at TIMESTAMPTZ,
+numeric_column1 NUMERIC,
+numeric_column2 NUMERIC
+);
+
+-- Create mentions table with foreign key reference
+CREATE TABLE mentions (
+id BIGINT PRIMARY KEY,
+numeric_value NUMERIC,
+text_value TEXT,
+timestamp_value TIMESTAMPTZ,
+tiktok_id BIGINT,
+CONSTRAINT mentions_tiktok_id_fkey
+FOREIGN KEY (tiktok_id)
+REFERENCES tiktoks(id)
+);

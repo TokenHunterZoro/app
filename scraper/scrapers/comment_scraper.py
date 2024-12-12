@@ -34,7 +34,7 @@ def find_crypto_tickers(text):
 
     words = cleaned_string.lower().split()
     
-    ignore_words = ["WHAT","DO","YOU","I",'AND','THE', "THINK", 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT']
+    ignore_words = ["WHAT","DO","YOU","I",'AND','THE',"VIDEO","ON","TILL","MEME","CAN","MAKE","ME","FROM","CTO","IVE","1000X","100X","REALLY","BEST","THINK", 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT']
     filtered_words = [word for word in words if word.upper() not in ignore_words]
     
     return dict(Counter(filtered_words))
@@ -94,7 +94,3 @@ def extract_comments(post_id):
     
     print(response)
     return response
-
-
-extract_comments('7447194055588498710')
-

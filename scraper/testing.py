@@ -15,6 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from scrapers.comment_scraper import extract_comments
 from pathlib import Path
+from supabase import create_client, Client
+import asyncio
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -27,6 +32,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 processed_urls = set()
+
+url: str = os.getenv("SUPABASE_URL")
+key: str = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 def get_chrome_path():
     """Get Chrome user data directory path"""
@@ -108,8 +117,7 @@ def process_search_term(driver, keyword, max_results=50):
             
             while len(results) < max_results:
                 try:
-                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainer']")
-                    
+                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainerV2']")
                     if not video_elements:
                         print("No video elements found. Waiting...")
                         time.sleep(5)
@@ -177,18 +185,21 @@ def process_hashtag_term(driver, keyword, max_results=50):
             
             while len(results) < max_results:
                 try:
-                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainer']")
-                    
+                    video_elements = driver.find_elements(By.CSS_SELECTOR, "div[class*='DivItemContainerV2']")
                     if not video_elements:
                         print("No video elements found. Waiting...")
                         time.sleep(5)
                         continue
                     
+                    print("WORKING TILL NOW")
                     for video_element in video_elements:
                         if len(results) >= max_results:
                             break
                             
                         video_data = VideoScraper.extract_video_data(video_element)
+                        print(video_data)
+                        max_results = len(results)
+                        break
                         if video_data and video_data['video_url'] and video_data['video_url'] not in processed_urls:
                             print(f"Found video {len(results)}/{max_results}: {video_data['video_url']}")
                             if 'video_url' in video_data:
@@ -240,9 +251,9 @@ def main():
     ]
 
     hashtag_terms =[  
-        # "memecoin",
-        # "solana",
-        # "crypto",
+        "memecoin",
+        "solana",
+        "crypto",
         "pumpfun"
     ]
     selected_profile = "Profile 3"
@@ -264,15 +275,15 @@ def main():
         
         all_results = {}
         
-        # for search in search_terms:
-        #     results = process_search_term(driver, search, 10)
-        #     if results:
-        #         all_results[search] = {
-        #             'total_videos': len(results),
-        #             'videos': results
-        #         }
-        #         print(f"Successfully processed {len(results)} videos for '{search}'")
-        #     time.sleep(5)
+        for search in search_terms:
+            results = process_search_term(driver, search, 10)
+            if results:
+                all_results[search] = {
+                    'total_videos': len(results),
+                    'videos': results
+                }
+                print(f"Successfully processed {len(results)} videos for '{search}'")
+            time.sleep(5)
 
         for hashtag in hashtag_terms:
             results = process_hashtag_term(driver, hashtag, 10)

@@ -12,15 +12,15 @@ class VideoScraper:
             
             # Extract posted time
             time_data = VideoScraper._extract_posted_time(video_element)
-            if not time_data:
-                print('Video older than 24 hours. Skipping...')
-                return None
+            # if not time_data:
+            #     print('Video older than 24 hours. Skipping...')
+            #     return None
             data.update(time_data)
             
             # Extract other video data
             data.update(VideoScraper._extract_video_url(video_element))
             data.update(VideoScraper._extract_thumbnail(video_element))
-            data.update(VideoScraper._extract_description(video_element))
+            # data.update(VideoScraper._extract_description(video_element))
             data.update(VideoScraper._extract_hashtags(video_element))
             data.update(VideoScraper._extract_author(video_element))
             data.update(VideoScraper._extract_views(video_element))
@@ -37,16 +37,18 @@ class VideoScraper:
         """Extract and validate posted time"""
         try:
             time_selectors = [
-                "div.css-dennn6-DivTimeTag",
-                "div[class*='TimeTag']"
+                "div[class*='DivTimeTag']"
             ]
             
             posted_time = ""
             posted_datetime = datetime.min
+
+            print("POSTED TIME")
             
             for selector in time_selectors:
                 try:
                     time_element = video_element.find_element(By.CSS_SELECTOR, selector)
+                    print("YESSS")
                     posted_time = time_element.text.strip()
                     if posted_time:
                         posted_datetime = parse_tiktok_time(posted_time)
@@ -55,11 +57,15 @@ class VideoScraper:
                     continue
                     
             now = datetime.now()
-            if now - timedelta(hours=24) <= posted_datetime <= now:
-                return {
-                    'posted_time': posted_time,
-                    'posted_timestamp': posted_datetime.timestamp()
-                }
+            if not posted_time:
+                posted_time = "1s"
+            if posted_datetime == datetime.min:
+                posted_datetime = now - timedelta(seconds=1)
+
+            return {
+                'posted_time': posted_time,
+                'posted_timestamp': posted_datetime.timestamp()
+            }
             return None
             
         except Exception as e:
@@ -75,6 +81,7 @@ class VideoScraper:
                 "a[href*='/video/']",
                 "a[class*='AVideoContainer']"
             ]
+            print("VIDEO URL")
             for selector in link_selectors:
                 try:
                     link = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -96,6 +103,7 @@ class VideoScraper:
                 "img[src*='tiktokcdn']",
                 "img[class*='poster']"
             ]
+            print("THUMBNAILS")
             for selector in thumbnail_selectors:
                 try:
                     thumbnail = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -113,17 +121,19 @@ class VideoScraper:
         """Extract video description"""
         try:
             desc_selectors = [
-                "span.css-j2a19r-SpanText",
-                "div[data-e2e='search-card-desc'] span",
-                "div[class*='desc'] span"
+                "h1[class*='H1Container']",
             ]
+            print("DESCRIPTION")
             for selector in desc_selectors:
                 try:
                     desc_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
+                    print(desc_elements)
+                    words=[]
                     for element in desc_elements:
                         text = element.text.strip()
                         if text and not text.startswith('#'):
-                            return {'description': text}
+                            words.push(text)
+                    return {'description': f'{" ".join(words)}'}
                 except:
                     continue
         except Exception as e:
@@ -139,6 +149,7 @@ class VideoScraper:
                 "a[href*='/tag/']"
             ]
             hashtags = []
+            print("HASHTAGS")
             for selector in hashtags_selectors:
                 try:
                     hashtag_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
@@ -158,9 +169,10 @@ class VideoScraper:
         """Extract video author"""
         try:
             author_selectors = [
-                "a.css-4rbku5-A",
-                "a[href*='/user/']"
+                "p[class*='PUniqueId']",
+                "p[class*='PUserName']",
             ]
+            print("AUTHOR")
             for selector in author_selectors:
                 try:
                     author_element = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -178,9 +190,10 @@ class VideoScraper:
         """Extract video views"""
         try:
             views_selectors = [
-                "div.css-1dbjc4n",
-                "div[class*='Views']"
+                "strong[class*='StrongVideoCount']",
+
             ]
+            print("VIEWS")
             for selector in views_selectors:
                 try:
                     views_element = video_element.find_element(By.CSS_SELECTOR, selector)
