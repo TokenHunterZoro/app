@@ -16,7 +16,7 @@ export default async function getMemecoins(start: number) {
     `
     )
     .eq("prices.is_latest", true)
-    .order("id", { ascending: true }) // Order by ID
+    .order("created_at", { ascending: false }) // Order by ID
     .limit(ITEMS_PER_PAGE)
     .gt("id", start); // Fetch rows with IDs greater than the last fetched ID
 

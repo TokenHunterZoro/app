@@ -282,7 +282,7 @@ export default function TimeSeriesChartWithPaywall({
             className="rounded-full mr-2"
           />
           <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
-            {ticker}
+            {ticker.toLocaleUpperCase()}
             <span className="text-muted-foreground text-sm font-medium sen tracking-normal">
               /SOL
             </span>

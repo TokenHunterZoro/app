@@ -124,7 +124,7 @@ export default function HeroTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {memecoinData.map((coin: any) => (
+            {memecoinData.map((coin: any, idx: number) => (
               <TableRow
                 key={coin.id}
                 className="cursor-pointer"
@@ -132,7 +132,7 @@ export default function HeroTable() {
                   router.push(`/token/${toKebabCase(coin.symbol)}`);
                 }}
               >
-                <TableCell>{coin.id}</TableCell>
+                <TableCell>{idx + 1}</TableCell>
                 <TableCell className="flex items-center space-x-2">
                   <Image
                     src={coin.image}
