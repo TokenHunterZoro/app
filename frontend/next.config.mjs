@@ -9,6 +9,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "p16-sign.tiktokcdn-us",
+        port: "",
+      },
+      {
+        protocol: "https",
         hostname: "picsum.photos",
         port: "",
       },

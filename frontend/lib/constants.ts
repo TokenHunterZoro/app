@@ -1,117 +1,116 @@
 import { DocsConfig } from "./types";
 
 const pumpfunSample = {
-  "extraction_time": "2024-12-11 16:35:15",
-  "total_searches": 1,
-  "results": {
-    "pumpfun": {
-      "total_videos": 6,
-      "videos": [
+  extraction_time: "2024-12-11 16:35:15",
+  total_searches: 1,
+  results: {
+    pumpfun: {
+      total_videos: 6,
+      videos: [
         {
-          "posted_time": "4h ago",
-          "posted_timestamp": 1733891681.760984,
-          "video_url": "https://www.tiktok.com/@dkbattleandnews/video/7447004775004146990",
-          "thumbnail_url": "https://p16-sign.tiktokcdn-us.com/obj/tos-useast5-p-0068-tx/owf7yeeAHACE1bADgODBkOQnsIlZ7JrEiFcECF?lk3s=b59d6b55&x-expires=1734076800&x-signature=UC7CZDY3Cau19IZ8sjQ0WRdrHQE%3D&shp=b59d6b55&shcp=-",
-          "description": "Doge Meet Cat aka DMC ticker currently on pump fun. Discord link in bio come join a great hard workin community.",
-          "hashtags": [],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:34:41",
-          "comments": {
-            "count": 5,
-            "tickers": {
-              "DMC": 2
+          posted_time: "4h ago",
+          posted_timestamp: 1733891681.760984,
+          video_url:
+            "https://www.tiktok.com/@dkbattleandnews/video/7447004775004146990",
+          thumbnail_url:
+            "https://p16-sign.tiktokcdn-us.com/obj/tos-useast5-p-0068-tx/owf7yeeAHACE1bADgODBkOQnsIlZ7JrEiFcECF?lk3s=b59d6b55&x-expires=1734076800&x-signature=UC7CZDY3Cau19IZ8sjQ0WRdrHQE%3D&shp=b59d6b55&shcp=-",
+          description:
+            "Doge Meet Cat aka DMC ticker currently on pump fun. Discord link in bio come join a great hard workin community.",
+          hashtags: [],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:34:41",
+          comments: {
+            count: 5,
+            tickers: {
+              DMC: 2,
             },
-            "data": [
+            data: [
               "everyone still sleepin on kitcat, wild",
               "Hell yea",
               "$DMC TO THE 🚀 🌕",
               "$kitcat 🚀🔥🔥🔥🌕🔥",
-              "solana memes have leveled up. kitcat added ai tech"
-            ]
-          }
+              "solana memes have leveled up. kitcat added ai tech",
+            ],
+          },
         },
         {
-          "posted_time": "4h ago",
-          "posted_timestamp": 1733891682.31884,
-          "video_url": "https://www.tiktok.com/@dkbattleandnews/video/7447004549753212202",
-          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/43b64c16adf78921aab4f3fb493b6f6f~c5_100x100.jpeg?lk3s=a5d48078&nonce=17678&refresh_token=50c2f075f52a3f5a0fd86e954e97ed22&x-expires=1734076800&x-signature=gvoBAq54ydVhx%2F0OdPteOE05img%3D&shp=a5d48078&shcp=b59d6b55",
-          "description": "Discord link in bio Doge Meet Cat aka DMC currently on pump fun get in early and become part of a hard working community. #mem",
-          "hashtags": [],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:34:42",
-          "comments": {
-            "count": 3,
-            "tickers": {
-              "DMC": 2
+          posted_time: "4h ago",
+          posted_timestamp: 1733891682.31884,
+          video_url:
+            "https://www.tiktok.com/@dkbattleandnews/video/7447004549753212202",
+          thumbnail_url:
+            "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/43b64c16adf78921aab4f3fb493b6f6f~c5_100x100.jpeg?lk3s=a5d48078&nonce=17678&refresh_token=50c2f075f52a3f5a0fd86e954e97ed22&x-expires=1734076800&x-signature=gvoBAq54ydVhx%2F0OdPteOE05img%3D&shp=a5d48078&shcp=b59d6b55",
+          description:
+            "Discord link in bio Doge Meet Cat aka DMC currently on pump fun get in early and become part of a hard working community. #mem",
+          hashtags: [],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:34:42",
+          comments: {
+            count: 3,
+            tickers: {
+              DMC: 2,
             },
-            "data": [
-              "🤣🤣",
-              "$Dmc",
-              "$DMC"
-            ]
-          }
+            data: ["🤣🤣", "$Dmc", "$DMC"],
+          },
         },
         {
-          "posted_time": "4h ago",
-          "posted_timestamp": 1733891682.834023,
-          "video_url": "https://www.tiktok.com/@j4bbing/video/7446996058183306514",
-          "thumbnail_url": "https://p16-sign-sg.tiktokcdn.com/aweme/100x100/tos-alisg-avt-0068/53a5056c13d10442666fad18102f3e08.jpeg?lk3s=a5d48078&nonce=92783&refresh_token=0c51e946854d2f4c1a315cbd8b5f5791&x-expires=1734076800&x-signature=OD6nDH%2FJzci56bn9vrl8EhME32Y%3D&shp=a5d48078&shcp=b59d6b55",
-          "description": "live now on pump.fun $TRENCHES 📈",
-          "hashtags": [
-            "#crypto",
-            "#bitcoin"
-          ],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:34:42",
-          "comments": {
-            "count": 6,
-            "tickers": {
-              "NOW": 1
+          posted_time: "4h ago",
+          posted_timestamp: 1733891682.834023,
+          video_url:
+            "https://www.tiktok.com/@j4bbing/video/7446996058183306514",
+          thumbnail_url:
+            "https://p16-sign-sg.tiktokcdn.com/aweme/100x100/tos-alisg-avt-0068/53a5056c13d10442666fad18102f3e08.jpeg?lk3s=a5d48078&nonce=92783&refresh_token=0c51e946854d2f4c1a315cbd8b5f5791&x-expires=1734076800&x-signature=OD6nDH%2FJzci56bn9vrl8EhME32Y%3D&shp=a5d48078&shcp=b59d6b55",
+          description: "live now on pump.fun $TRENCHES 📈",
+          hashtags: ["#crypto", "#bitcoin"],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:34:42",
+          comments: {
+            count: 6,
+            tickers: {
+              NOW: 1,
             },
-            "data": [
+            data: [
               "bro buy kitcat NOW 💰",
               "These dips don’t scare me, buying kitcat",
               "Shall I buy $kitcat?",
               "Already up 3x on $kitcat, and I’m still holding",
               "$kitcat is IT rn 🔥🔥🔥🔥",
-              "Check out $OpiumPepe. Got a great community behind it and recently got the whales out of the coin it’s ready to launch. 🚀 🐸🚀"
-            ]
-          }
+              "Check out $OpiumPepe. Got a great community behind it and recently got the whales out of the coin it’s ready to launch. 🚀 🐸🚀",
+            ],
+          },
         },
         {
-          "posted_time": "20h ago",
-          "posted_timestamp": 1733834085.680062,
-          "video_url": "https://www.tiktok.com/@pump.fun/video/7446749979323976992",
-          "thumbnail_url": "https://p16-sign-useast2a.tiktokcdn.com/obj/tos-useast2a-p-0037-euttp/oca7YAMACPBFhEInxWFfDBQN3KEurUEeRBDnEb?lk3s=b59d6b55&x-expires=1734076800&x-signature=80WDbHlB1Gv6L%2FlYG5ar6lENQrE%3D&shp=b59d6b55&shcp=-",
-          "description": "no, no we should not",
-          "hashtags": [
-            "#tradingtiktok",
-            "#parlay",
-            "#meme"
-          ],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:34:45",
-          "comments": {
-            "count": 17,
-            "tickers": {
-              "NYRIZZ": 1,
-              "LIL": 2,
-              "BRO": 1,
-              "KINGJALUCE": 2,
-              "DUMPMAS": 2,
-              "ROT": 2,
-              "GHOST": 1,
-              "CHUNGS": 2,
-              "BOUT": 1,
-              "MAKE": 1,
-              "ME": 1,
-              "RICH": 1
+          posted_time: "20h ago",
+          posted_timestamp: 1733834085.680062,
+          video_url:
+            "https://www.tiktok.com/@pump.fun/video/7446749979323976992",
+          thumbnail_url:
+            "https://p16-sign-useast2a.tiktokcdn.com/obj/tos-useast2a-p-0037-euttp/oca7YAMACPBFhEInxWFfDBQN3KEurUEeRBDnEb?lk3s=b59d6b55&x-expires=1734076800&x-signature=80WDbHlB1Gv6L%2FlYG5ar6lENQrE%3D&shp=b59d6b55&shcp=-",
+          description: "no, no we should not",
+          hashtags: ["#tradingtiktok", "#parlay", "#meme"],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:34:45",
+          comments: {
+            count: 17,
+            tickers: {
+              NYRIZZ: 1,
+              LIL: 2,
+              BRO: 1,
+              KINGJALUCE: 2,
+              DUMPMAS: 2,
+              ROT: 2,
+              GHOST: 1,
+              CHUNGS: 2,
+              BOUT: 1,
+              MAKE: 1,
+              ME: 1,
+              RICH: 1,
             },
-            "data": [
+            data: [
               "NYRIZZ🚀’s comment: We early🚨",
               "TheBullReefer’s comment: Alon stop they will really believe they should 😭",
               "Zeph’s comment: am i verified?",
@@ -128,36 +127,32 @@ const pumpfunSample = {
               "to the moon’s comment: $CHUNGS BOUT TO MAKE ME RICH",
               "BoBo’s comment: They all scammers and ruggers especially legion",
               "itzmmzatherealtor’s comment: $dumpfun",
-              "Mestre Ensinador’s comment: $Tiburcio"
-            ]
-          }
+              "Mestre Ensinador’s comment: $Tiburcio",
+            ],
+          },
         },
         {
-          "posted_time": "11h ago",
-          "posted_timestamp": 1733866494.031466,
-          "video_url": "https://www.tiktok.com/@tommy.crypto12/video/7446895504589475094",
-          "thumbnail_url": "https://p16-pu-sign-no.tiktokcdn-eu.com/obj/tos-no1a-p-0037-no/oUFfAbXOsA3NLlXBEf2V5jsDIWYfIDnsIGbAED?lk3s=b59d6b55&x-expires=1734076800&x-signature=KM3328m2v14CPKmg2P0YuoLWNJ0%3D&shp=b59d6b55&shcp=-",
-          "description": "",
-          "hashtags": [
-            "#XRP",
-            "#bitcoin",
-            "#trading",
-            "#crypto",
-            "#memecoin"
-          ],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:34:54",
-          "comments": {
-            "count": 36,
-            "tickers": {
-              "DIEGO": 4,
-              "BRLM": 4,
-              "XRP": 2,
-              "STOP": 1,
-              "GOING": 1
+          posted_time: "11h ago",
+          posted_timestamp: 1733866494.031466,
+          video_url:
+            "https://www.tiktok.com/@tommy.crypto12/video/7446895504589475094",
+          thumbnail_url:
+            "https://p16-pu-sign-no.tiktokcdn-eu.com/obj/tos-no1a-p-0037-no/oUFfAbXOsA3NLlXBEf2V5jsDIWYfIDnsIGbAED?lk3s=b59d6b55&x-expires=1734076800&x-signature=KM3328m2v14CPKmg2P0YuoLWNJ0%3D&shp=b59d6b55&shcp=-",
+          description: "",
+          hashtags: ["#XRP", "#bitcoin", "#trading", "#crypto", "#memecoin"],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:34:54",
+          comments: {
+            count: 36,
+            tickers: {
+              DIEGO: 4,
+              BRLM: 4,
+              XRP: 2,
+              STOP: 1,
+              GOING: 1,
             },
-            "data": [
+            data: [
               "Rabeya Symon’s comment: nice",
               "$DIEGO’s comment: $DIEGO",
               "Rabeya Symon’s comment: 🥰🥰🥰",
@@ -193,30 +188,33 @@ const pumpfunSample = {
               "kitcat gonna hit",
               "The future of crypto? Projects like kitcat",
               "Check out $OpiumPepe. Got a great community behind it and recently got the whales out of the coin it’s ready to launch. 🚀 🐸🚀",
-              "😏"
-            ]
-          }
+              "😏",
+            ],
+          },
         },
         {
-          "posted_time": "3h ago",
-          "posted_timestamp": 1733895300.842005,
-          "video_url": "https://www.tiktok.com/@forever1loveboystory/video/7447014382183222546",
-          "thumbnail_url": "https://p16-sign-sg.tiktokcdn.com/obj/tos-alisg-p-0037/oMfn6uRCEsDWAyeEVOFwiIAEBwAFQgC5RAAUwA?lk3s=b59d6b55&x-expires=1734076800&x-signature=wB17aoDMDS6iJr%2FjR4xN1vITYK0%3D&shp=b59d6b55&shcp=-",
-          "description": "What's so fun about Pump !t Up 🕹️⬆️behind the scenes?It's so much fun",
-          "hashtags": [],
-          "author": "",
-          "views": "",
-          "extracted_time": "2024-12-11 16:35:00",
-          "comments": {
-            "count": 0,
-            "tickers": {},
-            "data": []
-          }
-        }
-      ]
-    }
-  }
-}
+          posted_time: "3h ago",
+          posted_timestamp: 1733895300.842005,
+          video_url:
+            "https://www.tiktok.com/@forever1loveboystory/video/7447014382183222546",
+          thumbnail_url:
+            "https://p16-sign-sg.tiktokcdn.com/obj/tos-alisg-p-0037/oMfn6uRCEsDWAyeEVOFwiIAEBwAFQgC5RAAUwA?lk3s=b59d6b55&x-expires=1734076800&x-signature=wB17aoDMDS6iJr%2FjR4xN1vITYK0%3D&shp=b59d6b55&shcp=-",
+          description:
+            "What's so fun about Pump !t Up 🕹️⬆️behind the scenes?It's so much fun",
+          hashtags: [],
+          author: "",
+          views: "",
+          extracted_time: "2024-12-11 16:35:00",
+          comments: {
+            count: 0,
+            tickers: {},
+            data: [],
+          },
+        },
+      ],
+    },
+  },
+};
 const ITEMS_PER_PAGE = 7;
 
 const DUMMY_HERO_TABLE_DATA = [

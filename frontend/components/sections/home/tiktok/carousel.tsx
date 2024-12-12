@@ -1,41 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
+import { pumpfunSample } from "@/lib/constants";
 
 const TikTokCarousel = () => {
-  const [hoveredColumn, setHoveredColumn] = useState(null);
+  const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [positions, setPositions] = useState([0, 0, 0]);
-  const thumbnails = Array(15).map((_, i) => `/samples/${i}.png`);
+
+  const thumbnails = pumpfunSample.results.pumpfun.videos.map(
+    (video) => video.thumbnail_url
+  );
   const itemHeight = 204; // Card height (192px) + gap (12px)
+  const visibleHeight = 420; // Visible height of the container
   const totalHeight = itemHeight * thumbnails.length;
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPositions((prev) =>
         prev.map((pos, idx) => {
-          if (hoveredColumn === idx) return pos;
-          const direction = idx % 2 === 0 ? 1 : -1;
-          const newPos = pos + direction;
+          if (hoveredColumn === idx) return pos; // Pause scrolling when hovered
 
-          // For second column (idx 1), reset to totalHeight when reaching bottom
-          if (idx === 1 && newPos <= -totalHeight) {
-            return totalHeight;
-          }
-          // For other columns, reset to 0
-          if (Math.abs(newPos) >= totalHeight) {
-            return 0;
+          const direction = idx % 2 === 0 ? 1 : -1; // Alternate scroll direction
+          let newPos = pos + direction;
+
+          // Reset position when scrolling beyond limits
+          if (newPos > totalHeight) {
+            newPos = -visibleHeight;
+          } else if (newPos < -totalHeight) {
+            newPos = 0;
           }
           return newPos;
         })
       );
-    }, 50);
+    }, 50); // Scrolling speed
 
     return () => clearInterval(interval);
-  }, [hoveredColumn, totalHeight]);
+  }, [hoveredColumn, totalHeight, visibleHeight]);
 
-  const renderColumn = (columnIdx: any) => {
+  const renderColumn = (columnIdx: number) => {
     const style = {
-      transform: `translateY(${-positions[columnIdx]}px)`,
-      transition: "transform 0.5s linear",
+      transform: `translateY(${positions[columnIdx]}px)`,
     };
 
     return (
@@ -46,18 +49,27 @@ const TikTokCarousel = () => {
       >
         <div className="overflow-hidden h-[420px]">
           <div style={style}>
-            {[...thumbnails, ...thumbnails].map((src, i) => (
-              <Card
-                key={i}
-                className="overflow-hidden transition-transform hover:scale-105 mb-3 rounded-lg"
-              >
-                <img
-                  src={"https://picsum.photos/200/400"}
-                  alt={`Thumbnail ${i}`}
-                  className="w-full h-56 object-cover rounded-lg"
-                />
-              </Card>
-            ))}
+            {[
+              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
+              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
+              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
+            ].map(
+              (
+                src,
+                i // Duplicate array for smooth looping
+              ) => (
+                <Card
+                  key={`${columnIdx}-${i}`}
+                  className="overflow-hidden transition-transform mb-3 rounded-lg"
+                >
+                  <img
+                    src={src}
+                    alt={`Thumbnail ${i}`}
+                    className="w-full h-56 object-cover rounded-lg"
+                  />
+                </Card>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -66,8 +78,8 @@ const TikTokCarousel = () => {
 
   return (
     <div className="flex-1 max-w-5xl mx-auto px-4 py-12">
-      <div className="grid grid-cols-3 gap-3">
-        {[0, 1, 2].map((i) => renderColumn(i))}
+      <div className="grid grid-cols-2 gap-3 mx-24">
+        {[0, 1].map((i) => renderColumn(i))}
       </div>
     </div>
   );

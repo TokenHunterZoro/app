@@ -1,6 +1,7 @@
 import Image from "next/image";
 import UnlockNow from "@/components/unlock-now";
 import { useEnvironmentStore } from "@/components/context";
+import { pumpfunSample } from "@/lib/constants";
 
 export default function Tiktoks({ ticker }: { ticker: string }) {
   const { paid } = useEnvironmentStore((store) => store);
@@ -12,11 +13,65 @@ export default function Tiktoks({ ticker }: { ticker: string }) {
             Curated Tiktoks
           </p>
           <p className="text-md text-muted-foreground font-semibold mb-6">
-            All videos where ${ticker} was mentioned/talked about
+            All videos where ${ticker} was mentioned/talked about.
           </p>
           <div className="relative">
             <div className="grid grid-cols-4 gap-2">
-              <Image
+              {pumpfunSample.results.pumpfun.videos
+                .slice(
+                  0,
+                  paid ? pumpfunSample.results.pumpfun.videos.length : 4
+                )
+                .map((video, i) => {
+                  return (
+                    <div
+                      onClick={() => window.open(video.video_url, "_blank")}
+                      className="cursor-pointer relative w-[300px] h-[500px] rounded-xl border border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
+                      key={i}
+                    >
+                      <img
+                        src={video.thumbnail_url}
+                        alt="tiktok"
+                        className="w-[300px] h-[496px] rounded-xl"
+                      />
+                      <div className=" absolute inset-0 flex flex-col justify-between p-4 text-white">
+                        {/* Top Info (Posted Time and Author Info) */}
+                        <div className="flex items-center space-x-3">
+                          <img
+                            src={
+                              video.author.length == 0
+                                ? "https://picsum.photos/300/50" + i
+                                : video.author
+                            }
+                            alt={video.author}
+                            className="w-10 h-10 rounded-full border border-white"
+                          />
+                          <div>
+                            <p className="font-semibold">
+                              {video.author == ""
+                                ? "the.chill.guy"
+                                : video.author}
+                            </p>
+                            <p className="text-sm text-gray-300">
+                              {video.posted_time}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Bottom Info (Description and Comments Count) */}
+                        <div>
+                          <p className="text-sm line-clamp-2">
+                            {video.description}
+                          </p>
+                          <p className="mt-2 text-sm font-semibold">
+                            {video.comments.count} comments
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              {/* <Image
                 src={"https://picsum.photos/300/500"}
                 width={300}
                 height={500}
@@ -68,7 +123,7 @@ export default function Tiktoks({ ticker }: { ticker: string }) {
                     className="rounded-xl border border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
                   />
                 </>
-              )}
+              )} */}
             </div>
 
             {!paid && (
@@ -103,7 +158,7 @@ export default function Tiktoks({ ticker }: { ticker: string }) {
                   </div>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg ">
                   <UnlockNow text="Unlock all TikToks" />
                 </div>
               </>
