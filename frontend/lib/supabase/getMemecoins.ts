@@ -1,6 +1,9 @@
 import { ITEMS_PER_PAGE, supabase } from "../constants";
+import { TokenData } from "../types";
 
-export default async function getMemecoins(start: number) {
+export default async function getMemecoins(
+  start: number
+): Promise<TokenData[]> {
   // First, fetch tokens and join with the prices table to get the most recent price data
   const { data, error } = await supabase
     .from("tokens")
@@ -12,6 +15,8 @@ export default async function getMemecoins(start: number) {
       uri,
       created_at,
       address,
+      views,
+      mentions,
       prices:prices(price_usd, price_sol, market_cap)
     `
     )
@@ -22,7 +27,7 @@ export default async function getMemecoins(start: number) {
 
   if (error) {
     console.error("Error fetching data:", error);
-    return null;
+    return [];
   }
   console.log(data);
 
@@ -48,9 +53,11 @@ export default async function getMemecoins(start: number) {
         image: "" as any,
         created_at: token.created_at,
         address: token.address,
-        price_usd: latestPrice.price_usd || null,
-        price_sol: latestPrice.price_sol || null,
-        market_cap: latestPrice.market_cap || null,
+        prices: [],
+        latest_price_usd: latestPrice.price_usd || 0,
+        latest_market_cap: latestPrice.market_cap || 0,
+        views: token.views,
+        mentions: token.mentions,
       };
     })
   );

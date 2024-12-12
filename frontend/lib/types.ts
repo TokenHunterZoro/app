@@ -1,15 +1,25 @@
-interface TokenData {
-  position: number;
-  ticker: string;
-  price: number;
-  age: string;
-  volume: number;
+type Price = {
+  price_usd: number;
+  price_sol: number;
+  market_cap: number;
+  created_at: string;
+  is_latest: boolean;
+};
+
+type TokenData = {
+  id: number;
+  name: string;
+  symbol: string;
+  uri: string;
+  image: any;
+  created_at: string;
+  address: string;
+  prices: Price[];
+  latest_price_usd: number;
+  latest_market_cap: number;
   views: number;
   mentions: number;
-  marketCap: number;
-  image: string;
-}
-
+};
 type SortKey = keyof TokenData;
 type SortDirection = "asc" | "desc";
 
@@ -32,6 +42,7 @@ export interface DocsConfig {
 }
 export type {
   TokenData,
+  Price,
   SortKey,
   SortDirection,
   SortConfig,

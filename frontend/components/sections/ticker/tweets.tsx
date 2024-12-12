@@ -1,33 +1,34 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { TokenData } from "@/lib/types";
 import Image from "next/image";
 import React, { useEffect, useRef } from "react";
 
-export default function Tweets({ ticker }: { ticker: string }) {
+export default function Tweets({ tokenData }: { tokenData: TokenData }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const tweets = [
     {
-      content: `🚀 Trending Alert: TikTok mentions of $${ticker} are skyrocketing with a 125% increase in views today! Could this be the next moonshot? 🌕💫 #${ticker} #MemeCoin`,
+      content: `🚀 Trending Alert: TikTok mentions of $${tokenData.symbol.toUpperCase()} are skyrocketing with a 125% increase in views today! Could this be the next moonshot? 🌕💫 #${tokenData.symbol.toUpperCase()} #MemeCoin`,
       timestamp: "2024-12-04T09:30:00Z",
     },
     {
-      content: `📈 Insight: TikTok's $${ticker} challenge is going viral! Over 50k mentions and counting. Community engagement is heating up! 🔥 #CryptoTrends #${ticker}`,
+      content: `📈 Insight: TikTok's $${tokenData.symbol.toUpperCase()} challenge is going viral! Over 50k mentions and counting. Community engagement is heating up! 🔥 #CryptoTrends #${tokenData.symbol.toUpperCase()}`,
       timestamp: "2024-12-04T12:00:00Z",
     },
     {
-      content: `💡 Heads up! $${ticker}-related hashtags on TikTok now trending with over 1M cumulative views. Sentiment is overwhelmingly bullish. 🚀 #Altcoins #${ticker}Fam`,
+      content: `💡 Heads up! $${tokenData.symbol.toUpperCase()}-related hashtags on TikTok now trending with over 1M cumulative views. Sentiment is overwhelmingly bullish. 🚀 #Altcoins #${tokenData.symbol.toUpperCase()}Fam`,
       timestamp: "2024-12-04T14:45:00Z",
     },
     {
-      content: `🌟 Viral Power: TikTok memes are giving $${ticker} a huge boost! Watch for increased mentions as influencers join the hype train. 🚂💨 #CryptoVibes #${ticker}ToTheMoon`,
+      content: `🌟 Viral Power: TikTok memes are giving $${tokenData.symbol.toUpperCase()} a huge boost! Watch for increased mentions as influencers join the hype train. 🚂💨 #CryptoVibes #${tokenData.symbol.toUpperCase()}ToTheMoon`,
       timestamp: "2024-12-05T08:00:00Z",
     },
     {
-      content: `📊 Stat Check: TikTok mentions of $${ticker} are up 70% in the past 24 hours. Could this social surge drive the next pump? Stay tuned! 💹 #SocialSignals #${ticker}Army`,
+      content: `📊 Stat Check: TikTok mentions of $${tokenData.symbol.toUpperCase()} are up 70% in the past 24 hours. Could this social surge drive the next pump? Stay tuned! 💹 #SocialSignals #${tokenData.symbol.toUpperCase()}Army`,
       timestamp: "2024-12-05T18:30:00Z",
     },
     {
-      content: `🎥 TikTok stats show $${ticker} memes trending in over 30 countries! With such momentum, the community is unstoppable. 🌎💪 #MemeCoinMovement #${ticker}Hype`,
+      content: `🎥 TikTok stats show $${tokenData.symbol.toUpperCase()} memes trending in over 30 countries! With such momentum, the community is unstoppable. 🌎💪 #MemeCoinMovement #${tokenData.symbol.toUpperCase()}Hype`,
       timestamp: "2024-12-06T02:00:00Z",
     },
   ];
@@ -113,7 +114,8 @@ export default function Tweets({ ticker }: { ticker: string }) {
             ZoroX Tweets
           </p>
           <p className="text-md text-muted-foreground font-semibold">
-            View all tweets made by ZoroX about ${ticker}
+            View all tweets made by ZoroX about $
+            {tokenData.symbol.toUpperCase()}
           </p>
         </div>
         <p className="pr-2 font-semibold">

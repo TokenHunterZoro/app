@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SortableTableHeader from "./hero-table/sortable-table-header";
 import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
-import { SortConfig, SortKey, TokenData } from "@/lib/types";
+import { SortConfig, SortKey } from "@/lib/types";
 import TableWrapper from "./hero-table/wrapper";
 import { useEnvironmentStore } from "@/components/context";
 import getMemecoins from "@/lib/supabase/getMemecoins";
@@ -73,29 +73,29 @@ export default function HeroTable() {
           <TableHeader>
             <TableRow className="bg-muted/50">
               <SortableTableHeader
-                onClick={() => handleSort("position")}
-                sorted={sortConfig.key === "position"}
+                onClick={() => handleSort("id")}
+                sorted={sortConfig.key === "id"}
                 direction={sortConfig.direction}
               >
                 #
               </SortableTableHeader>
               <SortableTableHeader
-                onClick={() => handleSort("ticker")}
-                sorted={sortConfig.key === "ticker"}
+                onClick={() => handleSort("symbol")}
+                sorted={sortConfig.key === "symbol"}
                 direction={sortConfig.direction}
               >
                 TOKEN
               </SortableTableHeader>
               <SortableTableHeader
-                onClick={() => handleSort("price")}
-                sorted={sortConfig.key === "price"}
+                onClick={() => handleSort("latest_price_usd")}
+                sorted={sortConfig.key === "latest_price_usd"}
                 direction={sortConfig.direction}
               >
                 PRICE
               </SortableTableHeader>
               <SortableTableHeader
-                onClick={() => handleSort("age")}
-                sorted={sortConfig.key === "age"}
+                onClick={() => handleSort("created_at")}
+                sorted={sortConfig.key === "created_at"}
                 direction={sortConfig.direction}
               >
                 AGE
@@ -115,8 +115,8 @@ export default function HeroTable() {
                 MENTIONS
               </SortableTableHeader>
               <SortableTableHeader
-                onClick={() => handleSort("marketCap")}
-                sorted={sortConfig.key === "marketCap"}
+                onClick={() => handleSort("latest_market_cap")}
+                sorted={sortConfig.key === "latest_market_cap"}
                 direction={sortConfig.direction}
               >
                 MCAP
@@ -129,7 +129,7 @@ export default function HeroTable() {
                 key={coin.id}
                 className="cursor-pointer"
                 onClick={() => {
-                  router.push(`/token/${toKebabCase(coin.symbol)}`);
+                  router.push(`/token/${coin.id}`);
                 }}
               >
                 <TableCell>{idx + 1}</TableCell>

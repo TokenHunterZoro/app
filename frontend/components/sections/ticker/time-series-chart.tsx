@@ -24,6 +24,7 @@ import Image from "next/image";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
+import { TokenData } from "@/lib/types";
 
 interface DataPoint {
   timestamp: string;
@@ -240,9 +241,9 @@ const PaywallOverlay = () => {
   );
 };
 export default function TimeSeriesChartWithPaywall({
-  ticker,
+  tokenData,
 }: {
-  ticker: string;
+  tokenData: TokenData;
 }) {
   // Lift all state to the parent component
   const [showPrice, setShowPrice] = useState<boolean>(true);
@@ -278,11 +279,11 @@ export default function TimeSeriesChartWithPaywall({
             src={"https://picsum.photos/200"}
             width={32}
             height={32}
-            alt={ticker}
+            alt={tokenData.symbol}
             className="rounded-full mr-2"
           />
           <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
-            {ticker.toLocaleUpperCase()}
+            {tokenData.symbol.toLocaleUpperCase()}
             <span className="text-muted-foreground text-sm font-medium sen tracking-normal">
               /SOL
             </span>

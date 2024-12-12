@@ -2,8 +2,9 @@ import Image from "next/image";
 import UnlockNow from "@/components/unlock-now";
 import { useEnvironmentStore } from "@/components/context";
 import { pumpfunSample } from "@/lib/constants";
+import { TokenData } from "@/lib/types";
 
-export default function Tiktoks({ ticker }: { ticker: string }) {
+export default function Tiktoks({ tokenData }: { tokenData: TokenData }) {
   const { paid } = useEnvironmentStore((store) => store);
   return (
     <>
@@ -13,7 +14,8 @@ export default function Tiktoks({ ticker }: { ticker: string }) {
             Curated Tiktoks
           </p>
           <p className="text-md text-muted-foreground font-semibold mb-6">
-            All videos where ${ticker} was mentioned/talked about.
+            All videos where ${tokenData.symbol.toUpperCase()} was
+            mentioned/talked about.
           </p>
           <div className="relative">
             <div className="grid grid-cols-4 gap-2">
