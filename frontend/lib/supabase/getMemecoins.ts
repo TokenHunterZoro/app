@@ -20,7 +20,7 @@ export default async function getMemecoins(
       address,
       views,
       mentions,
-      prices:prices(price_usd, price_sol, market_cap)
+      prices:prices(price_usd, price_sol, is_latest)
     `
     )
     .eq("prices.is_latest", true)
@@ -39,14 +39,7 @@ export default async function getMemecoins(
       //   const fetchMetadataResponse = await fetch(token.uri);
       //   const metadata = await fetchMetadataResponse.json();
 
-      const latestPrice =
-        token.prices.length > 0
-          ? token.prices[0]
-          : {
-              price_usd: 0,
-              price_sol: 0,
-              market_cap: 0,
-            }; // Ensure we have the latest price
+      const latestPrice = token.prices.filter((price) => price.is_latest)[0];
 
       return {
         id: token.id,
@@ -61,7 +54,7 @@ export default async function getMemecoins(
         address: token.address,
         prices: [],
         latest_price_usd: latestPrice.price_usd || 0,
-        latest_market_cap: latestPrice.market_cap || 0,
+        latest_market_cap: (latestPrice.price_usd || 0) * 1000000000,
         views: token.views,
         mentions: token.mentions,
       };

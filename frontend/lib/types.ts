@@ -1,7 +1,6 @@
 type Price = {
   price_usd: number;
   price_sol: number;
-  market_cap: number;
   created_at: string;
   is_latest: boolean;
 };

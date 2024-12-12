@@ -10,7 +10,6 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
         prices(
           price_usd,
           price_sol,
-          market_cap,
           trade_at,
           is_latest
         )
@@ -32,7 +31,11 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
     );
   }
 
-  return data;
+  return {
+    ...data,
+    latest_price_usd: data?.prices?.[0]?.price_usd,
+    latest_market_cap: data?.prices?.[0]?.price_usd * 1000000000,
+  };
 };
 
 export default getCoinData;
