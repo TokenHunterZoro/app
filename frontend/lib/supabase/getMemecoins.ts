@@ -1,10 +1,13 @@
 import { ITEMS_PER_PAGE, supabase } from "../constants";
 import { TokenData } from "../types";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 export default async function getMemecoins(
   start: number
 ): Promise<TokenData[]> {
   // First, fetch tokens and join with the prices table to get the most recent price data
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { data, error } = await supabase
     .from("tokens")
     .select(
@@ -29,7 +32,6 @@ export default async function getMemecoins(
     console.error("Error fetching data:", error);
     return [];
   }
-  console.log(data);
 
   // Map data to the desired format, including IPFS image URI and price data
   const memecoins = await Promise.all(
@@ -45,13 +47,17 @@ export default async function getMemecoins(
               price_sol: 0,
               market_cap: 0,
             }; // Ensure we have the latest price
+
       return {
         id: token.id,
         name: token.name,
         symbol: token.symbol,
         uri: token.uri,
         image: "" as any,
-        created_at: token.created_at,
+        created_at: toZonedTime(
+          new Date(token.created_at),
+          timeZone
+        ).toISOString(),
         address: token.address,
         prices: [],
         latest_price_usd: latestPrice.price_usd || 0,
@@ -76,6 +82,7 @@ export default async function getMemecoins(
       memecoins[i].image = URL.createObjectURL(image);
     })
   );
+  console.log(memecoins);
 
   return memecoins;
 }
