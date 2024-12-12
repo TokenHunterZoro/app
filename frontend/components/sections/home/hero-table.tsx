@@ -68,99 +68,110 @@ export default function HeroTable() {
   }, [currentPage]);
   return (
     <>
-      <TableWrapper showWrapper={!paid}>
-        <Table className="w-full border mt-8">
-          <TableHeader>
-            <TableRow className="bg-muted/50">
-              <SortableTableHeader
-                onClick={() => handleSort("id")}
-                sorted={sortConfig.key === "id"}
-                direction={sortConfig.direction}
-              >
-                #
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("symbol")}
-                sorted={sortConfig.key === "symbol"}
-                direction={sortConfig.direction}
-              >
-                TOKEN
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("latest_price_usd")}
-                sorted={sortConfig.key === "latest_price_usd"}
-                direction={sortConfig.direction}
-              >
-                PRICE
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("created_at")}
-                sorted={sortConfig.key === "created_at"}
-                direction={sortConfig.direction}
-              >
-                AGE
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("views")}
-                sorted={sortConfig.key === "views"}
-                direction={sortConfig.direction}
-              >
-                VIEWS
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("mentions")}
-                sorted={sortConfig.key === "mentions"}
-                direction={sortConfig.direction}
-              >
-                MENTIONS
-              </SortableTableHeader>
-              <SortableTableHeader
-                onClick={() => handleSort("latest_market_cap")}
-                sorted={sortConfig.key === "latest_market_cap"}
-                direction={sortConfig.direction}
-              >
-                MCAP
-              </SortableTableHeader>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {memecoinData.map((coin: any, idx: number) => (
-              <TableRow
-                key={coin.id}
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push(`/token/${coin.id}`);
-                }}
-              >
-                <TableCell>{idx + 1}</TableCell>
-                <TableCell className="flex items-center space-x-2">
-                  <Image
-                    src={coin.image}
-                    alt={coin.symbol}
-                    width={32}
-                    height={32}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
-                </TableCell>
-                <TableCell>
-                  {coin.price_usd
-                    ? coin.price_usd
-                    : (Math.random() * (0.1 - 0.000001) + 0.000001).toFixed(6)}
-                </TableCell>
-                <TableCell>{getTimeAgo(coin.created_at)}</TableCell>
-                <TableCell>{coin.views || 0}</TableCell>
-                <TableCell>{coin.mentions || 0}</TableCell>
-                <TableCell>
-                  {coin.price_usd
-                    ? formatMarketcap(coin.price_usd * 1000000000)
-                    : formatMarketcap(Math.floor(Math.random() * 9999999))}
-                </TableCell>
+      {memecoinData.length == 0 ? (
+        <div className="w-[1000px] mx-auto mt-12 mb-24">
+          <div className="flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-gray-800 border-t-yellow-500 rounded-full animate-spin"></div>
+          </div>
+        </div>
+      ) : (
+        <TableWrapper showWrapper={!paid}>
+          <Table className="w-full border mt-8">
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <SortableTableHeader
+                  onClick={() => handleSort("id")}
+                  sorted={sortConfig.key === "id"}
+                  direction={sortConfig.direction}
+                >
+                  #
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("symbol")}
+                  sorted={sortConfig.key === "symbol"}
+                  direction={sortConfig.direction}
+                >
+                  TOKEN
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("latest_price_usd")}
+                  sorted={sortConfig.key === "latest_price_usd"}
+                  direction={sortConfig.direction}
+                >
+                  PRICE
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("created_at")}
+                  sorted={sortConfig.key === "created_at"}
+                  direction={sortConfig.direction}
+                >
+                  AGE
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("views")}
+                  sorted={sortConfig.key === "views"}
+                  direction={sortConfig.direction}
+                >
+                  VIEWS
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("mentions")}
+                  sorted={sortConfig.key === "mentions"}
+                  direction={sortConfig.direction}
+                >
+                  MENTIONS
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("latest_market_cap")}
+                  sorted={sortConfig.key === "latest_market_cap"}
+                  direction={sortConfig.direction}
+                >
+                  MCAP
+                </SortableTableHeader>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableWrapper>
+            </TableHeader>
+
+            <TableBody>
+              {memecoinData.map((coin: any, idx: number) => (
+                <TableRow
+                  key={coin.id}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    router.push(`/token/${coin.id}`);
+                  }}
+                >
+                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell className="flex items-center space-x-2">
+                    <Image
+                      src={coin.image}
+                      alt={coin.symbol}
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
+                  </TableCell>
+                  <TableCell>
+                    {coin.price_usd
+                      ? coin.price_usd
+                      : (Math.random() * (0.1 - 0.000001) + 0.000001).toFixed(
+                          6
+                        )}
+                  </TableCell>
+                  <TableCell>{getTimeAgo(coin.created_at)}</TableCell>
+                  <TableCell>{coin.views || 0}</TableCell>
+                  <TableCell>{coin.mentions || 0}</TableCell>
+                  <TableCell>
+                    {coin.price_usd
+                      ? formatMarketcap(coin.price_usd * 1000000000)
+                      : formatMarketcap(Math.floor(Math.random() * 9999999))}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableWrapper>
+      )}
 
       {paid && (
         <div className="flex justify-between items-center mt-4">
