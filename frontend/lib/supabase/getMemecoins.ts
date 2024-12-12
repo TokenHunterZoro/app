@@ -83,5 +83,7 @@ export default async function getMemecoins(
     })
   );
 
+  console.log(memecoins);
+
   return memecoins;
 }

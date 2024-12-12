@@ -16,39 +16,96 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-
+const sanitize = (str) => (str ? str.replace(/\u0000/g, "") : str);
 async function importTokens(filePath) {
   try {
     // Read JSON file
     const jsonData = await fs.readFile(filePath, "utf8");
     const tokens = JSON.parse(jsonData);
 
-    // let totalCount = 0;
-    // const pushData = [];
+    let totalCount = 0;
+    const pushData = [];
     for (const tokenData of tokens.data.Solana.Instructions) {
-      const { error } = await supabase.from("tokens").insert([
-        {
+      // const { error } = await supabase.from("tokens").insert([
+      //   {
+      //     name: tokenData.Instruction.Program.Arguments[0].Value.string,
+      //     symbol: tokenData.Instruction.Program.Arguments[1].Value.string,
+      //     uri: tokenData.Instruction.Program.Arguments[2].Value.string,
+      //     created_at: tokenData.Block.Time,
+      //     address: tokenData.Instruction.Program.Address,
+      //     create_tx: tokenData.Transaction.Signature,
+      //   },
+      // ]);
+
+      try {
+        const temp_push_data = {
           name: tokenData.Instruction.Program.Arguments[0].Value.string,
           symbol: tokenData.Instruction.Program.Arguments[1].Value.string,
           uri: tokenData.Instruction.Program.Arguments[2].Value.string,
           created_at: tokenData.Block.Time,
           address: tokenData.Instruction.Program.Address,
           create_tx: tokenData.Transaction.Signature,
-        },
-      ]);
+        };
+        if (
+          temp_push_data.name == undefined ||
+          temp_push_data.symbol == undefined ||
+          temp_push_data.uri == undefined ||
+          temp_push_data.created_at == undefined ||
+          temp_push_data.address == undefined ||
+          temp_push_data.create_tx == undefined
+        ) {
+          throw new Error("Data is not correct");
+        }
+        pushData.push({
+          name: sanitize(
+            tokenData.Instruction.Program.Arguments[0].Value.string
+          ),
+          symbol: sanitize(
+            tokenData.Instruction.Program.Arguments[1].Value.string
+          ),
+          uri: sanitize(
+            tokenData.Instruction.Program.Arguments[2].Value.string
+          ),
+          created_at: sanitize(tokenData.Block.Time),
+          address: sanitize(tokenData.Instruction.Program.Address),
+          create_tx: sanitize(tokenData.Transaction.Signature),
+        });
+        totalCount++;
+        console.log(totalCount);
 
-      // totalCount++;
-      // console.log(totalCount);
-      if (error) {
-        console.error(`Failed to import tokens`, error);
+        if (
+          totalCount % 3000 == 0 ||
+          totalCount == tokens.data.Solana.Instructions.length
+        ) {
+          console.log(
+            "Pushing from range ",
+            totalCount < 3000
+              ? 0
+              : totalCount % 3000 == 0
+              ? totalCount - 3000
+              : totalCount - (totalCount % 3000),
+            " to ",
+            totalCount
+          );
+          const { error } = await supabase.from("tokens").insert(pushData);
+          if (error) {
+            console.error(`Failed to import tokens`, error);
+          }
+          pushData.length = 0;
+        }
+      } catch (e) {
+        console.log("SKIPPING DATA");
+        console.log("Error", e);
       }
     }
 
     // try {
-    // const { error } = await supabase.from("tokens").insert(pushData);
-
-    // } catch (error) {
-    //   console.error("Error processing tokens:", error);
+    //   const { error } = await supabase.from("tokens").insert(pushData);
+    //   if (error) {
+    //     console.error(`Failed to import tokens`, error);
+    //   }
+    // } catch (e) {
+    //   console.error("Error processing tokens:", e);
     // }
   } catch (error) {
     if (error.code === "ENOENT") {
@@ -59,7 +116,7 @@ async function importTokens(filePath) {
   }
 }
 
-importTokens("./results/next-memecoins-2.json")
+importTokens("./results/next-memecoins-5.json")
   .catch(console.error)
   .finally(() => {
     console.log("Import process completed");
