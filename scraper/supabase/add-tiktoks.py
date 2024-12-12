@@ -9,9 +9,6 @@ import json
 load_dotenv()
 
 async def add_tiktoks(supabase, tiktoks):
-
-    # id, username, url, thumnail, caption, created_at, fetched_at, views, comments
-    # TODO: Convert the results to array with search value as key value
     try:
         updated_records = []
         fetched_at = tiktoks['extraction_time']
@@ -25,7 +22,6 @@ async def add_tiktoks(supabase, tiktoks):
                     "username": videos['author'],
                     "url": videos['video_url'],
                     "thumbnail": videos['thumbnail_url'],
-                    # "caption": videos['description'],
                     "created_at": datetime.fromtimestamp(videos['posted_timestamp']).isoformat(),
                     "fetched_at": fetched_at,
                     "views":  format_views(videos['views'] if len(videos['views']) > 0 else "0"),
@@ -33,62 +29,69 @@ async def add_tiktoks(supabase, tiktoks):
                 }
                 mentions_data.append({
                     "tiktok_id": tiktok_id,
+                    "views": update_data['views'],
                     "data": videos['comments']['tickers'],
                 })
                 add_tiktok_data.append(update_data)
             
-        # insert_response = supabase.table("tiktoks").insert(add_tiktok_data).execute()
-        # if hasattr(insert_response, "error"):
-        #     raise Exception(insert_response.error.message)
-        print("MENTIONS DATA")
-        print(mentions_data)
+        insert_response = supabase.table("tiktoks").insert(add_tiktok_data).execute()
+        if hasattr(insert_response, "error"):
+            raise Exception(insert_response.error.message)
 
-        # for m in mentions_data:
-        #     try:
-        #         updated_records = []
+        for m in mentions_data:
+            try:
+                for symbol, mentions in m['data'].items():
+                    if symbol == "AI" or symbol == "SOLANA":
+                        continue
 
-        #         for symbol, mentions in m['data'].items():
-        #             # Fetch the current record for the symbol (case-insensitive)
-        #             response = supabase.table("tokens").select("*").ilike("symbol", "%"+symbol"%").order("id", desc=False).execute()
-        #             if hasattr(response, "error"):
-        #                 raise Exception(response.error.message)
-        #             current_data = response.data
+                    # Fetch the current record for the symbol (case-insensitive)
+                    response = supabase.table("tokens").select("*").ilike("symbol", symbol).order("id", desc=False).execute()
+                    if hasattr(response, "error"):
+                        print("Error when fetching token data")
+                        raise Exception(response.error.message)
+                    if len(response.data) == 0:
+                        print("Coin not found. Skipping...")
+                        continue
                 
-        #             if current_data:
-        #                 add_mentions_data=[]
-        #                 # If a record exists, add the mentions to the existing value
-        #                 for data in current_data:
-        #                     current_mentions = data['mentions']
-        #                     new_mentions = current_mentions + mentions
-        #                     print(new_mentions)
-        #                     print(data['id'])
-        #                     print(data['symbol'])
-        #                     update_response = supabase.table("tokens").update({"mentions": new_mentions}).eq("id", data['id']).execute()
-        #                     if hasattr(update_response, "error"):
-        #                         raise Exception(update_response.error.message)
-        #                     updated_records.append(update_response.data)
-        #                     add_mentions_data.append({
-        #                         "tiktok_id": m['tiktok_id'],
-        #                         "count": mentions,
-        #                         "token_id": data['id']
-        #                     })
-        #                 add_mentions_response = supabase.table("mentions").insert(add_mentions_data).execute()
-        #                 if hasattr(add_mentions_response, "error"):
-        #                     raise Exception(add_mentions_response.error.message)
-        #     except Exception as error:
-        #         return {
-        #             "success": False,
-        #             "error": str(error),
-        #             "message": "Failed to update mentions data",
-        #         }
+                    current_data = response.data
+                
+                    if current_data:
+                        add_mentions_data=[]
+                        # If a record exists, add the mentions to the existing value
+                        for data in current_data:
+                            current_mentions = data['mentions']
+                            new_mentions = current_mentions + mentions
+                            new_views = data['views'] + m['views']
+                            print(new_mentions)
+                            print(new_views)
+                            print(data['id'])
+                            print(data['symbol'])
+
+                            update_response = supabase.table("tokens").update({"mentions": new_mentions, 'views': new_views}).eq("id", data['id']).execute()
+                            if hasattr(update_response, "error"):
+                                raise Exception(update_response.error.message)
+                            updated_records.append(update_response.data)
+                            add_mentions_data.append({
+                                "tiktok_id": m['tiktok_id'],
+                                "count": mentions,
+                                "token_id": data['id']
+                            })
+                        add_mentions_response = supabase.table("mentions").insert(add_mentions_data).execute()
+                        if hasattr(add_mentions_response, "error"):
+                            raise Exception(add_mentions_response.error.message)
+            except Exception as error:
+                return {
+                    "success": False,
+                    "error": str(error),
+                    "message": "Failed to update mentions data",
+                }
+     
+
         return {
-          "success": True,
+            "success": True,
+            "insertedRecords": insert_response.data,
+            "message": f"Successfully inserted {len(insert_response.data)} records",
         }
-        # return {
-        #     "success": True,
-        #     "insertedRecords": insert_response.data,
-        #     "message": f"Successfully inserted {len(insert_response.data)} records",
-        # }
     except Exception as error:
         return {
             "success": False,
