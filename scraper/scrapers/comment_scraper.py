@@ -1,7 +1,7 @@
 import requests
 import json
 import re
-from collections import defaultdict
+from collections import defaultdict, Counter
 from utils.chrome import DEFAULT_HEADERS
 
 def req(post_id, curs):
@@ -13,30 +13,17 @@ def req(post_id, curs):
     return raw_data
 
 def find_crypto_tickers(text):
-    # Pattern 1: Match $TICKER format
-    dollar_pattern = r'\$([A-Z]{2,10})'
+    cleaned_string = re.sub(r'\$([^\s,]+)', r'\1', text)
+    cleaned_string = re.sub(r'[\s,]+', ' ', cleaned_string.strip())
     
-    # Pattern 2: Match standalone uppercase words that look like tickers
-    # This will look for uppercase words 2-10 characters long
-    # We'll exclude common English words to reduce false positives
-    word_pattern = r'\b([A-Z]{2,10})\b'
+    cleaned_string = re.sub(r'[!"#\$%&\'\(\)\*\+,\-\.\/\:;<=>\?@\[\\\]\^_`\{\|\}\~\u00A0-\u10FFFF]', '', cleaned_string)
+
+    words = cleaned_string.lower().split()
     
-    # Common words to exclude (add more as needed)
-    common_words = {'THE', 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT'}
+    ignore_words = ["WHAT","DO","YOU","I",'AND','THE', "THINK", 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT']
+    filtered_words = [word for word in words if word.upper() not in ignore_words]
     
-    tickers = []
-    
-    # Find tickers with $ symbol
-    dollar_tickers = re.findall(dollar_pattern, text)
-    tickers.extend(dollar_tickers)
-    
-    # Find potential tickers without $ symbol
-    word_tickers = re.findall(word_pattern, text)
-    # Filter out common words
-    word_tickers = [t for t in word_tickers if t not in common_words]
-    tickers.extend(word_tickers)
-    
-    return tickers
+    return dict(Counter(filtered_words))
 
 def extract_comments(post_id):
     comments = []
