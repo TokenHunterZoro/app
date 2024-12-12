@@ -82,7 +82,6 @@ export default async function getMemecoins(
       memecoins[i].image = URL.createObjectURL(image);
     })
   );
-  console.log(memecoins);
 
   return memecoins;
 }

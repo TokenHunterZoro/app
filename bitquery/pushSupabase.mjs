@@ -59,7 +59,7 @@ async function importTokens(filePath) {
   }
 }
 
-importTokens("./results/next-memecoins-1.json")
+importTokens("./results/next-memecoins-2.json")
   .catch(console.error)
   .finally(() => {
     console.log("Import process completed");

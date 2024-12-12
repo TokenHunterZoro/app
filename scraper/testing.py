@@ -239,10 +239,12 @@ def main():
         "pumpfun", 
     ]
 
-    hashtag_terms =[  "memecoin",
-        "solana",
-        "crypto",
-        "pumpfun"]
+    hashtag_terms =[  
+        # "memecoin",
+        # "solana",
+        # "crypto",
+        "pumpfun"
+    ]
     selected_profile = "Profile 3"
     logger.info(f"Using Chrome profile: {selected_profile}")
     
@@ -262,18 +264,25 @@ def main():
         
         all_results = {}
         
-        for search in search_terms:
-            results = process_search_term(driver, search, 10)
-            if results:
-                all_results[search] = {
+        # for search in search_terms:
+        #     results = process_search_term(driver, search, 10)
+        #     if results:
+        #         all_results[search] = {
+        #             'total_videos': len(results),
+        #             'videos': results
+        #         }
+        #         print(f"Successfully processed {len(results)} videos for '{search}'")
+        #     time.sleep(5)
+
+        for hashtag in hashtag_terms:
+            results = process_hashtag_term(driver, hashtag, 10)
+            if(results):
+                all_results["#"+hashtag] = {
                     'total_videos': len(results),
                     'videos': results
                 }
-                print(f"Successfully processed {len(results)} videos for '{search}'")
+                print(f"Successfully processed {len(results)} videos for '{hashtag}'")
             time.sleep(5)
-
-        for hashtag in hashtag_terms:
-            results 
 
         if all_results:
             saved_path = save_combined_results(all_results)

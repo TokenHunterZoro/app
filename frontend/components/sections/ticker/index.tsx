@@ -11,7 +11,9 @@ export default function Ticker({ params }: { params: { id: string } }) {
   const [coinData, setCoinData] = useState<TokenData | null>(null);
   useEffect(() => {
     (async function () {
-      setCoinData(await getCoinData(parseInt(params.id)));
+      const fetchedCoinData = await getCoinData(parseInt(params.id));
+      console.log(fetchedCoinData);
+      setCoinData(fetchedCoinData);
     })();
   }, []);
 

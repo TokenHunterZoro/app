@@ -11,7 +11,7 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
           price_usd,
           price_sol,
           market_cap,
-          created_at,
+          trade_at,
           is_latest
         )
       `
