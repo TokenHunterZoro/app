@@ -24,7 +24,7 @@ async def add_tiktoks(supabase, tiktoks):
                     "username": videos['author'],
                     "url": videos['video_url'],
                     "thumbnail": videos['thumbnail_url'],
-                    "caption": videos['description'],
+                    # "caption": videos['description'],
                     "created_at": datetime.fromtimestamp(videos['posted_timestamp']).isoformat(),
                     "fetched_at": fetched_at,
                     "views": format_views(videos['views']),
