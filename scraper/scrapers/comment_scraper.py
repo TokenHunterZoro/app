@@ -2,11 +2,25 @@ import requests
 import json
 import re
 from collections import defaultdict, Counter
-from utils.chrome import DEFAULT_HEADERS
+# from utils.chrome import DEFAULT_HEADERS
 
 def req(post_id, curs):
     url = f'https://www.tiktok.com/api/comment/list/?WebIdLastTime=1729273214&aid=1988&app_language=en&app_name=tiktok_web&aweme_id={post_id}&browser_language=en-US&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F129.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&count=20&cursor={curs}&data_collection_enabled=false&device_id=7427171842932786693&device_platform=web_pc&focus_state=true&from_page=video&history_len=6&is_fullscreen=false&is_page_visible=true&odinId=7427171704705188869&os=windows&priority_region=&referer=&region=CA&screen_height=1080&screen_width=1920&tz_name=Asia%2FTehran&user_is_login=false&webcast_language=en&msToken=U488DBL2ELMV88PxvXu7bOKQJVxuv7LnhKNHsWaOT2uQhpGyj5M-7EmUsXBIS9HbQ_bQ35u3Za-f_hVhHMMYsH-4mxWPeJoUeMhgOHOvQ-IaKb5lr3DlgBIYJXCUc9MCexCHXig1u4a98hVjnec74fs=&X-Bogus=DFSzswVYtfhANH-ltQ2xJbJ92U6T&_signature=_02B4Z6wo000017DRplgAAIDBt3uT.9qT9Zew0aLAAIsv87'
-    response = requests.get(url=url, headers=DEFAULT_HEADERS)
+    response = requests.get(url=url, headers={
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9,fa;q=0.8',
+    'cache-control': 'no-cache',
+    'pragma': 'no-cache',
+    'priority': 'u=1, i',
+    'referer': 'https://www.tiktok.com/explore',
+    'sec-ch-ua': '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
+})
     info = response.text
     raw_data = json.loads(info)
     print(f'we are on {curs} cursor')
@@ -27,6 +41,7 @@ def find_crypto_tickers(text):
 
 def extract_comments(post_id):
     comments = []
+
     seen_comments = set()  # Track unique user-comment combinations
     ticker_counts = defaultdict(int)
     curs = 0
@@ -34,28 +49,30 @@ def extract_comments(post_id):
     while True:
         raw_data = req(post_id, curs)
         comment_data = raw_data['comments']
-        
+
         for cm in comment_data:
             # Get user ID
+            response_data={}
             user_id = cm['user']['uid']
+            response_data['timestamp'] = cm['create_time']
             
             # Get comment text
-            com = cm['share_info']['desc']
-            if com == "":
-                com = cm['text']
+            response_data['data'] = cm['share_info']['desc']
+            if response_data['data'] == "":
+                response_data['data'] = cm['text']
                 
             # Create unique identifier for user-comment combination
-            comment_identifier = f"{user_id}:{com}"
+            comment_identifier = f"{user_id}:{response_data['data']}"
             
             # Skip if we've seen this exact comment from this user
             if comment_identifier in seen_comments:
                 continue
                 
             seen_comments.add(comment_identifier)
-            comments.append(com)
+            comments.append(response_data)
             
             # Find and count crypto tickers in the comment
-            tickers = find_crypto_tickers(com)
+            tickers = find_crypto_tickers(response_data['data'])
             for ticker in tickers:
                 ticker_counts[ticker] += 1
         
@@ -75,4 +92,9 @@ def extract_comments(post_id):
         "data": comments
     }
     
+    print(response)
     return response
+
+
+extract_comments('7447194055588498710')
+
