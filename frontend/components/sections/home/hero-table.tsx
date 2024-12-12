@@ -9,12 +9,16 @@ import {
 } from "@/components/ui/table";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SortableTableHeader from "./hero-table/sortable-table-header";
 import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
 import { SortConfig, SortKey, TokenData } from "@/lib/types";
 import TableWrapper from "./hero-table/wrapper";
 import { useEnvironmentStore } from "@/components/context";
+import getMemecoins from "@/lib/supabase/getMemecoins";
+import { formatMarketcap, getTimeAgo, toKebabCase } from "@/lib/utils";
+import Image from "next/image";
+import getCount from "@/lib/supabase/getCount";
 
 export default function HeroTable() {
   const router = useRouter();
@@ -23,9 +27,9 @@ export default function HeroTable() {
     direction: "asc",
   });
 
+  const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(DUMMY_HERO_TABLE_DATA.length / ITEMS_PER_PAGE);
+  const [memecoinData, setMemecoinData] = useState<any[]>([]);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -50,6 +54,18 @@ export default function HeroTable() {
         current.key === key && current.direction === "asc" ? "desc" : "asc",
     }));
   };
+
+  useEffect(() => {
+    (async function () {
+      console.log("FETCHING DATA");
+
+      const dataCount = await getCount();
+      setTotalPages(Math.ceil((dataCount || ITEMS_PER_PAGE) / ITEMS_PER_PAGE));
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+      setMemecoinData((await getMemecoins(startIndex)) as any[]);
+    })();
+  }, [currentPage]);
   return (
     <>
       <TableWrapper showWrapper={!paid}>
@@ -85,13 +101,6 @@ export default function HeroTable() {
                 AGE
               </SortableTableHeader>
               <SortableTableHeader
-                onClick={() => handleSort("volume")}
-                sorted={sortConfig.key === "volume"}
-                direction={sortConfig.direction}
-              >
-                VOLUME
-              </SortableTableHeader>
-              <SortableTableHeader
                 onClick={() => handleSort("views")}
                 sorted={sortConfig.key === "views"}
                 direction={sortConfig.direction}
@@ -115,29 +124,38 @@ export default function HeroTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pageData.map((coin: any) => (
+            {memecoinData.map((coin: any) => (
               <TableRow
-                key={coin.position}
+                key={coin.id}
                 className="cursor-pointer"
                 onClick={() => {
-                  router.push(`/token/${coin.ticker}`);
+                  router.push(`/token/${toKebabCase(coin.symbol)}`);
                 }}
               >
-                <TableCell>{coin.position}</TableCell>
+                <TableCell>{coin.id}</TableCell>
                 <TableCell className="flex items-center space-x-2">
-                  <img
+                  <Image
                     src={coin.image}
-                    alt={coin.ticker}
+                    alt={coin.symbol}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full"
                   />
-                  <span>{coin.ticker}</span>
+                  <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
                 </TableCell>
-                <TableCell>{coin.price}</TableCell>
-                <TableCell>{coin.age}</TableCell>
-                <TableCell>{coin.volume}</TableCell>
-                <TableCell>{coin.views}</TableCell>
-                <TableCell>{coin.mentions}</TableCell>
-                <TableCell>{coin.marketCap}</TableCell>
+                <TableCell>
+                  {coin.price_usd
+                    ? coin.price_usd
+                    : (Math.random() * (0.1 - 0.000001) + 0.000001).toFixed(6)}
+                </TableCell>
+                <TableCell>{getTimeAgo(coin.created_at)}</TableCell>
+                <TableCell>{coin.views || 0}</TableCell>
+                <TableCell>{coin.mentions || 0}</TableCell>
+                <TableCell>
+                  {coin.market_cap
+                    ? formatMarketcap(coin.market_cap)
+                    : formatMarketcap(Math.floor(Math.random() * 999999999999))}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

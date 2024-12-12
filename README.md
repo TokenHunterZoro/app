@@ -20,3 +20,28 @@
 1. Get active creations
 2. Get active trades that happen currently
 3. Get all memecoin creations
+
+## Schemas
+
+CREATE TABLE prices (
+id INT8 PRIMARY KEY,
+token_id INT8,
+trade_at TIMESTAMPTZ,
+price_usd NUMERIC,
+price_sol NUMERIC,
+market_cap NUMERIC,
+price_token_id_fkey INT8,
+FOREIGN KEY (price_token_id_fkey) REFERENCES public.tokens(id)
+);
+
+CREATE TABLE tokens (
+id INT8 PRIMARY KEY,
+name VARCHAR,
+symbol VARCHAR,
+uri VARCHAR,
+created_at TIMESTAMPTZ,
+address VARCHAR,
+create_tx VARCHAR,
+mentions NUMERIC DEFAULT '0'::NUMERIC,
+views NUMERIC DEFAULT '0'::NUMERIC
+);

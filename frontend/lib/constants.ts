@@ -1,4 +1,11 @@
 import { DocsConfig } from "./types";
+import { createClient } from "@supabase/supabase-js";
+
+// Create a single supabase client for interacting with your database
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_SECRET || ""
+);
 
 const pumpfunSample = {
   extraction_time: "2024-12-11 16:35:15",
@@ -793,4 +800,10 @@ const docsConfig: DocsConfig = {
   ],
 };
 
-export { pumpfunSample, ITEMS_PER_PAGE, DUMMY_HERO_TABLE_DATA, docsConfig };
+export {
+  pumpfunSample,
+  ITEMS_PER_PAGE,
+  DUMMY_HERO_TABLE_DATA,
+  docsConfig,
+  supabase,
+};
