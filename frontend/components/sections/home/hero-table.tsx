@@ -57,6 +57,7 @@ export default function HeroTable() {
 
   useEffect(() => {
     (async function () {
+      setMemecoinData([]);
       console.log("FETCHING DATA");
 
       const dataCount = await getCount();

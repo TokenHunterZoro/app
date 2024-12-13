@@ -25,8 +25,7 @@ export default async function getMemecoins(
     )
     .eq("prices.is_latest", true)
     .order("mentions", { ascending: false }) // Order by ID
-    .limit(ITEMS_PER_PAGE)
-    .gt("id", start); // Fetch rows with IDs greater than the last fetched ID
+    .range(start, start + ITEMS_PER_PAGE - 1); // Fetch a page of data
 
   if (error) {
     console.error("Error fetching data:", error);
