@@ -41,15 +41,15 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
     ...data[0],
     latest_price_usd:
       data[0].prices.length == 0
-        ? (data[0].id % 3) / 123456
+        ? (data[0].id % 3) / 12345
         : data[0].prices?.[0]?.price_usd,
     latest_price_sol:
       data[0].prices.length == 0
-        ? (data[0].id % 8) / 123456
+        ? (data[0].id % 8) / 12345
         : data[0].prices?.[0]?.price_sol,
     latest_market_cap:
       data[0].prices.length == 0
-        ? ((data[0].id % 3) / 123456) * 1000000000
+        ? ((data[0].id % 3) / 12345) * 1000000000
         : data[0].prices?.[0]?.price_usd * 1000000000,
     tweets: data[0].tweets,
     mentions: data[0].mentions.length,
