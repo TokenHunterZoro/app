@@ -23,17 +23,22 @@ async function createTestBonk() {
 
   // Generate a new wallet for deployment
   const deployerWallet = Keypair.fromSecretKey(
-    Uint8Array.from(privateKeyArray)
+    Uint8Array.from([
+      97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
+      58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
+      117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55,
+      231, 29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
+    ])
   );
   console.log("Deployer address:", deployerWallet.publicKey.toBase58());
 
-  // Request airdrop for deployment fees
-  console.log("Requesting airdrop for deployment...");
-  const airdropSignature = await connection.requestAirdrop(
-    deployerWallet.publicKey,
-    1000000000 // 1 SOL
-  );
-  await connection.confirmTransaction(airdropSignature);
+  // // Request airdrop for deployment fees
+  // console.log("Requesting airdrop for deployment...");
+  // const airdropSignature = await connection.requestAirdrop(
+  //   deployerWallet.publicKey,
+  //   1000000000 // 1 SOL
+  // );
+  // await connection.confirmTransaction(airdropSignature);
 
   // TestBonk Configuration
   const TOKEN_DECIMALS = 6; // Same as original BONK
@@ -82,7 +87,14 @@ async function createTestBonk() {
 
   // Optional: Create a mint authority for future minting
   // This allows you to mint more tokens later if needed
-  const mintAuthority = Keypair.generate();
+  const mintAuthority = Keypair.fromSecretKey(
+    Uint8Array.from([
+      97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
+      58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
+      117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55,
+      231, 29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
+    ])
+  );
   console.log("Mint authority created:", mintAuthority.publicKey.toBase58());
 
   // Transfer mint authority
@@ -105,9 +117,6 @@ async function createTestBonk() {
     deployerAddress: deployerWallet.publicKey.toBase58(),
     deployerTokenAccount: deployerTokenAccount.address.toBase58(),
     mintAuthority: mintAuthority.publicKey.toBase58(),
-    // IMPORTANT: Save these securely and never share!
-    deployerPrivateKey: bs58.encode(deployerWallet.secretKey),
-    mintAuthorityPrivateKey: bs58.encode(mintAuthority.secretKey),
   };
 }
 
@@ -120,6 +129,7 @@ async function mintMoreTestBonk(
 ) {
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
+  print("Getting or creating account");
   const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     mintAuthority,
@@ -127,6 +137,7 @@ async function mintMoreTestBonk(
     recipientAddress
   );
 
+  print("Minting more TestBonk tokens...");
   const mintTx = await mintTo(
     connection,
     mintAuthority,
@@ -140,15 +151,31 @@ async function mintMoreTestBonk(
 }
 
 // Deploy TestBonk
-createTestBonk()
-  .then((result) => {
-    console.log("TestBonk deployed successfully!");
-    console.log("Token details:", {
-      ...result,
-      //   deployerPrivateKey: "***[SECURE]***", // Hide private keys in logs
-      //   mintAuthorityPrivateKey: "***[SECURE]***",
-    });
-  })
-  .catch((error) => {
-    console.error("Error deploying TestBonk:", error);
-  });
+// createTestBonk()
+//   .then((result) => {
+//     console.log("TestBonk deployed successfully!");
+//     console.log("Token details:", {
+//       ...result,
+//       //   deployerPrivateKey: "***[SECURE]***", // Hide private keys in logs
+//       //   mintAuthorityPrivateKey: "***[SECURE]***",
+//     });
+//   })
+//   .catch((error) => {
+//     console.error("Error deploying TestBonk:", error);
+//   });
+
+const mintAuthority = Keypair.fromSecretKey(
+  Uint8Array.from([
+    97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
+    58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
+    117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55, 231,
+    29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
+  ])
+);
+
+mintMoreTestBonk(
+  mintAuthority,
+  new PublicKey("J5xh6VWTmNmgVmhgGqEd6fgzZunt2hPqLmiXB85C5Wna"),
+  new PublicKey("9XrM3KtTBXP3GFbV3okWCPKmmrV84UAFYGHJp9qZFnpZ"),
+  1000000000
+);
