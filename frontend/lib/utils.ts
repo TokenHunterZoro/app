@@ -30,7 +30,6 @@ export function getTimeAgo(timestamp: string): string {
   const now: Date = new Date();
   const past: Date = new Date(timestamp);
   const diffInMs: number = now.getTime() - past.getTime();
-  console.log(past);
   const times: TimeUnits = {
     seconds: Math.floor(diffInMs / 1000),
     minutes: Math.floor(diffInMs / (1000 * 60)),

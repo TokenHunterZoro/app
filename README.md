@@ -1,71 +1,95 @@
-## TODO
+# ZoroX - The TikTok Memecoin Hunter
 
-1. Fetch videos by hashtag too
-2. Get all Pumpfun coins from Bitquery.
-3. Get last 24 hour coins from Bitquery.
-4. Group memecoins to memes.
-5. Try pattern matching the last 24 hour crypto with scraped data
-6. Display in the UI.
-7. Analyze running time, can be faster?
+**Description:**  
+ZoroX is an autonomous AI-powered agent that hunts for the hottest memecoins trending on TikTok and provides real-time analytics on their performance. Designed for crypto enthusiasts and memecoin hunters, ZoroX bridges the gap between TikTok meme culture and emerging cryptocurrency trends.
 
-## DONE
+By leveraging TikTok's trending data and Pump.fun's database of launched tokens, ZoroX offers users insights into memecoin popularity, trading volume, and market movements. It also integrates BONK tokens to incentivize premium features for advanced users.
 
-1. Fix comments scraping
-2. Structure code in folders
-3. Remove duplicate comments by the same person.
-4. Try to get ticker mentions in comments and captions. get the metric.
+---
 
-## BitQuery queries
+## Key Features
 
-1. Get active creations
-2. Get active trades that happen currently
-3. Get all memecoin creations
+1. **Real-Time Hashtag Analysis:**
 
-## Schemas
+   - Monitors TikTok for the hottest hashtags and trending descriptions in the past 24 hours (#solana, #pump, #pumpfun, #meme, #memecoin).
+   - Classifies crypto-related content based on comments containing $TICKER references.
 
-CREATE TABLE prices (
-id INT8 PRIMARY KEY,
-token_id INT8,
-trade_at TIMESTAMPTZ,
-price_usd NUMERIC,
-price_sol NUMERIC,
-market_cap NUMERIC,
-price_token_id_fkey INT8,
-FOREIGN KEY (price_token_id_fkey) REFERENCES public.tokens(id)
-);
+2. **Pattern Matching:**
 
-CREATE TABLE tokens (
-id INT8 PRIMARY KEY,
-name VARCHAR,
-symbol VARCHAR,
-uri VARCHAR,
-created_at TIMESTAMPTZ,
-address VARCHAR,
-create_tx VARCHAR,
-mentions NUMERIC DEFAULT '0'::NUMERIC,
-views NUMERIC DEFAULT '0'::NUMERIC
-);
+   - Matches trending TikTok memes against Pump.fun's database of launched tokens to identify related coins.
+   - Categorizes multiple tokens per meme for comprehensive coverage.
 
--- Create tiktoks table first since it's referenced by mentions
-CREATE TABLE tiktoks (
-id BIGINT PRIMARY KEY,
-varchar_column VARCHAR, -- Unnamed varchar column
-text_column1 TEXT, -- First unnamed text column
-text_column2 TEXT, -- Second unnamed text column
-created_at TIMESTAMPTZ,
-updated_at TIMESTAMPTZ,
-numeric_column1 NUMERIC,
-numeric_column2 NUMERIC
-);
+3. **Data Insights:**
 
--- Create mentions table with foreign key reference
-CREATE TABLE mentions (
-id BIGINT PRIMARY KEY,
-numeric_value NUMERIC,
-text_value TEXT,
-timestamp_value TIMESTAMPTZ,
-tiktok_id BIGINT,
-CONSTRAINT mentions_tiktok_id_fkey
-FOREIGN KEY (tiktok_id)
-REFERENCES tiktoks(id)
-);
+   - Displays filtered lists of the top trending coins and TikTok memes with the following analytics:
+     - 24-hour trading volume of the coin.
+     - 24-hour view count on TikTok.
+
+4. **Automated Social Media Updates:**
+
+   - Posts tweets from the ZoroX Twitter account about trending memecoins when:
+     - Volume growth surpasses $10K within an hour.
+     - Growth rate is at least 100% ($5K → $10K+).
+
+5. **Monetization:**
+   - Free version: View the first 5 tokens.
+   - Premium version: Full access for 7 days at 499,999 BONK
+
+---
+
+## Technical Stack
+
+- **AI and Data Processing:**
+  - OpenAI for natural language processing and classification of crypto-related content.
+- **Backend:**
+  - Supabase for database and API integration.
+- **Frontend:**
+  - Next.js, ShadCN, and TailwindCSS for an intuitive user interface.
+- **Incentivization Layer:**
+  - BONK tokens to reward users and enable premium features.
+
+---
+
+## How It Works
+
+1. **Data Collection:**
+
+   - ZoroX scrapes TikTok for relevant hashtags, descriptions, and comments.
+   - Patterns are matched with Pump.fun's database to identify associated tokens.
+
+2. **Trend Analysis:**
+
+   - Analyzes the trading volume and TikTok watch metrics for each identified token.
+   - Identifies surges in trading volume and view counts in real-time.
+
+3. **User Notifications:**
+
+   - Displays trending tokens in an easy-to-use dashboard.
+   - Posts updates about the hottest memecoins on Twitter to keep followers informed.
+
+4. **Premium Features:**
+   - Unlock detailed analytics and exclusive insights by subscribing with BONK tokens.
+
+---
+
+## Why ZoroX?
+
+In the fast-paced world of memecoins, ZoroX provides a cutting-edge advantage for traders and enthusiasts. By combining TikTok's viral potential with on-chain data from Pump.fun, ZoroX delivers actionable insights and real-time updates, empowering users to capitalize on emerging trends.
+
+---
+
+## Tagline
+
+_"Find the hottest memecoins before they pump – with ZoroX."_
+
+## Important Links
+
+**Demo Video** | https://www.canva.com/design/DAGZKlSQ674/sKdyTpeTJ7oqJn85P8o2cg/watch?utm_content=DAGZKlSQ674&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8e1a118963
+
+**Deck** | https://www.canva.com/design/DAGZKe_9vEc/eRRZxCtQpk1QxFSjz3ZT2A/view?utm_content=DAGZKe_9vEc&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8f286b75b1
+
+**Github** | https://github.com/gabrielantonyxaviour/zorox
+
+**Twitter** | https://x.com/TokenHunterZoro
+
+**Live App** | https://zorox-ai.vercel.app/

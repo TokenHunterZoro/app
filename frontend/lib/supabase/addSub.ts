@@ -10,7 +10,7 @@ export default async function addSub(
       created_at: new Date().toISOString(),
       address: address,
       amount: amount,
-      expires: new Date().getTime() + expires * 10000,
+      expires: new Date(new Date().getTime() + expires * 1000).toISOString(),
     },
   ]);
 

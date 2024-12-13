@@ -74,7 +74,7 @@ axios
   .then((response) => {
     // Save the response data as a JSON file
     fs.writeFileSync(
-      "results/next-memecoins-4.json",
+      "results/next-memecoins-5.json",
       JSON.stringify(response.data, null, 2),
       "utf-8"
     );

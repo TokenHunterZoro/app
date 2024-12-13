@@ -34,17 +34,25 @@ export default function UnlockNow({ text }: { text: string }) {
       <Button
         className="flex bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
         onClick={async () => {
+          if (walletAddress == "") {
+            toast({
+              title: "Wallet not connected",
+              description: "Please connect your wallet first.",
+            });
+            return;
+          }
+
           if (payEnabled) {
-            if (parseInt(bonkBalance) < parseInt("499999000000")) {
+            console.log(bonkBalance);
+            if (parseInt(bonkBalance) < parseInt("499999")) {
               toast({
                 title: "Insufficient BONK Balance",
                 description:
                   "Your balance is " +
-                  bonkBalance.toLocaleLowerCase() +
+                  parseInt(bonkBalance).toLocaleString() +
                   " BONK. You need 499,999 BONK to unlock this feature.",
               });
-            }
-            if (parseInt(balance) < 1) {
+            } else if (parseInt(balance) < 1) {
               toast({
                 title: "Insufficient SOL Balance",
                 description:
@@ -55,7 +63,6 @@ export default function UnlockNow({ text }: { text: string }) {
             } else {
               await transferTokens();
               setPaid(true);
-              addSub(walletAddress, 499999, 604800);
               toast({
                 title: "Payment Successful",
                 description: "You have unlocked ZoroX Paid Tier.",
