@@ -20,7 +20,7 @@ export default async function getMemecoins(
       address,
       views,
       mentions,
-      prices:prices(price_usd, price_sol, is_latest)
+      prices!inner(price_usd, price_sol, is_latest)
     `
     )
     .eq("prices.is_latest", true)
