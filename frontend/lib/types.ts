@@ -15,9 +15,12 @@ type TokenData = {
   address: string;
   prices: Price[];
   latest_price_usd: number;
+  latest_price_sol: number;
   latest_market_cap: number;
   views: number;
   mentions: number;
+  tweets: any[];
+  tiktoks: any[];
 };
 type SortKey = keyof TokenData;
 type SortDirection = "asc" | "desc";

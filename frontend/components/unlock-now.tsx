@@ -11,9 +11,15 @@ export default function UnlockNow({ text }: { text: string }) {
       <p className="sen text-muted-foreground font-semibold mt-6 mb-4 text-center">
         {text}
         <div className="flex  justify-center items-center">
-          <p>at 0.1&nbsp;</p>
-          <Image src={"/solana.png"} width={25} height={25} alt="solana" />
-          <p>SOL</p>
+          <p>at 499,999&nbsp;</p>
+          <Image
+            src={"/bonk.png"}
+            width={25}
+            height={25}
+            alt="bonk"
+            className="rounded-full mr-2 ml-1"
+          />
+          <p>BONK</p>
           <p>/week</p>
         </div>
       </p>

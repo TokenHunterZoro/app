@@ -28,8 +28,8 @@ export default function Ticker({ params }: { params: { id: string } }) {
   return (
     <div className="w-[1200px] mx-auto mt-12">
       <TimeSeriesChart tokenData={coinData} />
-      <Tweets tokenData={coinData} />
-      <Tiktoks tokenData={coinData} />
+      <Tweets symbol={coinData.symbol} tweets={coinData.tweets} growth="1.5" />
+      <Tiktoks symbol={coinData.symbol} tiktoks={coinData.tiktoks} />
     </div>
   );
 }

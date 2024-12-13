@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SortableTableHeader from "./hero-table/sortable-table-header";
 import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
-import { SortConfig, SortKey } from "@/lib/types";
+import { SortConfig, SortKey, TokenData } from "@/lib/types";
 import TableWrapper from "./hero-table/wrapper";
 import { useEnvironmentStore } from "@/components/context";
 import getMemecoins from "@/lib/supabase/getMemecoins";
@@ -98,7 +98,14 @@ export default function HeroTable() {
                   sorted={sortConfig.key === "latest_price_usd"}
                   direction={sortConfig.direction}
                 >
-                  PRICE
+                  PRICE IN USD
+                </SortableTableHeader>
+                <SortableTableHeader
+                  onClick={() => handleSort("latest_price_sol")}
+                  sorted={sortConfig.key === "latest_price_sol"}
+                  direction={sortConfig.direction}
+                >
+                  PRICE IN SOL
                 </SortableTableHeader>
                 <SortableTableHeader
                   onClick={() => handleSort("created_at")}
@@ -132,7 +139,7 @@ export default function HeroTable() {
             </TableHeader>
 
             <TableBody>
-              {memecoinData.map((coin: any, idx: number) => (
+              {memecoinData.map((coin: TokenData, idx: number) => (
                 <TableRow
                   key={coin.id}
                   className="cursor-pointer"
@@ -152,19 +159,20 @@ export default function HeroTable() {
                     <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
                   </TableCell>
                   <TableCell>
-                    {coin.price_usd
-                      ? coin.price_usd
-                      : (Math.random() * (0.1 - 0.000001) + 0.000001).toFixed(
-                          6
-                        )}
+                    {coin.latest_price_usd
+                      ? coin.latest_price_usd.toFixed(10)
+                      : "0.00"}
+                  </TableCell>
+                  <TableCell>
+                    {coin.latest_price_sol
+                      ? coin.latest_price_sol.toFixed(10)
+                      : "0.00"}
                   </TableCell>
                   <TableCell>{getTimeAgo(coin.created_at)}</TableCell>
                   <TableCell>{coin.views || 0}</TableCell>
                   <TableCell>{coin.mentions || 0}</TableCell>
                   <TableCell>
-                    {coin.price_usd
-                      ? formatMarketcap(coin.price_usd * 1000000000)
-                      : formatMarketcap(Math.floor(Math.random() * 9999999))}
+                    {formatMarketcap(coin.latest_market_cap || 0)}
                   </TableCell>
                 </TableRow>
               ))}

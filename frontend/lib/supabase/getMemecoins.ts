@@ -24,7 +24,7 @@ export default async function getMemecoins(
     `
     )
     .eq("prices.is_latest", true)
-    .order("created_at", { ascending: false }) // Order by ID
+    .order("mentions", { ascending: false }) // Order by ID
     .limit(ITEMS_PER_PAGE)
     .gt("id", start); // Fetch rows with IDs greater than the last fetched ID
 
@@ -39,7 +39,11 @@ export default async function getMemecoins(
       //   const fetchMetadataResponse = await fetch(token.uri);
       //   const metadata = await fetchMetadataResponse.json();
 
-      const latestPrice = token.prices.filter((price) => price.is_latest)[0];
+      const prices = token.prices.filter((price) => price.is_latest);
+      let latestPrice = prices[0] || {
+        price_sol: 0,
+        price_usd: 0,
+      };
 
       return {
         id: token.id,
@@ -55,8 +59,11 @@ export default async function getMemecoins(
         prices: [],
         latest_price_usd: latestPrice.price_usd || 0,
         latest_market_cap: (latestPrice.price_usd || 0) * 1000000000,
+        latest_price_sol: latestPrice.price_sol || 0,
         views: token.views,
         mentions: token.mentions,
+        tweets: [],
+        tiktoks: [],
       };
     })
   );

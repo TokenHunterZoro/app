@@ -4,34 +4,16 @@ import { TokenData } from "@/lib/types";
 import Image from "next/image";
 import React, { useEffect, useRef } from "react";
 
-export default function Tweets({ tokenData }: { tokenData: TokenData }) {
+export default function Tweets({
+  symbol,
+  growth,
+  tweets,
+}: {
+  symbol: string;
+  growth: string;
+  tweets: any[];
+}) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const tweets = [
-    {
-      content: `🚀 Trending Alert: TikTok mentions of $${tokenData.symbol.toUpperCase()} are skyrocketing with a 125% increase in views today! Could this be the next moonshot? 🌕💫 #${tokenData.symbol.toUpperCase()} #MemeCoin`,
-      timestamp: "2024-12-04T09:30:00Z",
-    },
-    {
-      content: `📈 Insight: TikTok's $${tokenData.symbol.toUpperCase()} challenge is going viral! Over 50k mentions and counting. Community engagement is heating up! 🔥 #CryptoTrends #${tokenData.symbol.toUpperCase()}`,
-      timestamp: "2024-12-04T12:00:00Z",
-    },
-    {
-      content: `💡 Heads up! $${tokenData.symbol.toUpperCase()}-related hashtags on TikTok now trending with over 1M cumulative views. Sentiment is overwhelmingly bullish. 🚀 #Altcoins #${tokenData.symbol.toUpperCase()}Fam`,
-      timestamp: "2024-12-04T14:45:00Z",
-    },
-    {
-      content: `🌟 Viral Power: TikTok memes are giving $${tokenData.symbol.toUpperCase()} a huge boost! Watch for increased mentions as influencers join the hype train. 🚂💨 #CryptoVibes #${tokenData.symbol.toUpperCase()}ToTheMoon`,
-      timestamp: "2024-12-05T08:00:00Z",
-    },
-    {
-      content: `📊 Stat Check: TikTok mentions of $${tokenData.symbol.toUpperCase()} are up 70% in the past 24 hours. Could this social surge drive the next pump? Stay tuned! 💹 #SocialSignals #${tokenData.symbol.toUpperCase()}Army`,
-      timestamp: "2024-12-05T18:30:00Z",
-    },
-    {
-      content: `🎥 TikTok stats show $${tokenData.symbol.toUpperCase()} memes trending in over 30 countries! With such momentum, the community is unstoppable. 🌎💪 #MemeCoinMovement #${tokenData.symbol.toUpperCase()}Hype`,
-      timestamp: "2024-12-06T02:00:00Z",
-    },
-  ];
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -114,13 +96,12 @@ export default function Tweets({ tokenData }: { tokenData: TokenData }) {
             ZoroX Tweets
           </p>
           <p className="text-md text-muted-foreground font-semibold">
-            View all tweets made by ZoroX about $
-            {tokenData.symbol.toUpperCase()}
+            View all tweets made by ZoroX about ${symbol.toUpperCase()}
           </p>
         </div>
         <p className="pr-2 font-semibold">
-          <span className="text-green-500 font-bold mr-1">1.5x</span> growth
-          since first tweet
+          <span className="text-green-500 font-bold mr-1">{growth}x</span>{" "}
+          growth since first tweet
         </p>
       </div>
       <ScrollArea className="w-[1200px] m-2">
@@ -155,14 +136,14 @@ export default function Tweets({ tokenData }: { tokenData: TokenData }) {
                   </div>
                   <div className="flex-1 flex justify-end">
                     <p className="text-xs text-gray-400">
-                      {timeAgo(tweet.timestamp)}
+                      {timeAgo(tweet.created_at)}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div>
                     <div className="flex items-center justify-between"></div>
-                    <p className="text-sm text-white mt-2">{tweet.content}</p>
+                    <p className="text-sm text-white mt-2">{tweet.tweet}</p>
                   </div>
                 </div>
               </CardContent>

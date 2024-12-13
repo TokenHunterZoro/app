@@ -18,7 +18,7 @@ export default function Home() {
         Realtime tiktok analytics for memecoins. <br />
         Hunt the next moonshot 🚀
       </p>
-      <div className="max-w-[1000px] mx-auto">
+      <div className="max-w-[1200px] mx-auto">
         <HeroTable />
       </div>
       {!paid && <UnlockNow text="View the realtime dashboard" />}

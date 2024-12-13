@@ -20,7 +20,7 @@ def find_crypto_tickers(text):
 
     words = cleaned_string.lower().split()
     
-    ignore_words = ["BEFORE", "AFTER", "A", "WHAT", "DO","YOU","I",'AND','THE',"VIDEO","ON","TILL","MEME","CAN","MAKE","ME","FROM","CTO","IVE","1000X","100X","REALLY","BEST","THINK", 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT']
+    ignore_words = ["BEFORE", "HERE","JUST","SOLANA","MEMECOIN", "CRYPTO", "AI", "AFTER", "A", "WHAT", "DO","YOU","I",'AND','THE',"VIDEO","ON","TILL","MEME","CAN","MAKE","ME","FROM","CTO","IVE","1000X","100X","REALLY","BEST","THINK", 'IS', 'ARE', 'WAS', 'WERE', 'BE', 'THIS', 'THAT', 'IT', 'LOL', 'OMG' ,'BUY', 'TO', 'ITS', 'MOON', 'LFG', 'HODL', 'SOON', 'ABOUT']
     filtered_words = [word for word in words if word.upper() not in ignore_words]
     
     return dict(Counter(filtered_words))

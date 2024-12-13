@@ -249,6 +249,7 @@ export default function TimeSeriesChartWithPaywall({
   const [showPrice, setShowPrice] = useState<boolean>(true);
   const [showViews, setShowViews] = useState<boolean>(true);
   const [showMentions, setShowMentions] = useState<boolean>(true);
+  const [usdOrSolToggle, setUsdOrSolToggle] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<TimeframeType>("24h");
   const [data, setData] = useState<DataPoint[]>(generateTimeData("24h"));
   const { paid } = useEnvironmentStore((store) => store);
@@ -275,24 +276,20 @@ export default function TimeSeriesChartWithPaywall({
     <Card className="w-full sen">
       <CardHeader>
         <div className="flex items-center justify-start">
-          <Image
-            src={"https://picsum.photos/200"}
-            width={32}
-            height={32}
-            alt={tokenData.symbol}
-            className="rounded-full mr-2"
-          />
+          <img src={tokenData.image} className="rounded-full mr-2 w-8 h-8" />
           <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
             {tokenData.symbol.toLocaleUpperCase()}
             <span className="text-muted-foreground text-sm font-medium sen tracking-normal">
-              /SOL
+              /{usdOrSolToggle ? "USD" : "SOL"}
             </span>
           </CardTitle>
         </div>
 
         <div className="flex items-center justify-start mb-4">
           <p className="font-semibold text-3xl">
-            ${data[data.length - 1].price.toFixed(5)}
+            {usdOrSolToggle
+              ? tokenData.latest_price_usd.toFixed(10)
+              : tokenData.latest_price_sol.toFixed(10)}
           </p>
           {isPriceUp ? (
             <span className="flex items-center text-green-500 ml-2 text-md">
