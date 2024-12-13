@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { pumpfunSample } from "@/lib/constants";
+import { Moving } from "@/components/ui/acternity/moving";
 
 const TikTokCarousel = () => {
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
@@ -47,7 +48,7 @@ const TikTokCarousel = () => {
         onMouseEnter={() => setHoveredColumn(columnIdx)}
         onMouseLeave={() => setHoveredColumn(null)}
       >
-        <div className="overflow-hidden h-[420px]">
+        <div className="overflow-hidden h-[420px] w-full bg-white">
           <div style={style}>
             {[
               ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
@@ -77,10 +78,8 @@ const TikTokCarousel = () => {
   };
 
   return (
-    <div className="flex-1 max-w-5xl mx-auto px-4 py-12">
-      <div className="grid grid-cols-2 gap-3 mx-24">
-        {[0, 1].map((i) => renderColumn(i))}
-      </div>
+    <div className="w-[50%] max-w-5xl mx-auto px-4 py-12">
+      <Moving />
     </div>
   );
 };
