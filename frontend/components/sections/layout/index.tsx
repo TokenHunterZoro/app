@@ -5,18 +5,36 @@ import { HandHelping } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import { CommandMenu } from "./command-menu";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { shortenAddress } from "@/lib/utils";
+import getSub from "@/lib/supabase/getSub";
+import fetchBalances from "@/lib/fetchBalances";
 
 export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { showConnectModal, showPayModal, showSupportModal } =
+  const { walletAddress, setAddress, setPaid, setBalances } =
     useEnvironmentStore((store) => store);
   const router = useRouter();
-  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    if (walletAddress.length > 0) {
+      getSub(walletAddress).then((expires) => {
+        console.log("EXPIRES");
+        console.log(expires);
+        if (expires) {
+          if (new Date().getTime() <= expires) setPaid(true);
+        }
+      });
+      fetchBalances(walletAddress).then((balances) => {
+        console.log("BALANCES");
+        console.log(balances);
+        setBalances(balances.sol.toString(), balances.token.toString());
+      });
+    }
+  }, [walletAddress]);
   return (
     <div className="w-full py-6">
       <div className="flex justify-between items-center px-6">
@@ -57,8 +75,33 @@ export default function Layout({
           </Button>
           <Button
             className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-            onClick={() => {
-              setWalletAddress("5pj7QiUhJyqeYQv64pCNzVs2X8LfU2fGpBAKAE3c718p");
+            onClick={async () => {
+              if (walletAddress) {
+                try {
+                  const { solana } = (window as any).phantom;
+
+                  if (solana) {
+                    await solana.disconnect();
+                    setAddress("");
+                  }
+                } catch (error) {
+                  console.error(
+                    "Error disconnecting from Phantom wallet:",
+                    error
+                  );
+                }
+              } else {
+                try {
+                  const { solana } = (window as any).phantom;
+
+                  if (solana) {
+                    const response = await solana.connect();
+                    setAddress(response.publicKey.toString());
+                  }
+                } catch (error) {
+                  console.error("Error connecting to Phantom wallet:", error);
+                }
+              }
             }}
           >
             <Image

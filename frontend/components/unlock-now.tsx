@@ -2,9 +2,17 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { useEnvironmentStore } from "./context";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import transferTokens from "@/lib/transfer-tokens";
+import addSub from "@/lib/supabase/addSub";
 
 export default function UnlockNow({ text }: { text: string }) {
-  const { setPaid } = useEnvironmentStore((store) => store);
+  const { setPaid, bonkBalance, balance, walletAddress } = useEnvironmentStore(
+    (store) => store
+  );
+  const payEnabled = true;
+  const { toast } = useToast();
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
@@ -25,8 +33,35 @@ export default function UnlockNow({ text }: { text: string }) {
       </p>
       <Button
         className="flex bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-        onClick={() => {
-          setPaid(true);
+        onClick={async () => {
+          if (payEnabled) {
+            if (parseInt(bonkBalance) < parseInt("499999000000")) {
+              toast({
+                title: "Insufficient BONK Balance",
+                description:
+                  "Your balance is " +
+                  bonkBalance.toLocaleLowerCase() +
+                  " BONK. You need 499,999 BONK to unlock this feature.",
+              });
+            }
+            if (parseInt(balance) < 1) {
+              toast({
+                title: "Insufficient SOL Balance",
+                description:
+                  "Your balance is " +
+                  balance.toLocaleLowerCase() +
+                  " SOL. You need at least 1 SOL to pay for gas.",
+              });
+            } else {
+              await transferTokens();
+              setPaid(true);
+              addSub(walletAddress, 499999, 604800);
+              toast({
+                title: "Payment Successful",
+                description: "You have unlocked ZoroX Paid Tier.",
+              });
+            }
+          } else setPaid(true);
         }}
       >
         <Image

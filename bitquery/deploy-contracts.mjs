@@ -1,35 +1,18 @@
-import {
-  clusterApiUrl,
-  Connection,
-  Keypair,
-  PublicKey,
-  sendAndConfirmTransaction,
-  Transaction,
-} from "@solana/web3.js";
+import { clusterApiUrl, Connection, Keypair, PublicKey } from "@solana/web3.js";
 import {
   createMint,
   getOrCreateAssociatedTokenAccount,
   mintTo,
   setAuthority,
   AuthorityType,
-  TOKEN_PROGRAM_ID,
-  createInitializeMintInstruction,
 } from "@solana/spl-token";
-import * as bs58 from "bs58";
 
 async function createTestBonk() {
   // Connect to Solana devnet
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
   // Generate a new wallet for deployment
-  const deployerWallet = Keypair.fromSecretKey(
-    Uint8Array.from([
-      97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
-      58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
-      117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55,
-      231, 29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
-    ])
-  );
+  const deployerWallet = Keypair.fromSecretKey(Uint8Array.from(walletKeyPair));
   console.log("Deployer address:", deployerWallet.publicKey.toBase58());
 
   // // Request airdrop for deployment fees
@@ -87,14 +70,7 @@ async function createTestBonk() {
 
   // Optional: Create a mint authority for future minting
   // This allows you to mint more tokens later if needed
-  const mintAuthority = Keypair.fromSecretKey(
-    Uint8Array.from([
-      97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
-      58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
-      117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55,
-      231, 29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
-    ])
-  );
+  const mintAuthority = Keypair.fromSecretKey(Uint8Array.from(walletKeyPair));
   console.log("Mint authority created:", mintAuthority.publicKey.toBase58());
 
   // Transfer mint authority
@@ -129,7 +105,7 @@ async function mintMoreTestBonk(
 ) {
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
-  print("Getting or creating account");
+  console.log("Getting or creating account");
   const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     mintAuthority,
@@ -137,7 +113,7 @@ async function mintMoreTestBonk(
     recipientAddress
   );
 
-  print("Minting more TestBonk tokens...");
+  console.log("Minting more TestBonk tokens...");
   const mintTx = await mintTo(
     connection,
     mintAuthority,
@@ -177,5 +153,5 @@ mintMoreTestBonk(
   mintAuthority,
   new PublicKey("J5xh6VWTmNmgVmhgGqEd6fgzZunt2hPqLmiXB85C5Wna"),
   new PublicKey("9XrM3KtTBXP3GFbV3okWCPKmmrV84UAFYGHJp9qZFnpZ"),
-  1000000000
+  620000000000
 );

@@ -7,6 +7,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_SECRET || ""
 );
 
+const TEST_BONK_TOKEN_MINT_ADDRESS =
+  "J5xh6VWTmNmgVmhgGqEd6fgzZunt2hPqLmiXB85C5Wna";
+
 const pumpfunSample = {
   extraction_time: "2024-12-11 16:35:15",
   total_searches: 1,
@@ -799,11 +802,13 @@ const docsConfig: DocsConfig = {
     },
   ],
 };
-
+const ZOROX_TREASURY_ADDRESS = "DUAqcapjRqWzkrC3TmA5Me9LnW4RxUdiuHiaqpL4XJEt";
 export {
   pumpfunSample,
   ITEMS_PER_PAGE,
   DUMMY_HERO_TABLE_DATA,
   docsConfig,
+  TEST_BONK_TOKEN_MINT_ADDRESS,
+  ZOROX_TREASURY_ADDRESS,
   supabase,
 };

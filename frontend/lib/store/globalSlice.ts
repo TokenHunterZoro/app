@@ -1,25 +1,24 @@
 import { StateCreator } from "zustand";
 interface GlobalState {
-  showConnectModal: boolean;
-  showSupportModal: boolean;
-  showPayModal: boolean;
+  walletAddress: string;
+  balance: string;
+  bonkBalance: string;
   paid: boolean;
 }
 
 interface GlobalActions {
-  setShowConnectModal: (showConnectModal: boolean) => void;
-  setShowSupportModal: (showSupportModal: boolean) => void;
-  setShowPayModal: (showPayModal: boolean) => void;
+  setAddress: (walletAddress: string) => void;
+  setBalances: (balance: string, bonkBalance: string) => void;
   setPaid: (paid: boolean) => void;
 }
 
 export type GlobalSlice = GlobalState & GlobalActions;
 
 export const initialGlobalState: GlobalState = {
-  showConnectModal: false,
-  showSupportModal: false,
-  showPayModal: false,
   paid: false,
+  walletAddress: "",
+  balance: "",
+  bonkBalance: "",
 };
 
 export const createGlobalSlice: StateCreator<
@@ -29,8 +28,7 @@ export const createGlobalSlice: StateCreator<
   GlobalSlice
 > = (set) => ({
   ...initialGlobalState,
-  setShowConnectModal: (showConnectModal) => set({ showConnectModal }),
-  setShowSupportModal: (showSupportModal) => set({ showSupportModal }),
-  setShowPayModal: (showPayModal) => set({ showPayModal }),
   setPaid: (paid) => set({ paid }),
+  setAddress: (walletAddress) => set({ walletAddress }),
+  setBalances: (balance, bonkBalance) => set({ balance, bonkBalance }),
 });
