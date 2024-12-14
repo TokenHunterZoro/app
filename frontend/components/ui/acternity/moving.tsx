@@ -7,9 +7,14 @@ import { pumpfunSample } from "@/lib/constants";
 export function Moving() {
   return (
     <InfiniteMovingCards
-      items={pumpfunSample.results.pumpfun.videos.map(
-        (video) => video.thumbnail_url
-      )}
+      items={[
+        "/thumbnails/1.jpeg",
+        "/thumbnails/2.jpeg",
+        "/thumbnails/3.jpeg",
+        "/thumbnails/1.jpeg",
+        "/thumbnails/2.jpeg",
+        "/thumbnails/3.jpeg",
+      ]}
       direction="right"
       speed="slow"
     />

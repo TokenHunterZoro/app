@@ -16,12 +16,16 @@ class VideoScraper:
                 print('Time info not present. Skipping...')
                 return None
 
-            current_time = datetime.now()
-            time_24hours_ago = current_time - timedelta(hours=24)
+            current_timestamp = datetime.now().timestamp()
+            video_timestamp = time_data["posted_timestamp"]
+            time_diff = current_timestamp - video_timestamp
+            print(f"Time difference: {time_diff}")
             
-            if time_24hours_ago <= time_data['posted_timestamp'] <= current_time:
-                print('Video within 24 hours. Skipping...')
+            print(time_diff)
+            if time_diff > 24 * 3600:  # 24 hours in seconds
+                print('Video older than 24 hours. Skipping...')
                 return None
+
             data.update(time_data)
             
             # Extract other video data

@@ -80,7 +80,7 @@ In the fast-paced world of memecoins, ZoroX provides a cutting-edge advantage fo
 
 ## Tagline
 
-_"Find the hottest memecoins before they pump – with ZoroX."_
+_"An Autonomous AI Agent that browses TikTok to help you find the hottest memecoins before they pump."_
 
 ## Important Links
 

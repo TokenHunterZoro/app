@@ -51,9 +51,15 @@ const TikTokCarousel = () => {
         <div className="overflow-hidden h-[420px] w-full bg-white">
           <div style={style}>
             {[
-              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
-              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
-              ...thumbnails.slice(columnIdx * 3, (columnIdx + 1) * 3),
+              "/thumbnails/1.jpeg",
+              "/thumbnails/2.jpeg",
+              "/thumbnails/3.jpeg",
+              "/thumbnails/1.jpeg",
+              "/thumbnails/2.jpeg",
+              "/thumbnails/3.jpeg",
+              "/thumbnails/1.jpeg",
+              "/thumbnails/2.jpeg",
+              "/thumbnails/3.jpeg",
             ].map(
               (
                 src,
