@@ -123,6 +123,7 @@ def process_search_term(driver, keyword, max_results=50):
                         time.sleep(5)
                         continue
                     
+                    print(len(video_elements))
                     for video_element in video_elements:
                         if len(results) >= max_results:
                             break
@@ -190,11 +191,14 @@ def process_hashtag_term(driver, keyword, max_results=50):
                         continue
                     
                     print("WORKING TILL NOW")
+                    print(len(video_elements))
                     for video_element in video_elements:
                         if len(results) >= max_results:
                             break
                             
                         video_data = VideoScraper.extract_video_data(video_element)
+                        print("VIDEO DATA")
+                        print(video_data)
                         if video_data and video_data['video_url'] and video_data['video_url'] not in processed_urls:
                             print(f"Found video {len(results)}/{max_results}: {video_data['video_url']}")
                             if 'video_url' in video_data:
@@ -212,10 +216,12 @@ def process_hashtag_term(driver, keyword, max_results=50):
                     if len(results) >= max_results:
                         print(f"\nReached target number of videos for '{keyword}'")
                         break
-                    
+
+                    print("Executing scroll script")
                     last_height = driver.execute_script("return document.documentElement.scrollHeight")
                     driver.execute_script(f"window.scrollTo(0, {last_height});")
                     time.sleep(scroll_pause_time)
+                    print("Successfully scrolled")
                     
                     new_height = driver.execute_script("return document.documentElement.scrollHeight")
                     if new_height == last_height:
@@ -282,7 +288,7 @@ def main():
             time.sleep(5)
 
         print("\nAll search terms processed!")
-
+        
         for hashtag in hashtag_terms:
             results = process_hashtag_term(driver, hashtag, 100)
             if(results):

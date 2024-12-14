@@ -9,7 +9,6 @@ def req(post_id, curs):
     response = requests.get(url=url, headers=DEFAULT_HEADERS)
     info = response.text
     raw_data = json.loads(info)
-    print(f'we are on {curs} cursor')
     return raw_data
 
 def find_crypto_tickers(text):
@@ -64,7 +63,6 @@ def extract_comments(post_id):
         
         if raw_data['has_more'] == 1:
             curs += 20
-            print('moving to the next cursor')
         else:
             print('no more comments available')
             break

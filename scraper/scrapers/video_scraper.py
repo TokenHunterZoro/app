@@ -17,7 +17,12 @@ class VideoScraper:
                 return None
 
             current_timestamp = datetime.now().timestamp()
+            print("Current timestamp")
+            print(current_timestamp)
             video_timestamp = time_data["posted_timestamp"]
+            print('Video timestamp')
+            print(video_timestamp)
+
             time_diff = current_timestamp - video_timestamp
             print(f"Time difference: {time_diff}")
             
@@ -54,24 +59,25 @@ class VideoScraper:
             posted_time = ""
             posted_datetime = datetime.min
 
-            print("POSTED TIME")
             
             for selector in time_selectors:
                 try:
                     time_element = video_element.find_element(By.CSS_SELECTOR, selector)
-                    print("YESSS")
                     posted_time = time_element.text.strip()
                     if posted_time:
                         posted_datetime = parse_tiktok_time(posted_time)
                         break
                 except:
                     continue
-                    
-            now = datetime.now()
+            
+            print("REACEIVED DATA")
+            print(posted_time)
+            print(posted_datetime)
+
             if not posted_time:
                 posted_time = "1s"
             if posted_datetime == datetime.min:
-                posted_datetime = now - timedelta(seconds=1)
+                posted_datetime = datetime.now() - timedelta(seconds=1)          
 
             return {
                 'posted_time': posted_time,
@@ -92,7 +98,6 @@ class VideoScraper:
                 "a[href*='/video/']",
                 "a[class*='AVideoContainer']"
             ]
-            print("VIDEO URL")
             for selector in link_selectors:
                 try:
                     link = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -114,7 +119,6 @@ class VideoScraper:
                 "img[src*='tiktokcdn']",
                 "img[class*='poster']"
             ]
-            print("THUMBNAILS")
             for selector in thumbnail_selectors:
                 try:
                     thumbnail = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -134,11 +138,9 @@ class VideoScraper:
             desc_selectors = [
                 "h1[class*='H1Container']",
             ]
-            print("DESCRIPTION")
             for selector in desc_selectors:
                 try:
                     desc_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
-                    print(desc_elements)
                     words=[]
                     for element in desc_elements:
                         text = element.text.strip()
@@ -160,7 +162,6 @@ class VideoScraper:
                 "a[href*='/tag/']"
             ]
             hashtags = []
-            print("HASHTAGS")
             for selector in hashtags_selectors:
                 try:
                     hashtag_elements = video_element.find_elements(By.CSS_SELECTOR, selector)
@@ -183,7 +184,6 @@ class VideoScraper:
                 "p[class*='PUniqueId']",
                 "p[class*='PUserName']",
             ]
-            print("AUTHOR")
             for selector in author_selectors:
                 try:
                     author_element = video_element.find_element(By.CSS_SELECTOR, selector)
@@ -204,7 +204,6 @@ class VideoScraper:
                 "strong[class*='StrongVideoCount']",
 
             ]
-            print("VIEWS")
             for selector in views_selectors:
                 try:
                     views_element = video_element.find_element(By.CSS_SELECTOR, selector)

@@ -170,8 +170,8 @@ export default function Tiktoks({
                   </div>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg ">
-                  <UnlockNow text="Unlock all TikToks" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg p-2">
+                  <UnlockNow text="View all curated TikToks" />
                 </div>
               </>
             )}
