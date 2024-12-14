@@ -114,7 +114,11 @@ export default function Tweets({
               key={index}
               className="rounded-lg mt-2 mb-4 transform transition-all duration-300 hover:scale-105 hover:border hover:border-[1px] hover:border-[#F8D12E] cursor-pointer"
               onClick={() => {
-                window.open("https://x.com/TokenHunterZoro", "_blank");
+                console.log("tweet", tweet);
+                window.open(
+                  "https://x.com/TokenHunterZoro/status/1867331863993627085",
+                  "_blank"
+                );
               }}
             >
               <CardContent className="p-4 w-[300px] sen">

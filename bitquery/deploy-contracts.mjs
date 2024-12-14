@@ -6,12 +6,16 @@ import {
   setAuthority,
   AuthorityType,
 } from "@solana/spl-token";
+import { promises as fs } from "fs";
 
 async function createTestBonk() {
   // Connect to Solana devnet
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
   // Generate a new wallet for deployment
+  const walletKeyPair = JSON.parse(
+    await fs.readFile("../wallet-keypair.json", "utf8")
+  );
   const deployerWallet = Keypair.fromSecretKey(Uint8Array.from(walletKeyPair));
   console.log("Deployer address:", deployerWallet.publicKey.toBase58());
 
@@ -70,6 +74,7 @@ async function createTestBonk() {
 
   // Optional: Create a mint authority for future minting
   // This allows you to mint more tokens later if needed
+
   const mintAuthority = Keypair.fromSecretKey(Uint8Array.from(walletKeyPair));
   console.log("Mint authority created:", mintAuthority.publicKey.toBase58());
 
@@ -140,14 +145,10 @@ async function mintMoreTestBonk(
 //     console.error("Error deploying TestBonk:", error);
 //   });
 
-const mintAuthority = Keypair.fromSecretKey(
-  Uint8Array.from([
-    97, 163, 241, 128, 254, 153, 73, 177, 28, 253, 140, 74, 189, 19, 74, 219,
-    58, 121, 10, 90, 99, 246, 251, 86, 172, 97, 24, 32, 86, 104, 68, 203, 194,
-    117, 123, 73, 163, 9, 203, 124, 148, 252, 72, 197, 107, 65, 56, 94, 55, 231,
-    29, 78, 78, 142, 58, 45, 206, 61, 118, 210, 154, 160, 249, 255,
-  ])
+const walletKeyPair = JSON.parse(
+  await fs.readFile("../wallet-keypair.json", "utf8")
 );
+const mintAuthority = Keypair.fromSecretKey(Uint8Array.from(walletKeyPair));
 
 mintMoreTestBonk(
   mintAuthority,

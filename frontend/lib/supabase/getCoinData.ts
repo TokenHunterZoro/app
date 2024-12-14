@@ -17,7 +17,7 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
           tiktoks(username, thumbnail, url, created_at, views),
           count
         ),
-        tweets(id, created_at, tweet)
+        tweets(id, created_at, tweet, tweet_id)
       `
     )
     .eq("id", tokenId);
