@@ -153,7 +153,7 @@ async function pushPrices(filePath) {
   }
 }
 
-pushPrices("./results/prices.json")
+pushPrices("./results/prices-2.json")
   .catch(console.error)
   .finally(() => {
     console.log("Update prices completed");

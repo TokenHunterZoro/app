@@ -20,6 +20,7 @@ const data = JSON.stringify({
           }
         }
         Transaction: { Result: { Success: true } }
+        Block: {Time: {till: "2024-12-14T09:52:33Z"}}
       }
     ) {
       Trade {
@@ -58,7 +59,7 @@ axios
   .then((response) => {
     // Save the response data as a JSON file
     fs.writeFileSync(
-      "results/prices.json",
+      "results/prices-2.json",
       JSON.stringify(response.data, null, 2),
       "utf-8"
     );
