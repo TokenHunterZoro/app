@@ -104,58 +104,64 @@ export default function Tweets({
           growth since first tweet
         </p>
       </div>
-      <ScrollArea className="w-[1200px] m-2">
-        <div
-          ref={scrollContainerRef}
-          className="flex space-x-2 p-2 overflow-x-hidden"
-        >
-          {tweets.map((tweet, index) => (
-            <Card
-              key={index}
-              className="rounded-lg mt-2 mb-4 transform transition-all duration-300 hover:scale-105 hover:border hover:border-[1px] hover:border-[#F8D12E] cursor-pointer"
-              onClick={() => {
-                console.log("tweet", tweet);
-                window.open(
-                  "https://x.com/TokenHunterZoro/status/1867331863993627085",
-                  "_blank"
-                );
-              }}
-            >
-              <CardContent className="p-4 w-[300px] sen">
-                <div className="flex items-center space-x-2">
-                  <Image
-                    src={"/logo.jpg"}
-                    width={28}
-                    height={28}
-                    alt="zoro"
-                    className="rounded-full"
-                  />
-                  <div className="flex flex-col justify-center">
-                    <p className="text-md font-bold text-white leading-tight">
-                      ZoroX
-                    </p>
-                    <p className="text-xs font-medium text-muted-foreground">
-                      @TokenHunterZoro
-                    </p>
+      {tweets.length > 0 ? (
+        <ScrollArea className="w-[1200px] m-2">
+          <div
+            ref={scrollContainerRef}
+            className="flex space-x-2 p-2 overflow-x-hidden"
+          >
+            {tweets.map((tweet, index) => (
+              <Card
+                key={index}
+                className="rounded-lg mt-2 mb-4 transform transition-all duration-300 hover:scale-105 hover:border hover:border-[1px] hover:border-[#F8D12E] cursor-pointer"
+                onClick={() => {
+                  console.log("tweet", tweet);
+                  window.open(
+                    "https://x.com/TokenHunterZoro/status/1867331863993627085",
+                    "_blank"
+                  );
+                }}
+              >
+                <CardContent className="p-4 w-[300px] sen">
+                  <div className="flex items-center space-x-2">
+                    <Image
+                      src={"/logo.jpg"}
+                      width={28}
+                      height={28}
+                      alt="zoro"
+                      className="rounded-full"
+                    />
+                    <div className="flex flex-col justify-center">
+                      <p className="text-md font-bold text-white leading-tight">
+                        ZoroX
+                      </p>
+                      <p className="text-xs font-medium text-muted-foreground">
+                        @TokenHunterZoro
+                      </p>
+                    </div>
+                    <div className="flex-1 flex justify-end">
+                      <p className="text-xs text-gray-400">
+                        {timeAgo(tweet.created_at)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 flex justify-end">
-                    <p className="text-xs text-gray-400">
-                      {timeAgo(tweet.created_at)}
-                    </p>
+                  <div className="flex items-start space-x-4">
+                    <div>
+                      <div className="flex items-center justify-between"></div>
+                      <p className="text-sm text-white mt-2">{tweet.tweet}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div>
-                    <div className="flex items-center justify-between"></div>
-                    <p className="text-sm text-white mt-2">{tweet.tweet}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : (
+        <div className="w-[1200px] h-[50px] flex justify-center items-center">
+          <p className="sen text-muted-foreground">No tweets yet</p>
         </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      )}
     </>
   );
 }
