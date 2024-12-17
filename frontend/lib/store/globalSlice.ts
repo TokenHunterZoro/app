@@ -15,7 +15,7 @@ interface GlobalActions {
 export type GlobalSlice = GlobalState & GlobalActions;
 
 export const initialGlobalState: GlobalState = {
-  paid: false,
+  paid: true,
   walletAddress: "",
   balance: "",
   bonkBalance: "",

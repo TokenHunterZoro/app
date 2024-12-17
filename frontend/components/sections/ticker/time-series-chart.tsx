@@ -146,11 +146,21 @@ function ChartContent({
             />
             <YAxis
               yAxisId="price"
-              orientation="right"
-              domain={["auto", "auto"]}
+              orientation="left"
+              domain={[0, "auto"]}
+              width={50}
               axisLine={{ stroke: "#E5E7EB" }}
               tick={{ fill: "#6B7280" }}
             />
+            <YAxis
+              yAxisId="secondary"
+              orientation="right"
+              domain={[0, "auto"]}
+              width={50}
+              axisLine={{ stroke: "#E5E7EB" }}
+              tick={{ fill: "#6B7280" }}
+            />
+
             <Tooltip
               content={({
                 active,
@@ -182,21 +192,9 @@ function ChartContent({
 
             {/* Reference line for starting price */}
 
-            {showPrice && (
-              <Line
-                yAxisId="price"
-                type="linear"
-                dataKey="price"
-                stroke={isPriceUp ? "#10B981" : "#EF4444"}
-                strokeWidth={2}
-                dot={false}
-                name="Price"
-              />
-            )}
-
             {showViews && (
               <Line
-                yAxisId="price"
+                yAxisId="secondary"
                 type="linear"
                 dataKey="views"
                 stroke="#800080"
@@ -208,13 +206,25 @@ function ChartContent({
 
             {showMentions && (
               <Line
-                yAxisId="price"
+                yAxisId="secondary"
                 type="linear"
                 dataKey="mentions"
                 stroke="#2563EB"
                 strokeWidth={2}
                 dot={false}
                 name="Mentions"
+              />
+            )}
+
+            {showPrice && (
+              <Line
+                yAxisId="price"
+                type="linear"
+                dataKey="price"
+                stroke={isPriceUp ? "#10B981" : "#EF4444"}
+                strokeWidth={2}
+                dot={false}
+                name="Price"
               />
             )}
           </LineChart>
