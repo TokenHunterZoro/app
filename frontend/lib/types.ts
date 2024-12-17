@@ -5,6 +5,13 @@ type Price = {
   is_latest: boolean;
 };
 
+type SearchTokenResponse = {
+  id: number;
+  symbol: string;
+  uri: string;
+  image: any;
+};
+
 type TokenData = {
   id: number;
   name: string;
@@ -49,4 +56,5 @@ export type {
   SortDirection,
   SortConfig,
   SortableTableHeaderProps,
+  SearchTokenResponse,
 };

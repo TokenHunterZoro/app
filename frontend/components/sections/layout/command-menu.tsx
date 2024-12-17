@@ -1,12 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { useState, useCallback } from "react";
+import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import { type DialogProps } from "@radix-ui/react-dialog";
-import { Circle, File, Laptop, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-
-import { docsConfig, DUMMY_HERO_TABLE_DATA } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +18,14 @@ import {
 } from "@/components/ui/command";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
+import searchTokens from "@/lib/supabase/searchTokens";
+import { SearchTokenResponse } from "@/lib/types";
 
 export function CommandMenu({ ...props }: DialogProps) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { paid } = useEnvironmentStore((store) => store);
+  const [searchResults, setSearchResults] = useState<SearchTokenResponse[]>([]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -52,6 +53,29 @@ export function CommandMenu({ ...props }: DialogProps) {
     command();
   }, []);
 
+  const debouncedSearch = useCallback(
+    debounce(async (searchTerm: string) => {
+      if (searchTerm.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+
+      try {
+        // Perform database query
+        const results = await searchTokens(searchTerm);
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Search failed", error);
+      }
+    }, 300), // 300ms delay
+    []
+  );
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    debouncedSearch(searchTerm);
+  };
+
   return (
     <>
       <Button
@@ -77,43 +101,26 @@ export function CommandMenu({ ...props }: DialogProps) {
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup heading="Memecoins">
-                {DUMMY_HERO_TABLE_DATA.map((navItem, id) => (
+                {searchResults.map((navItem, id) => (
                   <CommandItem
                     key={id}
-                    value={navItem.ticker}
+                    value={navItem.symbol}
                     onSelect={() => {
-                      runCommand(() => router.push("/token/" + navItem.ticker));
+                      runCommand(() => router.push("/token/" + navItem.id));
                     }}
                     className="data-[selected='true']:bg-secondary cursor-pointer"
                   >
                     <img
                       src={navItem.image}
-                      alt={navItem.ticker}
+                      alt={navItem.symbol}
                       className="w-6 h-6 mr-1 rounded-full"
                     />
-                    <span>{navItem.ticker}</span>
+                    <span>{navItem.symbol}</span>
                     <span className="text-accent">/ SOL</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
-              {docsConfig.sidebarNav.map((group) => (
-                <CommandGroup key={group.title} heading={group.title}>
-                  {group.items.map((navItem: any) => (
-                    <CommandItem
-                      key={navItem.href}
-                      value={navItem.title}
-                      onSelect={() => {
-                        runCommand(() => router.push(navItem.href as string));
-                      }}
-                    >
-                      <div className="mr-2 flex h-4 w-4 items-center justify-center">
-                        <Circle className="h-3 w-3" />
-                      </div>
-                      {navItem.title}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
+
               <CommandSeparator />
             </CommandList>
           </>
