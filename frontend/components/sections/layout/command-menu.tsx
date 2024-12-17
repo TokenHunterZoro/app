@@ -26,6 +26,9 @@ export function CommandMenu({ ...props }: DialogProps) {
   const [open, setOpen] = React.useState(false);
   const { paid } = useEnvironmentStore((store) => store);
   const [searchResults, setSearchResults] = useState<SearchTokenResponse[]>([]);
+  const { searchBarValue, setSearchBarValue, leaderboard } =
+    useEnvironmentStore((store) => store);
+  const [searchState, setSearchState] = useState(0);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -57,25 +60,29 @@ export function CommandMenu({ ...props }: DialogProps) {
     debounce(async (searchTerm: string) => {
       if (searchTerm.length < 2) {
         setSearchResults([]);
+        setSearchState(1);
         return;
       }
 
       try {
-        // Perform database query
+        setSearchState(2);
         const results = await searchTokens(searchTerm);
-        setSearchResults(results);
+
+        // Use functional state update to ensure latest state
+        setSearchResults((prevResults) => {
+          console.log("SEARCH RESULTS", results);
+          return results;
+        });
+
+        // Only set search state to 0 if results were found
+        setSearchState(results.length > 0 ? 0 : 1);
       } catch (error) {
         console.error("Search failed", error);
+        setSearchState(1);
       }
-    }, 300), // 300ms delay
+    }, 300),
     []
   );
-
-  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-    debouncedSearch(searchTerm);
-  };
-
   return (
     <>
       <Button
@@ -97,28 +104,46 @@ export function CommandMenu({ ...props }: DialogProps) {
       <CommandDialog open={open} onOpenChange={setOpen}>
         {paid ? (
           <>
-            <CommandInput placeholder="Type a ticker or search..." />
+            <CommandInput
+              value={searchBarValue}
+              onValueChange={(search) => {
+                setSearchBarValue(search);
+                debouncedSearch(search);
+              }}
+              placeholder="Type a ticker or search..."
+            />
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty>
+                {searchState == 0
+                  ? "No results found"
+                  : searchState == 1
+                  ? "Type a longer search term"
+                  : "Loading..."}
+              </CommandEmpty>
               <CommandGroup heading="Memecoins">
-                {searchResults.map((navItem, id) => (
-                  <CommandItem
-                    key={id}
-                    value={navItem.symbol}
-                    onSelect={() => {
-                      runCommand(() => router.push("/token/" + navItem.id));
-                    }}
-                    className="data-[selected='true']:bg-secondary cursor-pointer"
-                  >
-                    <img
-                      src={navItem.image}
-                      alt={navItem.symbol}
-                      className="w-6 h-6 mr-1 rounded-full"
-                    />
-                    <span>{navItem.symbol}</span>
-                    <span className="text-accent">/ SOL</span>
-                  </CommandItem>
-                ))}
+                {(searchBarValue == "" ? leaderboard : searchResults).map(
+                  (navItem, id) => (
+                    <CommandItem
+                      key={id}
+                      value={navItem.symbol + id}
+                      onSelect={() => {
+                        runCommand(() => router.push("/token/" + navItem.id));
+                      }}
+                      className="data-[selected='true']:bg-secondary cursor-pointer"
+                    >
+                      <img
+                        src={navItem.image}
+                        alt={navItem.symbol}
+                        className="w-6 h-6 mr-1 rounded-full"
+                      />
+                      <span>{navItem.symbol}</span>
+                      <span className="text-accent">/ SOL</span>
+                      <span className="ml-auto text-muted-foreground">
+                        {navItem.name}
+                      </span>
+                    </CommandItem>
+                  )
+                )}
               </CommandGroup>
 
               <CommandSeparator />

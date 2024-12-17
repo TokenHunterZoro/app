@@ -7,6 +7,7 @@ type Price = {
 
 type SearchTokenResponse = {
   id: number;
+  name: string;
   symbol: string;
   uri: string;
   image: any;

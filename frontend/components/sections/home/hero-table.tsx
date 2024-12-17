@@ -30,6 +30,7 @@ export default function HeroTable() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [memecoinData, setMemecoinData] = useState<any[]>([]);
+  const { setLeaderboad, leaderboard } = useEnvironmentStore((store) => store);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -63,8 +64,10 @@ export default function HeroTable() {
       const dataCount = await getCount();
       setTotalPages(Math.ceil((dataCount || ITEMS_PER_PAGE) / ITEMS_PER_PAGE));
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-
-      setMemecoinData((await getMemecoins(startIndex)) as any[]);
+      const tempMemecoins = (await getMemecoins(startIndex)) as any[];
+      setMemecoinData(tempMemecoins);
+      if (currentPage == 1 && leaderboard.length == 0)
+        setLeaderboad(tempMemecoins);
     })();
   }, [currentPage]);
   return (

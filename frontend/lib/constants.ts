@@ -227,6 +227,8 @@ const pumpfunSample = {
 };
 const ITEMS_PER_PAGE = 7;
 
+const IPFS_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
+
 const DUMMY_HERO_TABLE_DATA = [
   {
     position: 1,
@@ -811,4 +813,5 @@ export {
   TEST_BONK_TOKEN_MINT_ADDRESS,
   ZOROX_TREASURY_ADDRESS,
   supabase,
+  IPFS_GATEWAY_URL,
 };

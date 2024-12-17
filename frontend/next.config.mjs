@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/ipfs/:path*",
+        destination: "https://ipfs.io/ipfs/:path*",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
