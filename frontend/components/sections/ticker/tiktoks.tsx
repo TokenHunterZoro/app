@@ -30,25 +30,28 @@ export default function Tiktoks({
                 return (
                   <div
                     onClick={() => window.open(video.tiktoks.url, "_blank")}
-                    className="cursor-pointer relative w-[300px] h-[500px] rounded-xl border border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
+                    className="cursor-pointer relative w-[300px] h-[500px] rounded-xl border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
                     key={i}
                   >
                     <img
                       src={video.tiktoks.thumbnail}
                       alt="tiktok"
                       className="w-[300px] h-[496px] rounded-xl"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/tiktok-placeholder.png";
+                      }}
                     />
                     <div className=" absolute inset-0 flex flex-col justify-between p-4 text-white">
                       {/* Top Info (Posted Time and Author Info) */}
                       <div className="flex items-center space-x-3">
                         <img
-                          src={
-                            video.tiktoks.username.length == 0
-                              ? "https://picsum.photos/300/50" + i
-                              : video.tiktoks.username
-                          }
+                          src={"https://picsum.photos/300/50" + i}
                           alt={video.tiktoks.username}
                           className="w-10 h-10 rounded-full border border-white"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/solana.png";
+                          }}
                         />
                         <div>
                           <p className="font-semibold">
