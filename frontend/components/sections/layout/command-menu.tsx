@@ -58,6 +58,7 @@ export function CommandMenu({ ...props }: DialogProps) {
 
   const debouncedSearch = useCallback(
     debounce(async (searchTerm: string) => {
+      console.log("SEARCH TERM", searchTerm);
       if (searchTerm.length < 2) {
         setSearchResults([]);
         setSearchState(1);
