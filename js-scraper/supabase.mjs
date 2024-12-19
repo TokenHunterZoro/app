@@ -37,7 +37,6 @@ async function addTiktoks(supabase, tiktoks) {
       .from("tiktoks")
       .upsert(addTiktokData, {
         onConflict: "url",
-        ignoreDuplicates: true,
       });
     if (insertResponse.error) {
       throw new Error(insertResponse.error.message);
@@ -45,6 +44,7 @@ async function addTiktoks(supabase, tiktoks) {
 
     for (const m of mentionsData) {
       try {
+        const addMentionsData = [];
         for (const [symbol, mentions] of Object.entries(m.data)) {
           // Fetch the current record for the symbol (case-insensitive)
           const response = await supabase
@@ -65,29 +65,23 @@ async function addTiktoks(supabase, tiktoks) {
           const currentData = response.data;
 
           if (currentData) {
-            const addMentionsData = [];
             // If a record exists, add the mentions to the existing value
-            for (const data of currentData) {
-              if (updateResponse.error) {
-                throw new Error(updateResponse.error.message);
-              }
+            for (const data of currentData)
               addMentionsData.push({
                 tiktok_id: m.tiktok_id,
                 count: mentions,
                 token_id: data.id,
               });
-            }
-            const addMentionsResponse = await supabase
-              .from("mentions")
-              .upsert(addMentionsData, {
-                onConflict: "tiktok_id",
-                ignoreDuplicates: true,
-              });
-
-            if (addMentionsResponse.error) {
-              throw new Error(addMentionsResponse.error.message);
-            }
           }
+        }
+        const addMentionsResponse = await supabase
+          .from("mentions")
+          .upsert(addMentionsData, {
+            onConflict: "tiktok_id,token_id",
+          });
+
+        if (addMentionsResponse.error) {
+          throw new Error(addMentionsResponse.error.message);
         }
       } catch (error) {
         return {
@@ -141,7 +135,7 @@ const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_KEY;
 const supabase = createClient(url, key);
 
-const data = JSON.parse(fs.readFileSync("results/data.json", "utf8"));
+const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
 
 addTiktoks(supabase, data)
   .then((response) => console.log(response))

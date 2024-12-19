@@ -186,7 +186,7 @@ export default function HeroTable() {
       )}
 
       {paid && (
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center mt-4 px-4">
           <Button
             variant="outline"
             onClick={() => handlePageChange(currentPage - 1)}

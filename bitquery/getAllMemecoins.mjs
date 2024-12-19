@@ -8,7 +8,7 @@ const data = JSON.stringify({
   query: `{
   Solana {
     Instructions(
-      where: {Instruction: {Program: {Method: {is: "create"}, Name: {is: "pump"}}}, Block: {Time: {since: "2024-12-14T05:00:44Z"}}}
+      where: {Instruction: {Program: {Method: {is: "create"}, Name: {is: "pump"}}}, Block: {Time: {since: "2024-12-19T12:25:55Z"}}}
       orderBy: {descending: Block_Time}
     ) {
       Instruction {
@@ -74,7 +74,7 @@ axios
   .then((response) => {
     // Save the response data as a JSON file
     fs.writeFileSync(
-      "results/next-memecoins-7.json",
+      "results/next-memecoins-8.json",
       JSON.stringify(response.data, null, 2),
       "utf-8"
     );

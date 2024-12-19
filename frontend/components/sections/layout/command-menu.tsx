@@ -89,15 +89,17 @@ export function CommandMenu({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "sen relative h-10 flex w-full bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-80"
+          "sen relative h-10 flex w-full sm:w-80 bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-80"
         )}
         onClick={() => setOpen(true)}
         {...props}
       >
-        <span className="hidden lg:inline-flex w-full text-start ">
+        <span className="inline-flex sm:hidden md:hidden lg:inline-flex w-full text-start ">
           Search memecoins...
         </span>
-        <span className="inline-flex lg:hidden ">Search...</span>
+        <span className="hidden sm:inline-flex md:inline-flex lg:hidden w-full text-start">
+          Search...
+        </span>
         <kbd className="pointer-events-none absolute right-[0.4rem] top-[0.4rem] hidden h-6 select-none items-center gap-1 rounded border bg-muted px-2 font-mono text-md font-medium opacity-100 sm:flex">
           <span className="text-sm">⌘</span>K
         </kbd>

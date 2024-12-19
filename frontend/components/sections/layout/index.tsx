@@ -39,10 +39,10 @@ export default function Layout({
     }
   }, [walletAddress]);
   return (
-    <div className="w-full py-6">
-      <div className="flex justify-between items-center px-6">
+    <div className="w-full py-4 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 space-y-4 sm:space-y-0">
         <div
-          className="flex items-center space-x-4 select-none cursor-pointer"
+          className="flex items-center space-x-3 sm:space-x-4 select-none cursor-pointer"
           onClick={() => {
             router.push("/");
           }}
@@ -54,12 +54,14 @@ export default function Layout({
             height={40}
             className="rounded-full"
           />
-          <p className="font-bold text-2xl nouns tracking-widest text-[#F8D12E]">
+          <p className="font-bold text-lg sm:text-2xl nouns tracking-widest text-[#F8D12E]">
             ZoroX
           </p>
         </div>
+
         <CommandMenu />
-        <div className="flex space-x-4">
+
+        <div className="hidden md:flex space-y-4 sm:space-y-0 sm:space-x-4">
           <Button
             variant="ghost"
             className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
@@ -84,7 +86,9 @@ export default function Layout({
               });
             }}
           >
-            <p className="sen text-md font-bold ">Mint free Test Bonks</p>
+            <p className="sen text-sm sm:text-md font-bold">
+              Mint free Test Bonks
+            </p>
             <Image
               src="/bonk.png"
               alt="logo"
@@ -93,14 +97,15 @@ export default function Layout({
               className="rounded-full"
             />
           </Button>
+
           <Button
             variant="ghost"
-            className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
+            className="hidden lg:flex hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
             onClick={() => {
               window.open("https://x.com/TokenHunterZoro", "_blank");
             }}
           >
-            <p className="sen text-md font-bold ">Follow on</p>
+            <p className="sen text-sm sm:text-md font-bold">Follow on</p>
             <Image
               src="/x.png"
               alt="logo"
@@ -109,6 +114,7 @@ export default function Layout({
               className="rounded-full"
             />
           </Button>
+
           <Button
             className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
             onClick={async () => {
@@ -147,7 +153,7 @@ export default function Layout({
               className="rounded-full"
               alt="phantom"
             />
-            <p className="sen text-md font-bold ">
+            <p className="sen text-sm sm:text-md font-bold">
               {walletAddress == ""
                 ? "Connect Phantom"
                 : shortenAddress(walletAddress)}
@@ -155,8 +161,107 @@ export default function Layout({
           </Button>
         </div>
       </div>
+      <div className="flex md:hidden mt-4 justify-center md:justify-start ">
+        <Button
+          variant="ghost"
+          className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
+          onClick={async () => {
+            if (walletAddress == "") {
+              toast({
+                title: "Please connect your wallet first",
+                description:
+                  "You need to connect your wallet to mint free Test Bonks",
+              });
+              return;
+            }
+            console.log("Minting free Test Bonks");
+            toast({
+              title: "Minting free Test Bonks",
+              description: "Please wait for transaction confirmation...",
+            });
+            await mintFreeTestBonks(walletAddress);
+            toast({
+              title: "Transaction Successful",
+              description: "Minted 500,000 Test Bonks",
+            });
+          }}
+        >
+          <p className="sen text-sm sm:text-md font-bold">
+            Mint free Test Bonks
+          </p>
+          <Image
+            src="/bonk.png"
+            alt="logo"
+            width={20}
+            height={20}
+            className="rounded-full"
+          />
+        </Button>
 
-      {children}
+        <Button
+          variant="ghost"
+          className="hidden lg:flex hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
+          onClick={() => {
+            window.open("https://x.com/TokenHunterZoro", "_blank");
+          }}
+        >
+          <p className="sen text-sm sm:text-md font-bold">Follow on</p>
+          <Image
+            src="/x.png"
+            alt="logo"
+            width={20}
+            height={20}
+            className="rounded-full"
+          />
+        </Button>
+
+        <Button
+          className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
+          onClick={async () => {
+            if (walletAddress) {
+              try {
+                const { solana } = (window as any).phantom;
+
+                if (solana) {
+                  await solana.disconnect();
+                  setAddress("");
+                }
+              } catch (error) {
+                console.error(
+                  "Error disconnecting from Phantom wallet:",
+                  error
+                );
+              }
+            } else {
+              try {
+                const { solana } = (window as any).phantom;
+
+                if (solana) {
+                  const response = await solana.connect();
+                  setAddress(response.publicKey.toString());
+                }
+              } catch (error) {
+                console.error("Error connecting to Phantom wallet:", error);
+              }
+            }
+          }}
+        >
+          <Image
+            src={"/phantom.jpg"}
+            width={25}
+            height={25}
+            className="rounded-full"
+            alt="phantom"
+          />
+          <p className="sen text-sm sm:text-md font-bold">
+            {walletAddress == ""
+              ? "Connect Phantom"
+              : shortenAddress(walletAddress)}
+          </p>
+        </Button>
+      </div>
+
+      <div className="">{children}</div>
     </div>
   );
 }
