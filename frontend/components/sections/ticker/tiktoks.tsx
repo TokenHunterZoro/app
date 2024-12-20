@@ -18,10 +18,10 @@ export default function Tiktoks({
     <>
       <div className="flex justify-between sen my-12 items-center">
         <div className="flex flex-col w-full">
-          <p className="text-2xl font-bold nouns tracking-widest text-[#F8D12E]">
+          <p className="text-xl md:text-2xl text-center mx-auto md:mx-0 md:text-start font-bold nouns tracking-widest text-[#F8D12E]">
             Curated Tiktoks
           </p>
-          <p className="text-md text-muted-foreground font-semibold mb-6">
+          <p className="text-xs md:text-sm text-center mx-auto md:mx-0 md:text-start lg:text-md text-muted-foreground font-semibold mb-6">
             All videos where ${symbol.toUpperCase()} was mentioned/talked about.
           </p>
           <div className="relative">

@@ -91,21 +91,21 @@ export default function Tweets({
   return (
     <>
       <div className="flex justify-between sen my-12 items-center">
-        <div className="flex flex-col ">
-          <p className="text-2xl font-bold nouns tracking-widest text-[#F8D12E]">
+        <div className="flex flex-col w-full">
+          <p className="text-xl md:text-2xl text-center mx-auto md:mx-0 md:text-start font-bold nouns tracking-widest text-[#F8D12E]">
             ZoroX Tweets
           </p>
-          <p className="text-md text-muted-foreground font-semibold">
+          <p className="text-xs md:text-sm text-center mx-auto md:mx-0 md:text-start lg:text-md text-muted-foreground font-semibold">
             View all tweets made by ZoroX about ${symbol.toUpperCase()}
           </p>
         </div>
-        <p className="pr-2 font-semibold">
+        <p className="hidden md:block font-semibold">
           <span className="text-green-500 font-bold mr-1">{growth}x</span>{" "}
           growth since first tweet
         </p>
       </div>
       {tweets.length > 0 ? (
-        <ScrollArea className="w-[1200px] m-2">
+        <ScrollArea className="w-[400px] sm:w-[600px] md:w-[720px] lg:w-[1000px] xl:w-[1200px] ">
           <div
             ref={scrollContainerRef}
             className="flex space-x-2 p-2 overflow-x-hidden"
@@ -158,7 +158,7 @@ export default function Tweets({
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       ) : (
-        <div className="w-[1200px] h-[50px] flex justify-center items-center">
+        <div className="w-full h-[50px] flex justify-center items-center">
           <p className="sen text-muted-foreground">No tweets yet</p>
         </div>
       )}
