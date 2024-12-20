@@ -24,8 +24,8 @@ export default function Tiktoks({
           <p className="text-xs md:text-sm text-center mx-auto md:mx-0 md:text-start lg:text-md text-muted-foreground font-semibold mb-6">
             All videos where ${symbol.toUpperCase()} was mentioned/talked about.
           </p>
-          <div className="relative">
-            <div className="grid grid-cols-4 gap-2">
+          <div className="relative flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 ">
               {tiktoks.slice(0, paid ? tiktoks.length : 4).map((video, i) => {
                 return (
                   <div
@@ -173,7 +173,7 @@ export default function Tiktoks({
                   </div>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg p-2">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg p-6">
                   <UnlockNow text="View all curated TikToks" />
                 </div>
               </>
