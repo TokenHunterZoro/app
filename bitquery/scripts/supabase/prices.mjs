@@ -86,7 +86,7 @@ export async function pushPrices(filePath, dataJson) {
       if (missingUris.length > 0) {
         console.warn(
           "The following URIs were not found in the tokens table:",
-          missingUris
+          missingUris.length
         );
       }
       const { data, error } = await supabase
@@ -105,7 +105,7 @@ export async function pushPrices(filePath, dataJson) {
   }
 }
 
-// pushPrices("./results/prices-4.json")
+// pushPrices("./results/prices/prices-1734677849982.json")
 //   .catch(console.error)
 //   .finally(() => {
 //     console.log("Update prices completed");

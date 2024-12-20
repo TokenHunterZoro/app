@@ -4,7 +4,7 @@ import fs from "fs/promises";
 
 dotenv.config();
 
-export async function importTokens(filePath, dataJson) {
+export async function pushMemecoins(filePath, dataJson) {
   // Initialize Supabase client
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_ANON_SECRET;

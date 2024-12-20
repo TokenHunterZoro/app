@@ -1,0 +1,260 @@
+{
+  "data": {
+    "Solana": {
+      "DEXTrades": [
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:54Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmQ2X5t5xPkurnuafELt75B7QiP6zJkkxjUQ7nf6x8HrMu"
+              },
+              "Price": 2.015243832278588e-7,
+              "PriceInUSD": 0.00003817800043285615
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:54Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://cdn.dexscreener.com/cms/tokens/metadata/LLrbqJqtZShkM51Nwi1x"
+              },
+              "Price": 3.2384606122703753e-7,
+              "PriceInUSD": 0.00006135136040448837
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:54Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmYHUa6UUdV6zRUuY12MmDpfULEChRFS9hM3g8P4PhsDD4"
+              },
+              "Price": 2.889096548971081e-8,
+              "PriceInUSD": 0.000005473279586841243
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:54Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmWJ2snTcuLVLQPc5xwGkiWyfVqhsDmZ3hAmRyUmUuXepE"
+              },
+              "Price": 3.19954562208821e-7,
+              "PriceInUSD": 0.00006061413124729033
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmYc6mDysM4fF6Y7oefnuEen1bYVNNduEh6rcme6EBVKWf"
+              },
+              "Price": 1.4084407101849727e-7,
+              "PriceInUSD": 0.000026682354354259958
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmXRqsuDjNZ7p2x9Z8VGw2EjRbomiqFu1mV9u3JYY3nPcA"
+              },
+              "Price": 3.279352274655779e-8,
+              "PriceInUSD": 0.0000062126036837803625
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmT1XTz4q26HR1KgYDG8BkXPmxH53dgoxHGMHPwdLgr5Vd"
+              },
+              "Price": 1.0439718516828728e-7,
+              "PriceInUSD": 0.000019777635424083282
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmeLG862BKd5t993qS6jcAonzhY68DScqBeF1CXCFKnZGM"
+              },
+              "Price": 2.8846432963604785e-7,
+              "PriceInUSD": 0.000054648430752205636
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmX2wfxshR8xTyaSEReHkfmWTYK8vqrTWcmHcUEs14hFFw"
+              },
+              "Price": 1.226891620237091e-7,
+              "PriceInUSD": 0.000023242978372258835
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmUC9eP3SeMzcXP4DeA118NrVVGDPaRfYyUsNsrJuYTJCr"
+              },
+              "Price": 3.5779017172810346e-8,
+              "PriceInUSD": 0.000006778193840525242
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmRnfSKctQf8g2Pi3Lz819XoYbpBoGWg9DXeHrfgMbwpeP"
+              },
+              "Price": 3.963742191792198e-8,
+              "PriceInUSD": 0.00000750915341806902
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmeCw6GuWF1t28YYYqa3KbG5B3f1dR4iz8Z7dSqoVjA5Sb"
+              },
+              "Price": 1.4463048633076833e-7,
+              "PriceInUSD": 0.00002739967581737745
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmYoE8ChxSMeipcmTuD3dFnXqDKmqtSHNY1CBpqBWdnUzn"
+              },
+              "Price": 5.470611709622438e-8,
+              "PriceInUSD": 0.000010363858351661779
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/Qmaf3V698mEaxqJhvH4Vr9vMLHqD3v5gfFyCeyYRm7vYuE"
+              },
+              "Price": 1.7498485533714604e-7,
+              "PriceInUSD": 0.00003315019143490576
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmZTvS3RvvxxmMywV7GHRsqG8sKD1QnFSXArpuyW1mMLRf"
+              },
+              "Price": 3.532304520034743e-7,
+              "PriceInUSD": 0.00006691811746789336
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmNMUaQTcEaVHp12rTWZ2P4vnrybAvitbCdtSutND6aYAd"
+              },
+              "Price": 2.8155048152607195e-8,
+              "PriceInUSD": 0.000005333862946708317
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmYCudpLRJAg6ZxX1Qd2z91dTckQrcLY8nZ7Qc281Xfk9W"
+              },
+              "Price": 3.611220471721411e-8,
+              "PriceInUSD": 0.000006841314908113804
+            }
+          }
+        },
+        {
+          "Block": {
+            "Time": "2024-12-20T07:02:53Z"
+          },
+          "Trade": {
+            "Buy": {
+              "Currency": {
+                "Uri": "https://ipfs.io/ipfs/QmVKJLysUn4gE8y1TVXTZweNd8F9auexmgWdngH6Kxrpwa"
+              },
+              "Price": 1.3669995724996874e-7,
+              "PriceInUSD": 0.000025897268327871783
+            }
+          }
+        }
+      ]
+    }
+  }
+}
