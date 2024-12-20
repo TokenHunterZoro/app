@@ -5,7 +5,7 @@ import { pushPrices } from "./supabase/prices.mjs";
 
 dotenv.config();
 
-const path = "results/memecoins/metadata.json";
+const path = "results/prices/metadata.json";
 
 const getMetadata = async () => {
   try {
@@ -113,6 +113,7 @@ export async function fetchAndPushPrices() {
     await pushPrices("", response.data);
   } catch (e) {
     console.error("Error fetching data:", e);
+    throw e;
   }
 }
 

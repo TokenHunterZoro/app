@@ -5,6 +5,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import { extractComments, VideoScraper } from "./scraper.mjs";
+import { addTiktoks } from "./supabase.mjs";
 dotenv.config();
 
 // Configure logging

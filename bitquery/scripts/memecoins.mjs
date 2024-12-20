@@ -124,6 +124,7 @@ export async function fetchAndPushMemecoins() {
     await pushMemecoins("", response.data);
   } catch (e) {
     console.error("Error fetching data:", e);
+    throw e;
   }
 }
 

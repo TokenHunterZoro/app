@@ -36,7 +36,7 @@ export async function addTiktoks(supabase, tiktoks) {
     const insertResponse = await supabase
       .from("tiktoks")
       .upsert(addTiktokData, {
-        onConflict: "url",
+        onConflict: "id",
       });
     if (insertResponse.error) {
       throw new Error(insertResponse.error.message);
@@ -134,7 +134,9 @@ const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_KEY;
 const supabase = createClient(url, key);
 
-const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
+const data = JSON.parse(
+  fs.readFileSync("combined_results_2024-12-20T13-39-41-471Z.json", "utf8")
+);
 
 addTiktoks(supabase, data)
   .then((response) => console.log(response))
