@@ -15,10 +15,8 @@ import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
 import { SortConfig, SortKey, TokenData } from "@/lib/types";
 import TableWrapper from "./hero-table/wrapper";
 import { useEnvironmentStore } from "@/components/context";
-import getMemecoins from "@/lib/supabase/getMemecoins";
 import { formatMarketcap, getTimeAgo, toKebabCase } from "@/lib/utils";
 import Image from "next/image";
-import getCount from "@/lib/supabase/getCount";
 
 export default function HeroTable() {
   const router = useRouter();
@@ -30,7 +28,7 @@ export default function HeroTable() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [memecoinData, setMemecoinData] = useState<any[]>([]);
-  const { setLeaderboad, leaderboard } = useEnvironmentStore((store) => store);
+  const { setLeaderboard, leaderboard } = useEnvironmentStore((store) => store);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -61,13 +59,22 @@ export default function HeroTable() {
       setMemecoinData([]);
       console.log("FETCHING DATA");
 
-      const dataCount = await getCount();
+      const countResponse = await fetch("/api/supabase/get-count");
+      const countData = await countResponse.json();
+      const dataCount = countData.count;
+
       setTotalPages(Math.ceil((dataCount || ITEMS_PER_PAGE) / ITEMS_PER_PAGE));
+
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const tempMemecoins = (await getMemecoins(startIndex)) as any[];
+      const memecoinsResponse = await fetch(
+        `/api/supabase/get-memecoins?start=${startIndex}`
+      );
+      const tempMemecoins = await memecoinsResponse.json();
+
       setMemecoinData(tempMemecoins);
-      if (currentPage == 1 && leaderboard.length == 0)
-        setLeaderboad(tempMemecoins);
+      if (currentPage == 1 && leaderboard.length == 0) {
+        setLeaderboard(tempMemecoins);
+      }
     })();
   }, [currentPage]);
   return (

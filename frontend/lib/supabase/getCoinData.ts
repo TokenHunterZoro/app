@@ -1,26 +1,33 @@
-import { supabase } from "../constants";
+import { toZonedTime } from "date-fns-tz";
 import { Price, TokenData } from "../types";
+import { createClient } from "@supabase/supabase-js";
 
 const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
+  const supabase = createClient(
+    process.env.SUPABASE_URL || "",
+    process.env.SUPABASE_ANON_SECRET || ""
+  );
+
   const { data, error } = await supabase
     .from("tokens")
     .select(
       `
-        *,
-        prices(
-          price_usd,
-          price_sol,
-          trade_at,
-          is_latest
-        ),
-        mentions(
-          tiktoks(username, thumbnail, url, created_at, views),
-          count
-        ),
-        tweets(id, created_at, tweet, tweet_id)
-      `
+    *,
+    prices(
+      price_usd,
+      price_sol,
+      trade_at
+    ),
+    mentions(
+      tiktoks(username, thumbnail, url, created_at, views),
+      count
+    ),
+    tweets(id, created_at, tweet, tweet_id)
+  `
     )
-    .eq("id", tokenId);
+    .eq("id", tokenId)
+    .eq("prices.is_latest", true)
+    .single();
 
   if (error) {
     console.error("Error fetching token details:", error);
@@ -28,32 +35,27 @@ const getCoinData = async (tokenId: number): Promise<TokenData | null> => {
   }
 
   console.log(data);
-
-  // Optional: Sort prices by date if needed
-  if (data && data[0].prices) {
-    data[0].prices.sort(
-      (a: Price, b: Price) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-  }
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   return {
-    ...data[0],
+    id: data.id,
+    name: data.name,
+    symbol: data.symbol,
+    uri: data.uri,
+    image: "" as any,
+    created_at: toZonedTime(new Date(data.created_at), timeZone).toISOString(),
+    address: data.address,
+    prices: data.prices,
     latest_price_usd:
-      data[0].prices.length == 0
-        ? (data[0].id % 3) / 12345
-        : data[0].prices?.[0]?.price_usd,
+      data.prices.length == 0 ? null : data.prices?.[0]?.price_usd,
     latest_price_sol:
-      data[0].prices.length == 0
-        ? (data[0].id % 8) / 12345
-        : data[0].prices?.[0]?.price_sol,
+      data.prices.length == 0 ? null : data.prices?.[0]?.price_sol,
     latest_market_cap:
-      data[0].prices.length == 0
-        ? ((data[0].id % 3) / 12345) * 1000000000
-        : data[0].prices?.[0]?.price_usd * 1000000000,
-    tweets: data[0].tweets,
-    mentions: data[0].mentions.length,
-    tiktoks: data[0].mentions,
+      data.prices.length == 0 ? null : data.prices?.[0]?.price_usd * 1000000000,
+    tweets: data.tweets,
+    mentions: data.mentions.length,
+    tiktoks: data.mentions,
+    views: data.views,
   };
 };
 

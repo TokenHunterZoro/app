@@ -3,17 +3,26 @@ import { useEffect, useState } from "react";
 import Tiktoks from "./tiktoks";
 import TimeSeriesChart from "./time-series-chart";
 import Tweets from "./tweets";
-import getCoinData from "@/lib/supabase/getCoinData";
 import { TokenData } from "@/lib/types";
 import Image from "next/image";
+import { useEnvironmentStore } from "@/components/context";
 
 export default function Ticker({ params }: { params: { id: string } }) {
   const [coinData, setCoinData] = useState<TokenData | null>(null);
+  const { setTokenData } = useEnvironmentStore((store) => store);
   useEffect(() => {
     (async function () {
-      const fetchedCoinData = await getCoinData(parseInt(params.id));
-      console.log(fetchedCoinData);
-      setCoinData(fetchedCoinData);
+      const response = await fetch(
+        `/api/supabase/get-coin-data?tokenId=${params.id}`
+      );
+      const data = await response.json();
+      if (data && !data.error) {
+        setCoinData(data);
+        setTokenData(data.id, data);
+        if (data.latest_price_usd === null) {
+          // Update price data
+        }
+      }
     })();
   }, []);
 

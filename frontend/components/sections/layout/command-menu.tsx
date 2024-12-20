@@ -67,7 +67,10 @@ export function CommandMenu({ ...props }: DialogProps) {
 
       try {
         setSearchState(2);
-        const results = await searchTokens(searchTerm);
+        const response = await fetch(
+          `/api/supabase/search-tokens?term=${searchTerm}`
+        );
+        const results = await response.json();
 
         // Use functional state update to ensure latest state
         setSearchResults((prevResults) => {

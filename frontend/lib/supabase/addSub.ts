@@ -1,10 +1,15 @@
-import { supabase } from "../constants";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function addSub(
   address: string,
   amount: number,
   expires: number
 ) {
+  // Create a single supabase client for interacting with your database
+  const supabase = createClient(
+    process.env.SUPABASE_URL || "",
+    process.env.SUPABASE_ANON_SECRET || ""
+  );
   const { data, error } = await supabase.from("subs").insert([
     {
       created_at: new Date().toISOString(),

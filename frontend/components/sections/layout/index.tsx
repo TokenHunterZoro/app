@@ -7,7 +7,7 @@ import { CommandMenu } from "./command-menu";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { shortenAddress } from "@/lib/utils";
-import getSub from "@/lib/supabase/getSub";
+// import getSub from "@/lib/supabase/getSub";
 import fetchBalances from "@/lib/fetchBalances";
 import mintFreeTestBonks from "@/lib/mintFreeTestBonks";
 import { useToast } from "@/hooks/use-toast";
@@ -24,13 +24,15 @@ export default function Layout({
 
   useEffect(() => {
     if (walletAddress.length > 0) {
-      getSub(walletAddress).then((expires) => {
-        console.log("EXPIRES");
-        console.log(expires);
-        if (expires) {
-          if (new Date().getTime() <= expires) setPaid(true);
-        }
-      });
+      fetch(`/api/supabase/get-sub?address=${walletAddress}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("EXPIRES");
+          console.log(data.expires);
+          if (data.expires) {
+            if (new Date().getTime() <= data.expires) setPaid(true);
+          }
+        });
       fetchBalances(walletAddress).then((balances) => {
         console.log("BALANCES");
         console.log(balances);

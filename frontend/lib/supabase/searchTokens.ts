@@ -1,9 +1,14 @@
-import { IPFS_GATEWAY_URL, ITEMS_PER_PAGE, supabase } from "../constants";
+import { IPFS_GATEWAY_URL, ITEMS_PER_PAGE } from "../constants";
 import { SearchTokenResponse } from "../types";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function searchTokens(
   searchTerm: string
 ): Promise<SearchTokenResponse[]> {
+  const supabase = createClient(
+    process.env.SUPABASE_URL || "",
+    process.env.SUPABASE_ANON_SECRET || ""
+  );
   // First, fetch tokens and join with the prices table to get the most recent price data
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { data, error } = await supabase

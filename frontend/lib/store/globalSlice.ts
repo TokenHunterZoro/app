@@ -14,7 +14,8 @@ interface GlobalActions {
   setBalances: (balance: string, bonkBalance: string) => void;
   setPaid: (paid: boolean) => void;
   setSearchBarValue: (searchBarValue: string) => void;
-  setLeaderboad: (leaderboard: TokenData[]) => void;
+  setLeaderboard: (leaderboard: TokenData[]) => void;
+  setTokenData: (tokenId: number, tokenData: TokenData) => void;
 }
 
 export type GlobalSlice = GlobalState & GlobalActions;
@@ -39,5 +40,22 @@ export const createGlobalSlice: StateCreator<
   setAddress: (walletAddress) => set({ walletAddress }),
   setBalances: (balance, bonkBalance) => set({ balance, bonkBalance }),
   setSearchBarValue: (searchBarValue) => set({ searchBarValue }),
-  setLeaderboad: (leaderboard) => set({ leaderboard }),
+  setLeaderboard: (leaderboard) => set({ leaderboard }),
+  setTokenData: (tokenId, tokenData) =>
+    set((state) => {
+      const updatedLeaderboard = [...state.leaderboard];
+      const index = updatedLeaderboard.findIndex(
+        (token) => token.id === tokenId
+      );
+
+      if (index !== -1) {
+        // If token with tokenId exists, update it
+        updatedLeaderboard[index] = tokenData;
+      } else {
+        // Otherwise, add the new tokenData
+        updatedLeaderboard.push(tokenData);
+      }
+
+      return { leaderboard: updatedLeaderboard };
+    }),
 });
