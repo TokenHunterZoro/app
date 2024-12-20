@@ -37,6 +37,12 @@ type LeaderboardData = {
   symbol: string;
   uri: string;
   image: any;
+  created_at: string;
+  latest_price_usd: number | null;
+  latest_market_cap: number | null;
+  latest_price_sol: number | null;
+  views: number;
+  mentions: number;
 };
 type SortKey = keyof TokenData;
 type SortDirection = "asc" | "desc";

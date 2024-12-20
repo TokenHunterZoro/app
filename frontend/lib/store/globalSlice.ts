@@ -1,12 +1,13 @@
 import { StateCreator } from "zustand";
-import { TokenData } from "../types";
+import { LeaderboardData, TokenData } from "../types";
 interface GlobalState {
   walletAddress: string;
   balance: string;
   bonkBalance: string;
   paid: boolean;
   searchBarValue: string;
-  leaderboard: TokenData[];
+  leaderboard: LeaderboardData[];
+  tokens: Record<string, TokenData>;
 }
 
 interface GlobalActions {
@@ -15,7 +16,7 @@ interface GlobalActions {
   setPaid: (paid: boolean) => void;
   setSearchBarValue: (searchBarValue: string) => void;
   setLeaderboard: (leaderboard: TokenData[]) => void;
-  setTokenData: (tokenId: number, tokenData: TokenData) => void;
+  setToken: (tokenId: number, tokenData: TokenData) => void;
 }
 
 export type GlobalSlice = GlobalState & GlobalActions;
@@ -27,6 +28,7 @@ export const initialGlobalState: GlobalState = {
   bonkBalance: "",
   searchBarValue: "",
   leaderboard: [],
+  tokens: {},
 };
 
 export const createGlobalSlice: StateCreator<
@@ -41,21 +43,8 @@ export const createGlobalSlice: StateCreator<
   setBalances: (balance, bonkBalance) => set({ balance, bonkBalance }),
   setSearchBarValue: (searchBarValue) => set({ searchBarValue }),
   setLeaderboard: (leaderboard) => set({ leaderboard }),
-  setTokenData: (tokenId, tokenData) =>
-    set((state) => {
-      const updatedLeaderboard = [...state.leaderboard];
-      const index = updatedLeaderboard.findIndex(
-        (token) => token.id === tokenId
-      );
-
-      if (index !== -1) {
-        // If token with tokenId exists, update it
-        updatedLeaderboard[index] = tokenData;
-      } else {
-        // Otherwise, add the new tokenData
-        updatedLeaderboard.push(tokenData);
-      }
-
-      return { leaderboard: updatedLeaderboard };
-    }),
+  setToken: (tokenId, tokenData) =>
+    set((state) => ({
+      tokens: { ...state.tokens, [tokenId]: tokenData },
+    })),
 });

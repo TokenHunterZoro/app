@@ -1,4 +1,4 @@
-import { IPFS_GATEWAY_URL, ITEMS_PER_PAGE } from "@/lib/constants";
+import { IPFS_GATEWAY_URL_4, ITEMS_PER_PAGE } from "@/lib/constants";
 import { toZonedTime } from "date-fns-tz";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,12 +8,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const start = parseInt(searchParams.get("start") || "0");
 
-    // First, fetch tokens and join with the prices table to get the most recent price data
     const supabase = createClient(
       process.env.SUPABASE_URL || "",
       process.env.SUPABASE_ANON_SECRET || ""
     );
+
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_SECRET) {
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const { data, error } = await supabase
       .from("tokens")
       .select(
@@ -22,9 +30,8 @@ export async function GET(request: NextRequest) {
         name,
         symbol,
         uri,
-        created_at,
-        address,
         views,
+        created_at,
         mentions,
         prices!inner(price_usd, price_sol, is_latest)
       `
@@ -34,72 +41,72 @@ export async function GET(request: NextRequest) {
       .range(start, start + ITEMS_PER_PAGE - 1);
 
     if (error) {
-      console.error("Error fetching data:", error);
       return NextResponse.json(
-        { error: "Failed to fetch data" },
+        { error: "Database query failed", details: error.message },
         { status: 500 }
       );
     }
 
-    // Map data to the desired format, including IPFS image URI and price data
+    if (!data || data.length === 0) {
+      return NextResponse.json([]);
+    }
+
     const memecoins = await Promise.all(
       data.map(async (token) => {
-        const prices = token.prices.filter((price) => price.is_latest);
-        let latestPrice = prices[0] || {
-          price_sol: (token.id % 8) / 12345,
-          price_usd: (token.id % 3) / 12345,
-        };
+        try {
+          const memecoin = {
+            id: token.id,
+            name: token.name,
+            symbol: token.symbol,
+            uri: token.uri,
+            image: null as any,
+            created_at: toZonedTime(
+              new Date(token.created_at),
+              timeZone
+            ).toISOString(),
+            latest_price_usd: token.prices?.[0]?.price_usd || 0,
+            latest_market_cap: (token.prices?.[0]?.price_usd || 0) * 1000000000,
+            latest_price_sol: token.prices?.[0]?.price_sol || 0,
+            views: token.views,
+            mentions: token.mentions,
+          };
 
-        return {
-          id: token.id,
-          name: token.name,
-          symbol: token.symbol,
-          uri: token.uri,
-          image: "" as any,
-          created_at: toZonedTime(
-            new Date(token.created_at),
-            timeZone
-          ).toISOString(),
-          address: token.address,
-          prices: [],
-          latest_price_usd: latestPrice.price_usd || 0,
-          latest_market_cap: (latestPrice.price_usd || 0) * 1000000000,
-          latest_price_sol: latestPrice.price_sol || 0,
-          views: token.views,
-          mentions: token.mentions,
-          tweets: [],
-          tiktoks: [],
-        };
-      })
-    );
-
-    await Promise.all(
-      (
-        await Promise.all(
-          memecoins.map(async (memecoin) => {
+          try {
             const response = await fetch(
-              IPFS_GATEWAY_URL + memecoin.uri.split("/").at(-1)
+              IPFS_GATEWAY_URL_4 + token.uri.split("/").at(-1)
             );
-            return await response.json();
-          })
-        )
-      ).map(async (metadata, i) => {
-        const imageResponse = await fetch(
-          IPFS_GATEWAY_URL + metadata.image.split("/").at(-1)
-        );
-        const buffer = await imageResponse.arrayBuffer();
-        const base64Image = `data:image/png;base64,${Buffer.from(
-          buffer
-        ).toString("base64")}`;
-        memecoins[i].image = base64Image;
+            if (response.ok) {
+              const metadata = await response.json();
+              if (metadata?.image) {
+                const imageResponse = await fetch(
+                  IPFS_GATEWAY_URL_4 + metadata.image.split("/").at(-1)
+                );
+                if (imageResponse.ok) {
+                  const buffer = await imageResponse.arrayBuffer();
+                  memecoin.image = `data:image/png;base64,${Buffer.from(
+                    buffer
+                  ).toString("base64")}`;
+                }
+              }
+            }
+          } catch (error) {
+            console.error("Error loading metadata/image:", error);
+          }
+
+          return memecoin;
+        } catch (error) {
+          throw error;
+        }
       })
     );
 
     return NextResponse.json(memecoins);
   } catch (error) {
-    console.error("Error processing request:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      {
+        error: "Internal Server Error",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }

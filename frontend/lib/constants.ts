@@ -221,6 +221,9 @@ const pumpfunSample = {
 const ITEMS_PER_PAGE = 7;
 
 const IPFS_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
+const IPFS_GATEWAY_URL_2 = "https://ipfs.io/ipfs/";
+const IPFS_GATEWAY_URL_3 = "https://dweb.link/ipfs/";
+const IPFS_GATEWAY_URL_4 = "https://nftstorage.link/ipfs/";
 
 const DUMMY_HERO_TABLE_DATA = [
   {
@@ -806,4 +809,7 @@ export {
   TEST_BONK_TOKEN_MINT_ADDRESS,
   ZOROX_TREASURY_ADDRESS,
   IPFS_GATEWAY_URL,
+  IPFS_GATEWAY_URL_2,
+  IPFS_GATEWAY_URL_3,
+  IPFS_GATEWAY_URL_4,
 };
