@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/command";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
-import searchTokens from "@/lib/supabase/searchTokens";
 import { SearchTokenResponse } from "@/lib/types";
 import Image from "next/image";
 

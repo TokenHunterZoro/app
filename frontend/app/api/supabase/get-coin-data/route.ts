@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     `
       )
       .eq("id", parseInt(tokenId))
-      .eq("prices.is_latest", true)
+      .order("trade_at", { foreignTable: "prices", ascending: false })
       .single();
 
     if (error) {
