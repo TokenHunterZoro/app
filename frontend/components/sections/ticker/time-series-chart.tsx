@@ -20,7 +20,6 @@ import {
   ReferenceLine,
   TooltipProps,
 } from "recharts";
-import Image from "next/image";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
@@ -97,27 +96,32 @@ function ChartContent({
   const getTickInterval = (): number => {
     switch (timeframe) {
       case "24h":
-        return 3;
+        return window.innerWidth < 768 ? 6 : 3;
       case "7d":
         return 1;
       case "3h":
-        return 3;
+        return window.innerWidth < 768 ? 6 : 3;
       case "1h":
-        return 2;
+        return window.innerWidth < 768 ? 4 : 2;
       case "30m":
-        return 5;
+        return window.innerWidth < 768 ? 10 : 5;
       default:
         return 1;
     }
   };
 
   return (
-    <CardContent>
-      <div className="h-[400px] w-full">
+    <CardContent className="p-0 sm:p-6">
+      <div className="h-[300px] sm:h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 5, right: 0, left: 20, bottom: 5 }}
+            margin={{
+              top: 5,
+              right: window.innerWidth < 768 ? 10 : 0,
+              left: window.innerWidth < 768 ? 10 : 20,
+              bottom: 5,
+            }}
           >
             <ReferenceLine
               y={startingPrice}
@@ -141,24 +145,33 @@ function ChartContent({
             <XAxis
               dataKey="timestamp"
               axisLine={{ stroke: "#E5E7EB" }}
-              tick={{ fill: "#6B7280" }}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
+              }}
               interval={getTickInterval()}
             />
             <YAxis
               yAxisId="price"
               orientation="left"
               domain={[0, "auto"]}
-              width={50}
+              width={window.innerWidth < 768 ? 40 : 50}
               axisLine={{ stroke: "#E5E7EB" }}
-              tick={{ fill: "#6B7280" }}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
+              }}
             />
             <YAxis
               yAxisId="secondary"
               orientation="right"
               domain={[0, "auto"]}
-              width={50}
+              width={window.innerWidth < 768 ? 40 : 50}
               axisLine={{ stroke: "#E5E7EB" }}
-              tick={{ fill: "#6B7280" }}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
+              }}
             />
 
             <Tooltip
@@ -283,38 +296,59 @@ export default function TimeSeriesChartWithPaywall({
   };
 
   return (
-    <Card className="w-full sen">
-      <CardHeader>
-        <div className="flex items-center justify-start">
-          <img src={tokenData.image} className="rounded-full mr-2 w-8 h-8" />
-          <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
-            {tokenData.symbol.toLocaleUpperCase()}
-            <span className="text-muted-foreground text-sm font-medium sen tracking-normal">
-              /{usdOrSolToggle ? "USD" : "SOL"}
-            </span>
-          </CardTitle>
+    <Card className="w-full max-w-[100vw] overflow-hidden sen">
+      <CardHeader className="space-y-4 p-4 sm:p-6">
+        {/* Token Header */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center">
+            <img
+              src={tokenData.image}
+              className="rounded-full mr-2 w-6 h-6 sm:w-8 sm:h-8"
+            />
+            <CardTitle className="text-lg sm:text-xl font-bold text-[#F8D12E] nouns tracking-widest">
+              {tokenData.symbol.toLocaleUpperCase()}
+              <span className="text-muted-foreground text-xs sm:text-sm font-medium sen tracking-normal">
+                /{usdOrSolToggle ? "USD" : "SOL"}
+              </span>
+            </CardTitle>
+          </div>
+
+          <Select value={timeframe} onValueChange={handleTimeframeChange}>
+            <SelectTrigger className="w-24 sm:w-32">
+              <SelectValue placeholder="Timeframe" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="30m">30 Minutes</SelectItem>
+              <SelectItem value="1h">1 Hour</SelectItem>
+              <SelectItem value="3h">3 Hours</SelectItem>
+              <SelectItem value="24h">24 Hours</SelectItem>
+              <SelectItem value="7d">7 Days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex items-center justify-start mb-4">
-          <p className="font-semibold text-3xl">
+        {/* Price Display */}
+        <div className="flex items-center flex-wrap gap-2">
+          <p className="font-semibold text-xl sm:text-3xl">
             {usdOrSolToggle
               ? tokenData.latest_price_usd.toFixed(10)
               : tokenData.latest_price_sol.toFixed(10)}
           </p>
           {isPriceUp ? (
-            <span className="flex items-center text-green-500 ml-2 text-md">
-              <ChevronUp className="text-md w-4 h-4" />
+            <span className="flex items-center text-green-500 text-sm sm:text-md">
+              <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="ml-1">+{priceChange}%</span>
             </span>
           ) : (
-            <span className="flex items-center text-red-500 ml-2">
-              <ChevronDown className="text-xl w-4 h-4" />
+            <span className="flex items-center text-red-500 text-sm sm:text-md">
+              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="ml-1">{priceChange}%</span>
             </span>
           )}
         </div>
 
-        <div className="flex items-center space-x-8">
+        {/* Controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sen">
           <div className="flex items-center space-x-2">
             <Switch
               checked={showPrice}
@@ -323,11 +357,14 @@ export default function TimeSeriesChartWithPaywall({
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
             <div
-              className={`w-4 h-4 rounded-full ${
+              className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${
                 isPriceUp ? "bg-[#10B981]" : "bg-[#EF4444]"
               }`}
             />
-            <Label htmlFor="price-toggle" className="text-sm font-medium">
+            <Label
+              htmlFor="price-toggle"
+              className="text-xs sm:text-sm font-medium"
+            >
               Coin Price
             </Label>
           </div>
@@ -339,8 +376,11 @@ export default function TimeSeriesChartWithPaywall({
               id="views-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
-            <div className="w-4 h-4 rounded-full bg-[#800080]" />
-            <Label htmlFor="views-toggle" className="text-sm font-medium">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#800080]" />
+            <Label
+              htmlFor="views-toggle"
+              className="text-xs sm:text-sm font-medium"
+            >
               TikTok Views
             </Label>
           </div>
@@ -352,25 +392,13 @@ export default function TimeSeriesChartWithPaywall({
               id="mentions-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
-            <div className="w-4 h-4 rounded-full bg-[#2563EB]" />
-            <Label htmlFor="mentions-toggle" className="text-sm font-medium">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#2563EB]" />
+            <Label
+              htmlFor="mentions-toggle"
+              className="text-xs sm:text-sm font-medium"
+            >
               TikTok Mentions
             </Label>
-          </div>
-
-          <div className="flex-1 flex justify-end">
-            <Select value={timeframe} onValueChange={handleTimeframeChange}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Timeframe" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30m">30 Minutes</SelectItem>
-                <SelectItem value="1h">1 Hour</SelectItem>
-                <SelectItem value="3h">3 Hours</SelectItem>
-                <SelectItem value="24h">24 Hours</SelectItem>
-                <SelectItem value="7d">7 Days</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </CardHeader>
