@@ -11,7 +11,12 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SortableTableHeader from "./sortable-table-header";
-import { DUMMY_HERO_TABLE_DATA, ITEMS_PER_PAGE } from "@/lib/constants";
+import {
+  DUMMY_HERO_TABLE_DATA,
+  IPFS_GATEWAY_URL,
+  IPFS_GATEWAY_URL_4,
+  ITEMS_PER_PAGE,
+} from "@/lib/constants";
 import { LeaderboardData, SortConfig, SortKey, TokenData } from "@/lib/types";
 import TableWrapper from "./wrapper";
 import { useEnvironmentStore } from "@/components/context";
@@ -26,6 +31,7 @@ export default function HeroTable() {
   });
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [imagesFetched, setImagesFetched] = useState(false);
   const { setLeaderboard, leaderboard, paid } = useEnvironmentStore(
     (store) => store
   );
@@ -75,6 +81,7 @@ export default function HeroTable() {
 
         if (!isMounted) return;
         setLeaderboard(tempMemecoins);
+        setImagesFetched(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -84,6 +91,23 @@ export default function HeroTable() {
       isMounted = false;
     };
   }, [currentPage, setLeaderboard]);
+
+  useEffect(() => {
+    if (leaderboard.length > 0 && !imagesFetched) {
+      Promise.all(
+        leaderboard.map(async (coin) => {
+          console.log(coin.uri);
+          const metadataResponse = await fetch(
+            IPFS_GATEWAY_URL + coin.uri.split("/").at(-1)
+          );
+          const metadata = await metadataResponse.json();
+          coin.image = IPFS_GATEWAY_URL + metadata.image.split("/").at(-1);
+        })
+      ).then(() => {
+        setImagesFetched(true);
+      });
+    }
+  }, [imagesFetched, leaderboard]);
 
   return (
     <>
@@ -166,15 +190,21 @@ export default function HeroTable() {
                     router.push(`/token/${coin.id}`);
                   }}
                 >
-                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell>
+                    {(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
+                  </TableCell>
                   <TableCell className="flex items-center space-x-2">
-                    <Image
-                      src={coin.image}
-                      alt={coin.symbol}
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 rounded-full"
-                    />
+                    {imagesFetched ? (
+                      <Image
+                        src={coin.image || "/solana.png"}
+                        alt={coin.symbol}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+                    )}
                     <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
                   </TableCell>
                   <TableCell>

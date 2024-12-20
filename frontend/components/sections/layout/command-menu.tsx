@@ -20,6 +20,7 @@ import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
 import searchTokens from "@/lib/supabase/searchTokens";
 import { SearchTokenResponse } from "@/lib/types";
+import Image from "next/image";
 
 export function CommandMenu({ ...props }: DialogProps) {
   const router = useRouter();
@@ -137,10 +138,12 @@ export function CommandMenu({ ...props }: DialogProps) {
                       }}
                       className="data-[selected='true']:bg-secondary cursor-pointer"
                     >
-                      <img
-                        src={navItem.image}
+                      <Image
+                        src={navItem.image || "/memecoins/placeholder.png"}
                         alt={navItem.symbol}
-                        className="w-6 h-6 mr-1 rounded-full"
+                        width={24}
+                        height={24}
+                        className="mr-1 rounded-full"
                       />
                       <span>{navItem.symbol}</span>
                       <span className="text-accent">/ SOL</span>

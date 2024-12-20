@@ -1,4 +1,4 @@
-import { IPFS_GATEWAY_URL_4, ITEMS_PER_PAGE } from "@/lib/constants";
+import { ITEMS_PER_PAGE } from "@/lib/constants";
 import { toZonedTime } from "date-fns-tz";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
@@ -51,54 +51,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json([]);
     }
 
-    const memecoins = await Promise.all(
-      data.map(async (token) => {
-        try {
-          const memecoin = {
-            id: token.id,
-            name: token.name,
-            symbol: token.symbol,
-            uri: token.uri,
-            image: null as any,
-            created_at: toZonedTime(
-              new Date(token.created_at),
-              timeZone
-            ).toISOString(),
-            latest_price_usd: token.prices?.[0]?.price_usd || 0,
-            latest_market_cap: (token.prices?.[0]?.price_usd || 0) * 1000000000,
-            latest_price_sol: token.prices?.[0]?.price_sol || 0,
-            views: token.views,
-            mentions: token.mentions,
-          };
-
-          try {
-            const response = await fetch(
-              IPFS_GATEWAY_URL_4 + token.uri.split("/").at(-1)
-            );
-            if (response.ok) {
-              const metadata = await response.json();
-              if (metadata?.image) {
-                const imageResponse = await fetch(
-                  IPFS_GATEWAY_URL_4 + metadata.image.split("/").at(-1)
-                );
-                if (imageResponse.ok) {
-                  const buffer = await imageResponse.arrayBuffer();
-                  memecoin.image = `data:image/png;base64,${Buffer.from(
-                    buffer
-                  ).toString("base64")}`;
-                }
-              }
-            }
-          } catch (error) {
-            console.error("Error loading metadata/image:", error);
-          }
-
-          return memecoin;
-        } catch (error) {
-          throw error;
-        }
-      })
-    );
+    const memecoins = data.map((token) => ({
+      id: token.id,
+      name: token.name,
+      symbol: token.symbol,
+      uri: token.uri,
+      image: null,
+      created_at: toZonedTime(
+        new Date(token.created_at),
+        timeZone
+      ).toISOString(),
+      latest_price_usd: token.prices?.[0]?.price_usd || 0,
+      latest_market_cap: (token.prices?.[0]?.price_usd || 0) * 1000000000,
+      latest_price_sol: token.prices?.[0]?.price_sol || 0,
+      views: token.views,
+      mentions: token.mentions,
+    }));
 
     return NextResponse.json(memecoins);
   } catch (error) {

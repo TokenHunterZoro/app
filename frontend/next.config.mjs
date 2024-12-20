@@ -25,6 +25,16 @@ const nextConfig = {
         hostname: "picsum.photos",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "nftstorage.link",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        port: "",
+      },
     ],
   },
 };
