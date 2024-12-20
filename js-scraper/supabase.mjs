@@ -4,7 +4,7 @@ import fs from "fs";
 
 dotenv.config();
 
-async function addTiktoks(supabase, tiktoks) {
+export async function addTiktoks(supabase, tiktoks) {
   try {
     const fetchedAt = tiktoks.extraction_time;
     const addTiktokData = [];
@@ -71,14 +71,13 @@ async function addTiktoks(supabase, tiktoks) {
                 tiktok_id: m.tiktok_id,
                 count: mentions,
                 token_id: data.id,
+                mention_at: new Date().toISOString(),
               });
           }
         }
         const addMentionsResponse = await supabase
           .from("mentions")
-          .upsert(addMentionsData, {
-            onConflict: "tiktok_id,token_id",
-          });
+          .insert(addMentionsData);
 
         if (addMentionsResponse.error) {
           throw new Error(addMentionsResponse.error.message);

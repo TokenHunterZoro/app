@@ -298,6 +298,7 @@ const main = async () => {
       if (savedPath) {
         console.log("\nSuccessfully saved all results!");
       }
+      await addTiktoks(supabase, allResults);
     }
 
     console.log("\nAll hashtag terms processed!");
