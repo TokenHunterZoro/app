@@ -19,19 +19,16 @@ export async function GET(request: NextRequest) {
     );
 
     const { data, error } = await supabase
-      .from("tokens")
+      .from("prices")
       .select(
         `
-        *,
-        prices(
-          price_usd,
-          price_sol,
-          trade_at
-        )
+        price_usd,
+        price_sol,
+        trade_at
       `
       )
-      .eq("id", parseInt(tokenId))
-      .single();
+      .eq("token_id", parseInt(tokenId))
+      .order("trade_at", { ascending: false });
 
     if (error) {
       return NextResponse.json(
@@ -40,7 +37,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, data: data.prices });
+    return NextResponse.json({ success: true, data: data });
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(

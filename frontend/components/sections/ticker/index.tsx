@@ -65,6 +65,8 @@ export default function Ticker({ params }: { params: { id: string } }) {
       console.log(coinData);
       fetch(`/api/supabase/get-prices?tokenId=${params.id}`).then((res) => {
         res.json().then((data) => {
+          console.log("DATA");
+          console.log(data);
           setCoinData((prev) => (prev ? { ...prev, prices: data.data } : null));
         });
         setRefreshPrices(false);
