@@ -21,9 +21,9 @@ export class VideoScraper {
       console.log(`Time difference: ${timeDiff}`);
 
       console.log(timeDiff);
-      if (timeDiff > 120 * 3600) {
+      if (timeDiff > 6 * 3600) {
         // 24 hours in seconds
-        console.log("Video older than 24 hours. Skipping...");
+        console.log("Video older than 6 hours. Skipping...");
         return null;
       }
 
@@ -282,6 +282,8 @@ export async function extractComments(postId) {
       "OMG",
       "BUY",
       "TO",
+      "PUMP",
+      "NEW",
       "ITS",
       "MOON",
       "LFG",
