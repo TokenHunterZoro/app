@@ -359,7 +359,7 @@ export default function HeroTable() {
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            NextNext
+            Next
           </Button>
         </div>
       )}

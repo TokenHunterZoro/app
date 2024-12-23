@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       `
       )
       .eq("token_id", parseInt(tokenId))
-      .order("trade_at", { ascending: false });
+      .order("trade_at", { ascending: true });
 
     if (error) {
       return NextResponse.json(

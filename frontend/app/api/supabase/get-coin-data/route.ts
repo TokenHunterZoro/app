@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     `
       )
       .eq("id", parseInt(tokenId))
-      .order("trade_at", { foreignTable: "prices", ascending: false })
+      .order("trade_at", { foreignTable: "prices", ascending: true })
       .single();
 
     if (error) {
@@ -64,13 +64,17 @@ export async function GET(request: NextRequest) {
       address: data.address,
       prices: data.prices,
       latest_price_usd:
-        data.prices.length == 0 ? null : data.prices?.[0]?.price_usd,
+        data.prices.length == 0
+          ? null
+          : data.prices?.[data.prices.length - 1]?.price_usd,
       latest_price_sol:
-        data.prices.length == 0 ? null : data.prices?.[0]?.price_sol,
+        data.prices.length == 0
+          ? null
+          : data.prices?.[data.prices.length - 1]?.price_sol,
       latest_market_cap:
         data.prices.length == 0
           ? null
-          : data.prices?.[0]?.price_usd * 1000000000,
+          : data.prices?.[data.prices.length - 1]?.price_usd * 1000000000,
       tweets: data.tweets,
       mentions: data.mentions.length,
       tiktoks: data.mentions,

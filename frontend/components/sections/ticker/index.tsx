@@ -12,69 +12,118 @@ export default function Ticker({ params }: { params: { id: string } }) {
   const [coinData, setCoinData] = useState<TokenData | null>(null);
   const { setToken, tokens } = useEnvironmentStore((store) => store);
   const [imageFetched, setImageFetched] = useState(false);
-  const [refreshPrices, setRefreshPrices] = useState(false);
+  const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
+
+  // First useEffect for fetching initial coin data
   useEffect(() => {
-    const fetchData = async () => {
-      if (tokens[params.id]) {
-        setCoinData(tokens[params.id]);
-      } else {
-        const response = await fetch(
-          `/api/supabase/get-coin-data?tokenId=${params.id}`
-        );
-        const data = await response.json();
-        if (data && !data.error) {
-          setImageFetched(false);
-          setCoinData(data);
-          setToken(data.id, data);
+    const fetchCoinDataAndPrices = async () => {
+      if (isUpdatingPrice) return; // Prevent concurrent updates
 
-          const updateResponse = await fetch(`/api/supabase/update-price`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ tokenId: params.id }),
+      try {
+        // Use cached data if available
+        const cachedToken = tokens[params.id];
+        if (cachedToken) {
+          setCoinData(cachedToken);
+
+          const pricesResponse = await fetch(
+            `/api/supabase/get-prices?tokenId=${params.id}`
+          );
+          const pricesData = await pricesResponse.json();
+
+          setCoinData((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  prices: pricesData.data,
+                }
+              : null
+          );
+          setToken(parseInt(params.id), {
+            ...cachedToken,
+            prices: pricesData.data,
           });
-          console.log("updateResponse");
-          console.log(updateResponse);
-
-          setRefreshPrices(true);
+        } else {
+          const coinResponse = await fetch(
+            `/api/supabase/get-coin-data?tokenId=${params.id}`
+          );
+          const coinData = await coinResponse.json();
+          setCoinData(coinData);
+          setToken(parseInt(params.id), coinData);
         }
+
+        // Set flag before updating price
+        setIsUpdatingPrice(true);
+
+        // Initiate long-running update-price API call
+        const updateResponse = await fetch(`/api/supabase/update-price`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tokenId: params.id }),
+        });
+        const updateData = await updateResponse.json();
+
+        // Update prices after `update-price` completes
+        if (updateData.success) {
+          setCoinData((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  prices: [...prev.prices, ...updateData.data].sort(
+                    (a, b) =>
+                      new Date(a.trade_at).getTime() -
+                      new Date(b.trade_at).getTime()
+                  ),
+                }
+              : null
+          );
+
+          if (coinData) {
+            setToken(parseInt(params.id), {
+              ...coinData,
+              prices: updateData.data || [],
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching coin data:", error);
+      } finally {
+        setIsUpdatingPrice(false);
       }
     };
 
-    fetchData();
-  }, [params.id]);
+    fetchCoinDataAndPrices();
+  }, [params.id]); // Remove setToken and tokens from dependencies
 
+  // Second useEffect for fetching image
   useEffect(() => {
-    if (coinData && !imageFetched) {
-      const fetchImage = async () => {
+    const fetchImage = async () => {
+      if (!coinData?.uri || imageFetched) return;
+
+      try {
         const metadataResponse = await fetch(
-          IPFS_GATEWAY_URL + coinData.uri.split("/").at(-1)
+          `${IPFS_GATEWAY_URL}${coinData.uri.split("/").at(-1) || ""}`
         );
         const metadata = await metadataResponse.json();
-        coinData.image = metadata.image;
+
+        setCoinData((prev) =>
+          prev
+            ? {
+                ...prev,
+                image: metadata.image,
+              }
+            : null
+        );
+
         setImageFetched(true);
-      };
-      fetchImage();
-    }
-  }, [coinData, imageFetched]);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
 
-  useEffect(() => {
-    if (refreshPrices) {
-      console.log("REFRESHING PRICES");
-      console.log(coinData);
-      fetch(`/api/supabase/get-prices?tokenId=${params.id}`).then((res) => {
-        res.json().then((data) => {
-          console.log("DATA");
-          console.log(data);
-          setCoinData((prev) => (prev ? { ...prev, prices: data.data } : null));
-        });
-        setRefreshPrices(false);
-      });
-    }
-  }, [refreshPrices]);
+    fetchImage();
+  }, [coinData?.uri, imageFetched]); // Only depend on uri and imageFetched
 
-  if (coinData === null)
+  if (coinData === null) {
     return (
       <div className="w-full xl:w-[1250px] mx-auto mt-12 px-4">
         <div className="flex items-center justify-center">
@@ -82,6 +131,8 @@ export default function Ticker({ params }: { params: { id: string } }) {
         </div>
       </div>
     );
+  }
+
   return (
     <div className="w-full xl:w-[1250px] mx-auto mt-12 px-4">
       <TimeSeriesChart tokenData={coinData} />
