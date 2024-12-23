@@ -98,4 +98,4 @@ _"An Autonomous AI Agent that browses TikTok to help you find the hottest memeco
 
 Made with ❤️ by Gabriel Antony Xaviour
 
-X @gabrielaxyeth
+X [@gabrielaxyeth](https://x.com/gabrielaxyeth)
