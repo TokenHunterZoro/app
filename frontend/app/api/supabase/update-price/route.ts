@@ -4,8 +4,10 @@ import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
+  console.log("Starting POST request handler");
   try {
     const { tokenId } = await request.json();
+    console.log("Received request with tokenId:", tokenId);
 
     if (!tokenId) {
       console.error("Token ID is missing in the request.");
@@ -20,19 +22,11 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_URL || "",
       process.env.SUPABASE_ANON_SECRET || ""
     );
+    console.log("Supabase client created");
 
     const { data, error } = await supabase
       .from("tokens")
-      .select(
-        `
-        *,
-        prices(
-          price_usd,
-          price_sol,
-          trade_at
-        )
-      `
-      )
+      .select(`id, address, prices(price_usd, price_sol, trade_at)`)
       .eq("id", parseInt(tokenId))
       .eq("prices.is_latest", true)
       .single();
@@ -46,122 +40,65 @@ export async function POST(request: NextRequest) {
     }
 
     console.log("Token data fetched successfully:", data);
-    let firstRequestBody = "";
-    let secondRequestBody = "";
-    let thirdRequestBody = "";
     const now = Date.now();
+    const requestBodies = [];
+    console.log("Current timestamp:", new Date(now).toISOString());
 
-    if (data.prices.length == 0) {
-      console.log("No prices found, preparing to fetch trades.");
-      firstRequestBody = JSON.stringify({
-        query: getQuery(data.address, "", ""),
+    // Always get current price
+    console.log("Adding request for current price");
+    requestBodies.push({
+      query: getQuery(data.address, true, 0),
+      variables: "{}",
+    });
+
+    const sincePriceFetch =
+      data.prices.length > 0 ? new Date(data.prices[0].trade_at).getTime() : 0;
+    const timeDiff = now - sincePriceFetch;
+    console.log(
+      "Time since last price fetch:",
+      timeDiff / (60 * 1000),
+      "minutes"
+    );
+
+    // Helper function to add request bodies based on time intervals
+    if (!sincePriceFetch || timeDiff > 12 * 60 * 60 * 1000) {
+      console.log("Adding 12h and 6h requests");
+      requestBodies.push({
+        query: getQuery(data.address, false, 0),
         variables: "{}",
       });
-      secondRequestBody = JSON.stringify({
-        query: getQuery(
-          data.address,
-          new Date(now - 24 * 60 * 60 * 1000 - 1000).toISOString(),
-          new Date(now - 24 * 60 * 60 * 1000 + 1000).toISOString()
-        ),
+      requestBodies.push({
+        query: getQuery(data.address, false, 1200),
         variables: "{}",
       });
-      thirdRequestBody = JSON.stringify({
-        query: getQuery(
-          data.address,
-          new Date(now - 12 * 60 * 60 * 1000 - 1000).toISOString(),
-          new Date(now - 12 * 60 * 60 * 1000 + 1000).toISOString()
-        ),
+    } else if (timeDiff > 3 * 60 * 60 * 1000) {
+      console.log("Adding 3h request");
+      requestBodies.push({
+        query: getQuery(data.address, false, 3000),
         variables: "{}",
       });
-    } else {
-      console.log("Fetching trades since:   ", data.prices[0].trade_at);
-      const sincePriceFetch = new Date(data.prices[0].trade_at);
-      firstRequestBody = JSON.stringify({
-        query: getQuery(data.address, "", ""),
+    } else if (timeDiff > 60 * 60 * 1000) {
+      console.log("Adding 1h request");
+      requestBodies.push({
+        query: getQuery(data.address, false, 4000),
         variables: "{}",
       });
-      if (now - sincePriceFetch.getTime() > 24 * 60 * 60 * 1000) {
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 24 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 24 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-        thirdRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 12 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 12 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      } else if (now - sincePriceFetch.getTime() > 12 * 60 * 60 * 1000) {
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 12 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 12 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-        thirdRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 6 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 6 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      } else if (now - sincePriceFetch.getTime() > 3 * 60 * 60 * 1000)
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 3 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 3 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      else if (now - sincePriceFetch.getTime() > 1 * 60 * 60 * 1000)
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 1 * 60 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 1 * 60 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      else if (now - sincePriceFetch.getTime() > 30 * 60 * 1000)
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 30 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 30 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      else if (now - sincePriceFetch.getTime() > 15 * 60 * 1000)
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 15 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 15 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
-      else
-        secondRequestBody = JSON.stringify({
-          query: getQuery(
-            data.address,
-            new Date(now - 5 * 60 * 1000 - 1000).toISOString(),
-            new Date(now - 5 * 60 * 1000 + 1000).toISOString()
-          ),
-          variables: "{}",
-        });
+    } else if (timeDiff > 30 * 60 * 1000) {
+      console.log("Adding 30min request");
+      requestBodies.push({
+        query: getQuery(data.address, true, 2000),
+        variables: "{}",
+      });
+    } else if (timeDiff > 0) {
+      console.log("Adding 5min request");
+      requestBodies.push({
+        query: getQuery(data.address, true, 1000),
+        variables: "{}",
+      });
     }
 
-    const firstRequestConfig = {
+    console.log(`Preparing to make ${requestBodies.length} API requests`);
+    const axiosConfig = {
       method: "post",
       maxBodyLength: Infinity,
       url: "https://streaming.bitquery.io/eap",
@@ -170,107 +107,55 @@ export async function POST(request: NextRequest) {
         "X-API-KEY": process.env.BITQUERY_API_KEY,
         Authorization: "Bearer " + process.env.ACCESS_TOKEN,
       },
-      data: firstRequestBody,
-    };
-    const secondRequestConfig = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://streaming.bitquery.io/eap",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": process.env.BITQUERY_API_KEY,
-        Authorization: "Bearer " + process.env.ACCESS_TOKEN,
-      },
-      data: secondRequestBody,
     };
 
-    const insertData: any[] = [];
+    console.log("Making API requests...");
+    const responses = await Promise.all(
+      requestBodies.map((body) =>
+        axios.request({ ...axiosConfig, data: JSON.stringify(body) })
+      )
+    );
+    console.log(`Received ${responses.length} API responses`);
 
-    const firstResponse = await axios.request(firstRequestConfig);
-    const secondResponse = await axios.request(secondRequestConfig);
+    const insertData = responses.reduce((acc: any[], response, index) => {
+      console.log(`Processing response ${index + 1}/${responses.length}`);
+      if (response.data.errors) {
+        console.error(`Error in response ${index + 1}:`, response.data.errors);
+        throw new Error(JSON.stringify(response.data.errors));
+      }
 
-    if (
-      firstResponse.data.data &&
-      firstResponse.data.data.Solana.DEXTrades[0]
-    ) {
-      const firstTrade = firstResponse.data.data.Solana.DEXTrades[0];
-      insertData.push({
-        token_id: data.id,
-        price_sol: firstTrade.Trade.Buy.Price,
-        price_usd: firstTrade.Trade.Buy.PriceInUSD,
-        trade_at: firstTrade.Block.Time,
-        is_latest: true,
-      });
-    } else {
-      return NextResponse.json({
-        success: false,
-        error: firstResponse.data.errors
-          ? firstResponse.data.errors
-          : "No trades found",
-      });
-    }
-
-    if (
-      secondResponse.data.data &&
-      secondResponse.data.data.Solana.DEXTrades[0]
-    ) {
-      const secondTrade = secondResponse.data.data.Solana.DEXTrades[0];
-      insertData.push({
-        token_id: data.id,
-        price_sol: secondTrade.Trade.Buy.Price,
-        price_usd: secondTrade.Trade.Buy.PriceInUSD,
-        trade_at: secondTrade.Block.Time,
-        is_latest: true,
-      });
-    } else {
-      return NextResponse.json({
-        success: false,
-        error: secondResponse.data.errors
-          ? secondResponse.data.errors
-          : "No trades found",
-      });
-    }
-
-    if (thirdRequestBody) {
-      const thirdRequestConfig = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "https://streaming.bitquery.io/eap",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": process.env.BITQUERY_API_KEY,
-          Authorization: "Bearer " + process.env.ACCESS_TOKEN,
-        },
-        data: thirdRequestBody,
-      };
-      const thirdResponse = await axios.request(thirdRequestConfig);
-      if (
-        thirdResponse.data.data &&
-        thirdResponse.data.data.Solana.DEXTrades.length > 0
-      ) {
-        const thirdTrade = thirdResponse.data.data.Solana.DEXTrades[0];
-        insertData.push({
+      const trades = response.data.data?.Solana.DEXTrades;
+      if (trades?.[0]) {
+        const trade = trades[0];
+        console.log(`Found trade data in response ${index + 1}:`, trade);
+        acc.push({
           token_id: data.id,
-          price_sol: thirdTrade.Trade.Buy.Price,
-          price_usd: thirdTrade.Trade.Buy.PriceInUSD,
-          trade_at: thirdTrade.Block.Time,
+          price_sol: trade.Trade.Buy.Price,
+          price_usd: trade.Trade.Buy.PriceInUSD,
+          trade_at: trade.Block.Time,
           is_latest: true,
         });
       } else {
-        return NextResponse.json({
-          success: false,
-          error: thirdResponse.data.errors
-            ? thirdResponse.data.errors
-            : "No trades found",
-        });
+        console.log(`No trade data found in response ${index + 1}`);
       }
+      return acc;
+    }, []);
+
+    if (insertData.length > 0) {
+      console.log("Preparing to insert price data:", insertData);
+      const { error: insertError } = await supabase
+        .from("prices")
+        .insert(insertData);
+
+      if (insertError) {
+        console.error("Error inserting prices:", insertError);
+        throw new Error(`Failed to insert prices: ${insertError.message}`);
+      }
+
+      console.log(`Successfully inserted ${insertData.length} price records`);
+    } else {
+      console.log("No price data to insert");
     }
-
-    const { error: insertError } = await supabase
-      .from("prices")
-      .insert(insertData);
-
-    console.log("Inserted data:", insertError);
 
     return NextResponse.json({ success: true, data: insertData });
   } catch (error) {

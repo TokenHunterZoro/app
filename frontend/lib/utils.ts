@@ -74,25 +74,20 @@ export function formatMarketcap(num: number): string {
 
 export function getQuery(
   mintAddress: string,
-  beforeOffsetTimestamp: string,
-  afterOffsetTimestamp: string
+  isLatest: boolean,
+  offset: number = 0
 ) {
   console.log("mintAddress", mintAddress);
-  console.log("beforeOffsetTimestamp", beforeOffsetTimestamp);
-  console.log("afterOffsetTimestamp", afterOffsetTimestamp);
-  if (beforeOffsetTimestamp.length > 0)
+  console.log("isLatest", isLatest);
+  console.log("offset", offset);
+
+  if (!isLatest) {
     return `{
   Solana {
     DEXTrades(
-      limit: { count: 1 }
-      orderBy: { descending: Block_Time }
+      limit: { count: 1, offset: ${offset} }
+      orderBy: { ascending: Block_Time }
       where: {
-        Block: {
-          Time: {
-            after: "${afterOffsetTimestamp}"
-            before: "${beforeOffsetTimestamp}"
-          }
-        },
         Instruction: {
           Program: {
             Address: {
@@ -133,11 +128,11 @@ export function getQuery(
     }
   }
 }`;
-  else
+  } else {
     return `{
   Solana {
     DEXTrades(
-      limit: { count: 1 }
+      limit: { count: 1, offset: ${offset} }
       orderBy: { descending: Block_Time }
       where: {
         Instruction: {
@@ -180,4 +175,5 @@ export function getQuery(
     }
   }
 }`;
+  }
 }
