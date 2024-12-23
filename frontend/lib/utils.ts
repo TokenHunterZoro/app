@@ -71,3 +71,113 @@ export function formatMarketcap(num: number): string {
 
   return formatted + units[exponent];
 }
+
+export function getQuery(
+  mintAddress: string,
+  beforeOffsetTimestamp: string,
+  afterOffsetTimestamp: string
+) {
+  console.log("mintAddress", mintAddress);
+  console.log("beforeOffsetTimestamp", beforeOffsetTimestamp);
+  console.log("afterOffsetTimestamp", afterOffsetTimestamp);
+  if (beforeOffsetTimestamp.length > 0)
+    return `{
+  Solana {
+    DEXTrades(
+      limit: { count: 1 }
+      orderBy: { descending: Block_Time }
+      where: {
+        Block: {
+          Time: {
+            after: "${afterOffsetTimestamp}"
+            before: "${beforeOffsetTimestamp}"
+          }
+        },
+        Instruction: {
+          Program: {
+            Address: {
+              is: "${mintAddress}" 
+            }
+          }
+        },
+        Trade: {
+          Dex: {
+            ProtocolName: {
+              is: "pump"
+            }
+          },
+          Buy: {
+            Currency: {
+              MintAddress: {
+                notIn: ["11111111111111111111111111111111"]
+              }
+            }
+          }
+        },
+        Transaction: {
+          Result: {
+            Success: true
+          }
+        }
+      }
+    ) {
+      Trade {
+        Buy {
+          Price
+          PriceInUSD
+        }
+      }
+      Block {
+        Time
+      }
+    }
+  }
+}`;
+  else
+    return `{
+  Solana {
+    DEXTrades(
+      limit: { count: 1 }
+      orderBy: { descending: Block_Time }
+      where: {
+        Instruction: {
+          Program: {
+            Address: {
+              is: "${mintAddress}" 
+            }
+          }
+        },
+        Trade: {
+          Dex: {
+            ProtocolName: {
+              is: "pump"
+            }
+          },
+          Buy: {
+            Currency: {
+              MintAddress: {
+                notIn: ["11111111111111111111111111111111"]
+              }
+            }
+          }
+        },
+        Transaction: {
+          Result: {
+            Success: true
+          }
+        }
+      }
+    ) {
+      Trade {
+        Buy {
+          Price
+          PriceInUSD
+        }
+      }
+      Block {
+        Time
+      }
+    }
+  }
+}`;
+}

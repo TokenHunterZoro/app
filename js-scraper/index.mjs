@@ -299,7 +299,11 @@ const main = async () => {
       if (savedPath) {
         console.log("\nSuccessfully saved all results!");
       }
-      await addTiktoks(supabase, allResults);
+      await addTiktoks(supabase, {
+        extraction_time: new Date().toISOString(),
+        total_searches: allResults.length,
+        results: allResults,
+      });
     }
 
     console.log("\nAll hashtag terms processed!");
