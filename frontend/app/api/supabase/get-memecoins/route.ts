@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const start = parseInt(searchParams.get("start") || "0");
+    let start = parseInt(searchParams.get("start") || "0");
 
     const supabase = createClient(
       process.env.SUPABASE_URL || "",
@@ -19,39 +19,51 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
-
+    const uniqueSymbols = new Set();
+    const results = [];
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const { data, error } = await supabase
-      .from("tokens")
-      .select(
+    while (uniqueSymbols.size < 7) {
+      const { data, error } = await supabase
+        .from("tokens")
+        .select(
+          `
+          id,
+          name,
+          symbol,
+          uri,
+          views,
+          created_at,
+          mentions,
+          prices!inner(price_usd, price_sol, is_latest)
         `
-        id,
-        name,
-        symbol,
-        uri,
-        views,
-        created_at,
-        mentions,
-        prices!inner(price_usd, price_sol, is_latest)
-      `
-      )
-      .eq("prices.is_latest", true)
-      .order("mentions", { ascending: false })
-      .range(start, start + ITEMS_PER_PAGE - 1);
+        )
+        .eq("prices.is_latest", true)
+        .order("mentions", { ascending: false })
+        .range(start, start + ITEMS_PER_PAGE - 1);
 
-    if (error) {
-      return NextResponse.json(
-        { error: "Database query failed", details: error.message },
-        { status: 500 }
-      );
+      if (error) {
+        return NextResponse.json(
+          { error: "Database query failed", details: error.message },
+          { status: 500 }
+        );
+      }
+      if (!data || data.length === 0) {
+        return NextResponse.json([]);
+      }
+      for (const entry of data) {
+        results.push(entry);
+        uniqueSymbols.add(entry.symbol.toUpperCase());
+        if (uniqueSymbols.size === 7) {
+          break;
+        }
+      }
+
+      // Increment range for pagination
+      start += ITEMS_PER_PAGE;
     }
 
-    if (!data || data.length === 0) {
-      return NextResponse.json([]);
-    }
-
-    const memecoins = data.map((token) => ({
+    const memecoins = results.map((token) => ({
       id: token.id,
       name: token.name,
       symbol: token.symbol,

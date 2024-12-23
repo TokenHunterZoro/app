@@ -9,10 +9,9 @@ import {
 } from "@/components/ui/table";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SortableTableHeader from "./sortable-table-header";
 import {
-  DUMMY_HERO_TABLE_DATA,
   IPFS_GATEWAY_URL,
   IPFS_GATEWAY_URL_4,
   ITEMS_PER_PAGE,
@@ -22,6 +21,8 @@ import TableWrapper from "./wrapper";
 import { useEnvironmentStore } from "@/components/context";
 import { formatMarketcap, getTimeAgo, toKebabCase } from "@/lib/utils";
 import Image from "next/image";
+import { ChevronRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function HeroTable() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function HeroTable() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [imagesFetched, setImagesFetched] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState(new Set());
   const { setLeaderboard, leaderboard, paid } = useEnvironmentStore(
     (store) => store
   );
@@ -108,6 +110,36 @@ export default function HeroTable() {
       });
     }
   }, [imagesFetched, leaderboard]);
+  const groupedTokens = useMemo(() => {
+    const groups: Record<string, LeaderboardData[]> = {};
+    leaderboard.forEach((token) => {
+      const symbol = token.symbol.toUpperCase();
+      if (!groups[symbol]) {
+        groups[symbol] = [];
+      }
+      groups[symbol].push(token);
+    });
+    return groups;
+  }, [leaderboard]);
+  const getGroupRepresentative = (tokens: LeaderboardData[]) => {
+    return tokens.reduce((prev, current) =>
+      (current.latest_market_cap || 0) > (prev.latest_market_cap || 0)
+        ? current
+        : prev
+    );
+  };
+
+  const toggleGroup = (symbol: string) => {
+    setExpandedGroups((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(symbol)) {
+        newSet.delete(symbol);
+      } else {
+        newSet.add(symbol);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <>
@@ -182,48 +214,120 @@ export default function HeroTable() {
             </TableHeader>
 
             <TableBody>
-              {leaderboard.map((coin: LeaderboardData, idx: number) => (
-                <TableRow
-                  key={coin.id}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    router.push(`/token/${coin.id}`);
-                  }}
-                >
-                  <TableCell>
-                    {(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
-                  </TableCell>
-                  <TableCell className="flex items-center space-x-2">
-                    {imagesFetched ? (
-                      <Image
-                        src={coin.image || "/solana.png"}
-                        alt={coin.symbol}
-                        width={32}
-                        height={32}
-                        className="w-8 h-8 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
-                    )}
-                    <span>{(coin.symbol as string).toLocaleUpperCase()}</span>
-                  </TableCell>
-                  <TableCell>
-                    {coin.latest_price_usd
-                      ? coin.latest_price_usd.toFixed(10)
-                      : "0.00"}
-                  </TableCell>
-                  <TableCell>
-                    {coin.latest_price_sol
-                      ? coin.latest_price_sol.toFixed(10)
-                      : "0.00"}
-                  </TableCell>
-                  <TableCell>{getTimeAgo(coin.created_at)}</TableCell>
-                  <TableCell>{coin.views || 0}</TableCell>
-                  <TableCell>{coin.mentions || 0}</TableCell>
-                  <TableCell>
-                    {formatMarketcap(coin.latest_market_cap || 0)}
-                  </TableCell>
-                </TableRow>
+              {Object.entries(groupedTokens).map(([symbol, tokens]) => (
+                <React.Fragment key={symbol}>
+                  {/* Group Header Row */}
+                  <TableRow
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleGroup(symbol)}
+                  >
+                    <TableCell>
+                      {tokens.length > 1 ? (
+                        expandedGroups.has(symbol) ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )
+                      ) : (
+                        <span className="w-4" />
+                      )}
+                    </TableCell>
+                    <TableCell className="flex items-center space-x-2">
+                      {imagesFetched ? (
+                        <Image
+                          src={
+                            getGroupRepresentative(tokens).image ||
+                            "/solana.png"
+                          }
+                          alt={symbol}
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+                      )}
+                      <div>
+                        <span className="font-medium">{symbol}</span>
+                        {tokens.length > 1 && (
+                          <span className="ml-2 text-sm text-muted-foreground">
+                            ({tokens.length} tokens)
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      $
+                      {getGroupRepresentative(tokens).latest_price_usd?.toFixed(
+                        10
+                      ) || "0.00"}
+                    </TableCell>
+                    <TableCell>
+                      ◎
+                      {getGroupRepresentative(tokens).latest_price_sol?.toFixed(
+                        10
+                      ) || "0.00"}
+                    </TableCell>
+                    <TableCell>
+                      {getTimeAgo(getGroupRepresentative(tokens).created_at)}
+                    </TableCell>
+                    <TableCell>
+                      {tokens.reduce((sum, t) => sum + (t.views || 0), 0)}
+                    </TableCell>
+                    <TableCell>
+                      {tokens.reduce((sum, t) => sum + (t.mentions || 0), 0)}
+                    </TableCell>
+                    <TableCell>
+                      {formatMarketcap(
+                        tokens.reduce(
+                          (sum, t) => sum + (t.latest_market_cap || 0),
+                          0
+                        )
+                      )}
+                    </TableCell>
+                  </TableRow>
+
+                  {/* Expanded Group Rows */}
+                  {expandedGroups.has(symbol) &&
+                    tokens.length > 1 &&
+                    tokens.map((token, idx) => (
+                      <TableRow
+                        key={token.id}
+                        className="cursor-pointer bg-muted/20 hover:bg-muted/30"
+                        onClick={() => router.push(`/token/${token.id}`)}
+                      >
+                        <TableCell />
+                        <TableCell className="flex items-center space-x-2 pl-8">
+                          {imagesFetched ? (
+                            <Image
+                              src={token.image || "/solana.png"}
+                              alt={token.symbol}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6 rounded-full"
+                            />
+                          ) : (
+                            <div className="w-6 h-6 rounded-full bg-gray-200 animate-pulse" />
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            {token.symbol}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          ${token.latest_price_usd?.toFixed(10) || "0.00"}
+                        </TableCell>
+                        <TableCell>
+                          ◎{token.latest_price_sol?.toFixed(10) || "0.00"}
+                        </TableCell>
+                        <TableCell>{getTimeAgo(token.created_at)}</TableCell>
+                        <TableCell>{token.views || 0}</TableCell>
+                        <TableCell>{token.mentions || 0}</TableCell>
+                        <TableCell>
+                          {formatMarketcap(token.latest_market_cap || 0)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
@@ -249,7 +353,7 @@ export default function HeroTable() {
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            Next
+            NextNext
           </Button>
         </div>
       )}

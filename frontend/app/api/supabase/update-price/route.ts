@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
   Solana {
     DEXTrades(
       orderBy: { descending: Block_Time }
+      limitBy: { by: Block_Hash, count: 1 }
       where: {
         Instruction: {
           Program: {
@@ -113,6 +114,7 @@ export async function POST(request: NextRequest) {
   Solana {
     DEXTrades(
       orderBy: { descending: Block_Time }
+      limitBy: { by: Block_Hash, count: 1 }
       where: {
         Instruction: {
           Program: {
@@ -190,15 +192,25 @@ export async function POST(request: NextRequest) {
 
     const trades = response.data.data.Solana.DEXTrades;
     console.log(`Fetched ${trades.length} trades.`);
-    const insertData = trades.map((trade: any, i: number) => {
-      return {
-        token_id: data.id,
-        price_sol: trade.Trade.Buy.Price,
-        price_usd: trade.Trade.Buy.PriceInUSD,
-        trade_at: trade.Block.Time,
-        is_latest: i == 0,
-      };
+    let insertData: any[] = [];
+    let lastTime = 0;
+    const interval = 5000;
+    console.log(trades[trades.length - 1]);
+    trades.forEach((trade: any, i: number) => {
+      const tradeTime = new Date(trade.Block.Time).getTime();
+      if (tradeTime - lastTime >= interval) {
+        insertData.push({
+          token_id: data.id,
+          price_sol: trade.Trade.Buy.Price,
+          price_usd: trade.Trade.Buy.PriceInUSD,
+          trade_at: trade.Block.Time,
+          is_latest: i == 0,
+        });
+        lastTime = tradeTime;
+      }
     });
+    console.log("INSERT DATA");
+    console.log(insertData);
     const batchSize = 1500;
     for (let i = 0; i < insertData.length; i += batchSize) {
       console.log("Inserting batch:", i);

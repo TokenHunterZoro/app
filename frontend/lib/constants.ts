@@ -218,7 +218,7 @@ const pumpfunSample = {
     },
   },
 };
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 20;
 
 const IPFS_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
 const IPFS_GATEWAY_URL_2 = "https://ipfs.io/ipfs/";

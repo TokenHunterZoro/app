@@ -185,4 +185,75 @@ async function main() {
   }
 }
 
-main();
+async function altMain() {
+  const query = `{
+  Solana {
+    DEXTrades(
+      orderBy: { descending: Block_Time }
+      where: {
+        Instruction: {
+          Program: {
+            Address: {
+              is: "${"6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"}" 
+            }
+          }
+        },
+        Trade: {
+          Dex: {
+            ProtocolName: {
+              is: "pump"
+            }
+          },
+          Buy: {
+            Currency: {
+              MintAddress: {
+                notIn: ["11111111111111111111111111111111"]
+              }
+            }
+          }
+        },
+        Transaction: {
+          Result: {
+            Success: true
+          }
+        }
+      }
+    ) {
+      Trade {
+        Buy {
+          Price
+          PriceInUSD
+        }
+      }
+      Block {
+        Time
+      }
+    }
+  }
+}`;
+
+  const config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: "https://streaming.bitquery.io/eap",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": process.env.BITQUERY_API_KEY,
+      Authorization: "Bearer " + process.env.ACCESS_TOKEN,
+    },
+    data: JSON.stringify({
+      query: query,
+      variables: "{}",
+    }),
+  };
+
+  const response = await axios.request(config);
+  if (!response.data || response.data.data.Solana.DEXTrades == null) {
+    console.log("ERROR");
+    console.log(response.data.errors[0].message);
+  } else {
+    console.log(JSON.stringify(response.data.data.Solana.DEXTrades, null, 2));
+  }
+}
+
+altMain();

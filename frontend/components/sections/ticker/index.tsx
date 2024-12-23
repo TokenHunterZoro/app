@@ -43,7 +43,7 @@ export default function Ticker({ params }: { params: { id: string } }) {
     };
 
     fetchData();
-  }, [params.id, setToken, tokens]);
+  }, [params.id]);
 
   useEffect(() => {
     if (coinData && !imageFetched) {

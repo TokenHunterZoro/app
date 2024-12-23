@@ -57,19 +57,8 @@ const processTradeData = (
   const filteredTrades = trades.filter(
     (trade) => now - new Date(trade.trade_at).getTime() <= timeframeLimit
   );
-
-  // Determine the earliest timestamp in the filtered trades
-  const earliestTimestamp = Math.min(
-    ...filteredTrades.map((trade) => new Date(trade.trade_at).getTime())
-  );
-
-  // Filter out trades that are older than the earliest timestamp for the timeframe
-  const validTrades = filteredTrades.filter(
-    (trade) => new Date(trade.trade_at).getTime() >= earliestTimestamp
-  );
-
-  console.log(validTrades);
-  return validTrades.map((trade) => ({
+  console.log(filteredTrades);
+  return filteredTrades.map((trade) => ({
     timestamp: formatTimestamp(trade.trade_at, timeframe),
     price: trade.price_usd,
     mentions: Math.floor(Math.random() * 1000), // Keeping random generation for mentions
@@ -96,7 +85,6 @@ const formatTimestamp = (
       return timestamp;
   }
 };
-
 function ChartContent({
   data,
   showPrice,
@@ -239,9 +227,34 @@ function ChartContent({
                 name="Mentions"
               />
             )}
-
             <Tooltip
-            // ... Tooltip configuration remains the same
+              content={({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div
+                      style={{
+                        padding: "10px",
+                      }}
+                      className=" border bg-card"
+                    >
+                      <p style={{ margin: 0, fontWeight: "bold" }}>{label}</p>
+                      {payload[0] && (
+                        <p style={{ margin: 0 }}>Price: ${payload[0].value}</p>
+                      )}
+                      {payload[1] && (
+                        <p style={{ margin: 0 }}>
+                          Mentions: {payload[1].value}
+                        </p>
+                      )}
+                      {payload[2] && (
+                        <p style={{ margin: 0 }}>Views: {payload[2].value}</p>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              cursor={false}
             />
           </LineChart>
         </ResponsiveContainer>
