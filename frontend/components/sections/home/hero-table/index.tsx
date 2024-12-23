@@ -219,7 +219,13 @@ export default function HeroTable() {
                   {/* Group Header Row */}
                   <TableRow
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => toggleGroup(symbol)}
+                    onClick={() => {
+                      if (tokens.length > 1) {
+                        toggleGroup(symbol);
+                      } else {
+                        router.push(`/token/${tokens[0].id}`);
+                      }
+                    }}
                   >
                     <TableCell>
                       {tokens.length > 1 ? (

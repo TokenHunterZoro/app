@@ -11,23 +11,23 @@ export async function addTiktoks(supabase, tiktoks) {
     const mentionsData = [];
 
     for (const result of tiktoks.results) {
-      for (const videos of result.videos) {
-        const tiktokId = getTiktokId(videos.video_url);
+      for (const video of result.videos) {
+        const tiktokId = getTiktokId(video.video_url);
         const updateData = {
           id: tiktokId,
-          username: videos.author,
-          url: videos.video_url,
-          thumbnail: videos.thumbnail_url,
-          created_at: new Date(videos.posted_timestamp * 1000).toISOString(),
+          username: video.author,
+          url: video.video_url,
+          thumbnail: video.thumbnail_url,
+          created_at: new Date(video.posted_timestamp * 1000).toISOString(),
           fetched_at: fetchedAt,
-          views: formatViews(videos.views.length > 0 ? videos.views : "0"),
-          comments: videos.comments.count,
+          views: formatViews(video.views?.toString() || "0"),
+          comments: video.comments?.count || 0,
         };
 
         mentionsData.push({
           tiktok_id: tiktokId,
           views: updateData.views,
-          data: videos.comments.tickers,
+          data: video.comments?.tickers || {},
         });
         addTiktokData.push(updateData);
       }
@@ -35,109 +35,113 @@ export async function addTiktoks(supabase, tiktoks) {
 
     const insertResponse = await supabase
       .from("tiktoks")
-      .upsert(addTiktokData, {
-        onConflict: "id",
-      });
+      .upsert(addTiktokData, { onConflict: "id" })
+      .select();
     if (insertResponse.error) {
       throw new Error(insertResponse.error.message);
     }
 
-    for (const m of mentionsData) {
-      try {
-        const addMentionsData = [];
-        for (const [symbol, mentions] of Object.entries(m.data)) {
-          // Fetch the current record for the symbol (case-insensitive)
-          const response = await supabase
-            .from("tokens")
-            .select("*")
-            .ilike("symbol", symbol)
-            .order("id", { ascending: true });
+    // Fetch all tokens once
+    const response = await supabase
+      .from("tokens")
+      .select("id,symbol")
+      .order("id", { ascending: true });
 
-          if (response.error) {
-            console.log("Error when fetching token data");
-            throw new Error(response.error.message);
-          }
-          if (response.data.length === 0) {
-            console.log("Coin not found. Skipping...");
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    // Create a map of symbol to token IDs
+    const symbolToTokens = new Map();
+    response.data.forEach((token) => {
+      if (!symbolToTokens.has(token.symbol)) {
+        symbolToTokens.set(token.symbol, []);
+      }
+      symbolToTokens.get(token.symbol).push(token.id);
+    });
+    const mentionAt = new Date().toISOString();
+    await Promise.all(
+      mentionsData.map(async (mention) => {
+        const addMentionsData = [];
+
+        for (const [symbol, mentions] of Object.entries(mention.data)) {
+          // Check if symbol exists in our map
+          const tokenIds = symbolToTokens.get(symbol);
+          if (!tokenIds) {
+            // console.warn(`Token not found for symbol: ${symbol}. Skipping.`);
             continue;
           }
 
-          const currentData = response.data;
-
-          if (currentData) {
-            // If a record exists, add the mentions to the existing value
-            for (const data of currentData)
-              addMentionsData.push({
-                tiktok_id: m.tiktok_id,
-                count: mentions,
-                token_id: data.id,
-                mention_at: new Date().toISOString(),
-              });
+          // Add mention entry for each token ID associated with the symbol
+          for (const tokenId of tokenIds) {
+            addMentionsData.push({
+              tiktok_id: mention.tiktok_id,
+              count: mentions,
+              token_id: tokenId,
+              mention_at: mentionAt,
+            });
           }
         }
-        const addMentionsResponse = await supabase
-          .from("mentions")
-          .insert(addMentionsData);
 
-        if (addMentionsResponse.error) {
-          throw new Error(addMentionsResponse.error.message);
+        if (addMentionsData.length > 0) {
+          console.log("ADD MENTIONS STARTING");
+          const addMentionsResponse = await supabase
+            .from("mentions")
+            .insert(addMentionsData);
+          console.log("ADD MENTIONS ENDING");
+
+          if (addMentionsResponse.error) {
+            throw new Error(addMentionsResponse.error.message);
+          }
         }
-      } catch (error) {
-        return {
-          success: false,
-          error: error.toString(),
-          message: "Failed to update mentions data",
-        };
-      }
-    }
+      })
+    );
 
     return {
       success: true,
-      insertedRecords: insertResponse.data,
-      message: `Successfully inserted ${insertResponse.data.length} records`,
+      message: `Successfully inserted ${insertResponse.data.length} TikTok records`,
     };
   } catch (error) {
+    console.error("Error adding TikTok data:", error.message);
     return {
       success: false,
-      error: error.toString(),
-      message: "Failed to add tiktok data",
+      error: error.message,
+      message: "Failed to add TikTok data",
     };
   }
 }
 
 function formatViews(views) {
-  let num = 0;
-  if (views.endsWith("k") || views.endsWith("K")) {
-    // Convert to thousands
-    num = parseFloat(views.slice(0, -1)) * 1000;
-  } else if (views.endsWith("m") || views.endsWith("M")) {
-    // Convert to millions
-    num = parseFloat(views.slice(0, -1)) * 1000000;
-  } else {
-    // Convert to plain number
-    num = parseFloat(views);
+  const unitMultiplier = {
+    k: 1_000,
+    m: 1_000_000,
+  };
+
+  const unit = views.slice(-1).toLowerCase();
+  if (unit in unitMultiplier) {
+    return Math.floor(parseFloat(views.slice(0, -1)) * unitMultiplier[unit]);
   }
-  return Math.floor(num);
+  return Math.floor(parseFloat(views)) || 0;
 }
 
 function getTiktokId(url) {
-  // Regex to extract the video ID
-  const pattern = /\/video\/(\d+)/;
-  const match = url.match(pattern);
-  if (match) {
-    return match[1];
-  }
-  return null;
+  const match = url.match(/\/video\/(\d+)/);
+  return match ? match[1] : null;
 }
 
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_KEY;
-const supabase = createClient(url, key);
+// (async () => {
+//   const supabase = createClient(
+//     process.env.SUPABASE_URL,
+//     process.env.SUPABASE_KEY
+//   );
+//   const data = JSON.parse(
+//     fs.readFileSync("combined_results_2024-12-20T13-39-41-471Z.json", "utf8")
+//   );
 
-const data = JSON.parse(
-  fs.readFileSync("combined_results_2024-12-20T13-39-41-471Z.json", "utf8")
-);
-
-addTiktoks(supabase, data)
-  .then((response) => console.log(response))
-  .catch((error) => console.error(error));
+//   try {
+//     const response = await addTiktoks(supabase, data);
+//     console.log(response);
+//   } catch (error) {
+//     console.error("Unexpected error:", error);
+//   }
+// })();
