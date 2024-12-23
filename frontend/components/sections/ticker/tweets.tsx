@@ -99,9 +99,14 @@ export default function Tweets({
             View all tweets made by ZoroX about ${symbol.toUpperCase()}
           </p>
         </div>
-        <p className="hidden md:block font-semibold">
-          <span className="text-green-500 font-bold mr-1">{growth}x</span>{" "}
-          growth since first tweet
+        <p className="hidden md:block font-semibold text-right">
+          <span
+            className={`${growth != "0" && "text-green-500 "} "font-bold mr-1"`}
+          >
+            {growth == "0" && "No"}
+            {growth != "0" && "x"}
+          </span>{" "}
+          growth since the first tweet
         </p>
       </div>
       {tweets.length > 0 ? (

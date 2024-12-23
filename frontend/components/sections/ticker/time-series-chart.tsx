@@ -10,6 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Tooltip as TooltipUI,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   LineChart,
   Line,
   XAxis,
@@ -20,7 +26,7 @@ import {
   ReferenceLine,
   TooltipProps,
 } from "recharts";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
 import { TokenData } from "@/lib/types";
@@ -35,8 +41,7 @@ interface DataPoint {
   timestamp: string;
   rawTimestamp: number;
   price: number;
-  mentions: number;
-  views: number;
+  popularity: number;
 }
 
 type TimeframeType = "30m" | "1h" | "3h" | "24h" | "7d";
@@ -91,8 +96,7 @@ const processTradeData = (
       timestamp: formatTimestamp(trade.trade_at, timeframe),
       rawTimestamp: tradeDate.getTime(), // Store milliseconds timestamp
       price: trade.price_usd,
-      mentions: Math.floor(Math.random() * 1000),
-      views: Math.floor(Math.random() * 10000),
+      popularity: 0, // TODO: Show popularity
     };
   });
 };
@@ -119,16 +123,14 @@ const formatTimestamp = (
 function ChartContent({
   data,
   showPrice,
-  showViews,
-  showMentions,
+  showPopularity,
   timeframe,
   startingPrice,
   isPriceUp,
 }: {
   data: DataPoint[];
   showPrice: boolean;
-  showViews: boolean;
-  showMentions: boolean;
+  showPopularity: boolean;
   timeframe: TimeframeType;
   startingPrice: number;
   isPriceUp: boolean;
@@ -204,10 +206,7 @@ function ChartContent({
             <YAxis
               yAxisId="price"
               orientation="left"
-              domain={[
-                minPrice - priceMargin * 0.2,
-                maxPrice + priceMargin * 1.5,
-              ]}
+              domain={[minPrice - priceMargin * 0.1, maxPrice]}
               width={window.innerWidth < 768 ? 40 : 50}
               axisLine={{ stroke: "#E5E7EB" }}
               tick={{
@@ -241,29 +240,18 @@ function ChartContent({
               />
             )}
 
-            {showViews && (
+            {showPopularity && (
               <Line
                 yAxisId="secondary"
                 type="monotone"
-                dataKey="views"
+                dataKey="popularity"
                 stroke="#800080"
                 strokeWidth={2}
                 dot={false}
-                name="Views"
+                name="Popularity"
               />
             )}
 
-            {showMentions && (
-              <Line
-                yAxisId="secondary"
-                type="monotone"
-                dataKey="mentions"
-                stroke="#2563EB"
-                strokeWidth={2}
-                dot={false}
-                name="Mentions"
-              />
-            )}
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
@@ -312,8 +300,7 @@ export default function TimeSeriesChartWithPaywall({
 }) {
   // Lift all state to the parent component
   const [showPrice, setShowPrice] = useState<boolean>(true);
-  const [showViews, setShowViews] = useState<boolean>(true);
-  const [showMentions, setShowMentions] = useState<boolean>(true);
+  const [showPopularity, setShowPopularity] = useState<boolean>(true);
   const [usdOrSolToggle, setUsdOrSolToggle] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<TimeframeType>("24h");
   const { paid } = useEnvironmentStore((store) => store);
@@ -413,34 +400,30 @@ export default function TimeSeriesChartWithPaywall({
 
           <div className="flex items-center space-x-2">
             <Switch
-              checked={showViews}
-              onCheckedChange={setShowViews}
+              checked={showPopularity}
+              onCheckedChange={setShowPopularity}
               id="views-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
             <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#800080]" />
             <Label
-              htmlFor="views-toggle"
+              htmlFor="popularity-toggle"
               className="text-xs sm:text-sm font-medium"
             >
-              TikTok Views
+              TikTok Popularity
             </Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={showMentions}
-              onCheckedChange={setShowMentions}
-              id="mentions-toggle"
-              className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
-            />
-            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#2563EB]" />
-            <Label
-              htmlFor="mentions-toggle"
-              className="text-xs sm:text-sm font-medium"
-            >
-              TikTok Mentions
-            </Label>
+            <TooltipProvider>
+              <TooltipUI delayDuration={100}>
+                <TooltipTrigger>
+                  <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                </TooltipTrigger>
+                <TooltipContent className="text-center">
+                  Popularity is calculated using views and <br />
+                  mentions of the tickers in the video and <br />
+                  comments.
+                </TooltipContent>
+              </TooltipUI>
+            </TooltipProvider>
           </div>
         </div>
       </CardHeader>
@@ -449,8 +432,7 @@ export default function TimeSeriesChartWithPaywall({
         <ChartContent
           data={data}
           showPrice={showPrice}
-          showViews={showViews}
-          showMentions={showMentions}
+          showPopularity={showPopularity}
           timeframe={timeframe}
           startingPrice={startingPrice}
           isPriceUp={isPriceUp}
