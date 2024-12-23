@@ -33,6 +33,7 @@ interface TradeData {
 
 interface DataPoint {
   timestamp: string;
+  rawTimestamp: number;
   price: number;
   mentions: number;
   views: number;
@@ -40,11 +41,32 @@ interface DataPoint {
 
 type TimeframeType = "30m" | "1h" | "3h" | "24h" | "7d";
 
+const formatDateTime = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+function formatFloatingNumber(number: number) {
+  if (number === 0) return "0.000"; // Special case for zero
+
+  const absNumber = Math.abs(number);
+  const decimalPlaces = Math.max(0, 3 - Math.floor(Math.log10(absNumber)));
+
+  // Round the number to the desired precision
+  const rounded = Number(absNumber.toFixed(decimalPlaces));
+
+  // Return the number, keeping the sign
+  return (number < 0 ? -rounded : rounded).toString();
+}
 const processTradeData = (
   trades: TradeData[],
   timeframe: TimeframeType
 ): DataPoint[] => {
-  console.log("TRADES");
   const now = Date.now();
   const timeframeLimit = {
     "30m": 1000 * 60 * 30,
@@ -54,16 +76,25 @@ const processTradeData = (
     "7d": 1000 * 60 * 60 * 24 * 7,
   }[timeframe];
 
-  const filteredTrades = trades.filter(
-    (trade) => now - new Date(trade.trade_at).getTime() <= timeframeLimit
-  );
-  console.log(filteredTrades);
-  return filteredTrades.map((trade) => ({
-    timestamp: formatTimestamp(trade.trade_at, timeframe),
-    price: trade.price_usd,
-    mentions: Math.floor(Math.random() * 1000), // Keeping random generation for mentions
-    views: Math.floor(Math.random() * 10000), // Keeping random generation for views
-  }));
+  const cutoffTime = now - timeframeLimit;
+
+  // Filter trades within the timeframe and sort by timestamp
+  const filteredTrades = trades
+    .filter((trade) => new Date(trade.trade_at).getTime() >= cutoffTime)
+    .sort(
+      (a, b) => new Date(a.trade_at).getTime() - new Date(b.trade_at).getTime()
+    );
+
+  return filteredTrades.map((trade) => {
+    const tradeDate = new Date(trade.trade_at);
+    return {
+      timestamp: formatTimestamp(trade.trade_at, timeframe),
+      rawTimestamp: tradeDate.getTime(), // Store milliseconds timestamp
+      price: trade.price_usd,
+      mentions: Math.floor(Math.random() * 1000),
+      views: Math.floor(Math.random() * 10000),
+    };
+  });
 };
 
 const formatTimestamp = (
@@ -102,28 +133,23 @@ function ChartContent({
   startingPrice: number;
   isPriceUp: boolean;
 }) {
-  const getTickInterval = (): number => {
-    switch (timeframe) {
-      case "24h":
-        return window.innerWidth < 768 ? 6 : 3;
-      case "7d":
-        return 1;
-      case "3h":
-        return window.innerWidth < 768 ? 6 : 3;
-      case "1h":
-        return window.innerWidth < 768 ? 4 : 2;
-      case "30m":
-        return window.innerWidth < 768 ? 10 : 5;
-      default:
-        return 1;
-    }
-  };
   const maxPrice = Math.max(...data.map((d) => d.price));
   const minPrice = Math.min(...data.map((d) => d.price));
   const priceMargin = (maxPrice - minPrice) * 1.5;
+
+  // Get domain for X axis
+  const xDomain = useMemo(() => {
+    if (data.length === 0) return [0, 0];
+    return [
+      Math.min(...data.map((d) => d.rawTimestamp)),
+      Math.max(...data.map((d) => d.rawTimestamp)),
+    ];
+  }, [data]);
+
   const getTickCount = (): number => {
-    return 7; // Fixed number of ticks for readability
+    return 7;
   };
+
   return (
     <CardContent className="p-0 sm:p-6">
       <div className="h-[300px] sm:h-[400px] w-full">
@@ -156,7 +182,18 @@ function ChartContent({
               stroke="#374151"
             />
             <XAxis
-              dataKey="timestamp"
+              dataKey="rawTimestamp"
+              type="number"
+              domain={xDomain}
+              scale="time"
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp);
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                return `${String(hours).padStart(2, "0")}:${String(
+                  minutes
+                ).padStart(2, "0")}`;
+              }}
               axisLine={{ stroke: "#E5E7EB" }}
               tick={{
                 fill: "#6B7280",
@@ -168,15 +205,16 @@ function ChartContent({
               yAxisId="price"
               orientation="left"
               domain={[
-                minPrice - priceMargin * 1.5,
+                minPrice - priceMargin * 0.2,
                 maxPrice + priceMargin * 1.5,
-              ]} // Increased the range of the y-axis
+              ]}
               width={window.innerWidth < 768 ? 40 : 50}
               axisLine={{ stroke: "#E5E7EB" }}
               tick={{
                 fill: "#6B7280",
                 fontSize: window.innerWidth < 768 ? 10 : 12,
               }}
+              tickFormatter={(value) => formatFloatingNumber(value)}
             />
             <YAxis
               yAxisId="secondary"
@@ -190,24 +228,23 @@ function ChartContent({
               }}
             />
 
-            {/* Rest of the chart components remain the same */}
-
             {showPrice && (
               <Line
                 yAxisId="price"
-                type="linear"
+                type="monotone"
                 dataKey="price"
                 stroke={isPriceUp ? "#10B981" : "#EF4444"}
                 strokeWidth={2}
                 dot={false}
                 name="Price"
+                connectNulls={true}
               />
             )}
 
             {showViews && (
               <Line
                 yAxisId="secondary"
-                type="linear"
+                type="monotone"
                 dataKey="views"
                 stroke="#800080"
                 strokeWidth={2}
@@ -219,7 +256,7 @@ function ChartContent({
             {showMentions && (
               <Line
                 yAxisId="secondary"
-                type="linear"
+                type="monotone"
                 dataKey="mentions"
                 stroke="#2563EB"
                 strokeWidth={2}
@@ -231,24 +268,14 @@ function ChartContent({
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div
-                      style={{
-                        padding: "10px",
-                      }}
-                      className=" border bg-card"
-                    >
-                      <p style={{ margin: 0, fontWeight: "bold" }}>{label}</p>
-                      {payload[0] && (
-                        <p style={{ margin: 0 }}>Price: ${payload[0].value}</p>
-                      )}
-                      {payload[1] && (
-                        <p style={{ margin: 0 }}>
-                          Mentions: {payload[1].value}
+                    <div className="border bg-card p-2">
+                      <p className="font-bold m-0">{formatDateTime(label)}</p>
+                      {payload.map((entry, index) => (
+                        <p key={index} className="m-0">
+                          {entry.name}: {entry.name === "Price" ? "$" : ""}
+                          {formatFloatingNumber(entry.value as number)}
                         </p>
-                      )}
-                      {payload[2] && (
-                        <p style={{ margin: 0 }}>Views: {payload[2].value}</p>
-                      )}
+                      ))}
                     </div>
                   );
                 }
@@ -262,7 +289,6 @@ function ChartContent({
     </CardContent>
   );
 }
-
 const PaywallOverlay = () => {
   return (
     <div className="absolute inset-0 w-full h-full">
