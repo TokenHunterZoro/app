@@ -1,8 +1,16 @@
 type Price = {
   price_usd: number;
   price_sol: number;
-  created_at: string;
+  trade_at: string;
   is_latest: boolean;
+};
+
+type SearchTokenResponse = {
+  id: number;
+  name: string;
+  symbol: string;
+  uri: string;
+  image: any;
 };
 
 type TokenData = {
@@ -14,13 +22,27 @@ type TokenData = {
   created_at: string;
   address: string;
   prices: Price[];
-  latest_price_usd: number;
-  latest_price_sol: number;
-  latest_market_cap: number;
+  latest_price_usd: number | null;
+  latest_price_sol: number | null;
+  latest_market_cap: number | null;
   views: number;
   mentions: number;
   tweets: any[];
   tiktoks: any[];
+};
+
+type LeaderboardData = {
+  id: number;
+  name: string;
+  symbol: string;
+  uri: string;
+  image: any;
+  created_at: string;
+  latest_price_usd: number | null;
+  latest_market_cap: number | null;
+  latest_price_sol: number | null;
+  views: number;
+  mentions: number;
 };
 type SortKey = keyof TokenData;
 type SortDirection = "asc" | "desc";
@@ -49,4 +71,6 @@ export type {
   SortDirection,
   SortConfig,
   SortableTableHeaderProps,
+  SearchTokenResponse,
+  LeaderboardData,
 };

@@ -18,37 +18,40 @@ export default function Tiktoks({
     <>
       <div className="flex justify-between sen my-12 items-center">
         <div className="flex flex-col w-full">
-          <p className="text-2xl font-bold nouns tracking-widest text-[#F8D12E]">
+          <p className="text-xl md:text-2xl text-center mx-auto md:mx-0 md:text-start font-bold nouns tracking-widest text-[#F8D12E]">
             Curated Tiktoks
           </p>
-          <p className="text-md text-muted-foreground font-semibold mb-6">
+          <p className="text-xs md:text-sm text-center mx-auto md:mx-0 md:text-start lg:text-md text-muted-foreground font-semibold mb-6">
             All videos where ${symbol.toUpperCase()} was mentioned/talked about.
           </p>
-          <div className="relative">
-            <div className="grid grid-cols-4 gap-2">
+          <div className="relative flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 ">
               {tiktoks.slice(0, paid ? tiktoks.length : 4).map((video, i) => {
                 return (
                   <div
                     onClick={() => window.open(video.tiktoks.url, "_blank")}
-                    className="cursor-pointer relative w-[300px] h-[500px] rounded-xl border border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
+                    className="cursor-pointer relative w-[300px] h-[500px] rounded-xl border-[2px] border-secondary hover:border-muted-foreground transition duration-300 ease-in-out"
                     key={i}
                   >
                     <img
                       src={video.tiktoks.thumbnail}
                       alt="tiktok"
                       className="w-[300px] h-[496px] rounded-xl"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/tiktok-placeholder.png";
+                      }}
                     />
                     <div className=" absolute inset-0 flex flex-col justify-between p-4 text-white">
                       {/* Top Info (Posted Time and Author Info) */}
                       <div className="flex items-center space-x-3">
                         <img
-                          src={
-                            video.tiktoks.username.length == 0
-                              ? "https://picsum.photos/300/50" + i
-                              : video.tiktoks.username
-                          }
+                          src={"https://picsum.photos/300/50" + i}
                           alt={video.tiktoks.username}
                           className="w-10 h-10 rounded-full border border-white"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/solana.png";
+                          }}
                         />
                         <div>
                           <p className="font-semibold">
@@ -170,7 +173,7 @@ export default function Tiktoks({
                   </div>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg p-2">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg p-6">
                   <UnlockNow text="View all curated TikToks" />
                 </div>
               </>

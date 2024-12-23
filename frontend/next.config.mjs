@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/ipfs/:path*",
+        destination: "https://ipfs.io/ipfs/:path*",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
@@ -15,6 +23,16 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "picsum.photos",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "nftstorage.link",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
         port: "",
       },
     ],

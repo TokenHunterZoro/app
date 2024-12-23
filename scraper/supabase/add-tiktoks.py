@@ -41,9 +41,6 @@ async def add_tiktoks(supabase, tiktoks):
         for m in mentions_data:
             try:
                 for symbol, mentions in m['data'].items():
-                    if symbol == "AI" or symbol == "SOLANA":
-                        continue
-
                     # Fetch the current record for the symbol (case-insensitive)
                     response = supabase.table("tokens").select("*").ilike("symbol", symbol).order("id", desc=False).execute()
                     if hasattr(response, "error"):

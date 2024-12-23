@@ -5,7 +5,7 @@ import { useEnvironmentStore } from "./context";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import transferTokens from "@/lib/transfer-tokens";
-import addSub from "@/lib/supabase/addSub";
+// import addSub from "@/lib/supabase/addSub";
 
 export default function UnlockNow({ text }: { text: string }) {
   const { setPaid, bonkBalance, balance, walletAddress } = useEnvironmentStore(

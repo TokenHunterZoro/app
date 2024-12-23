@@ -84,7 +84,7 @@ const TikTokCarousel = () => {
   };
 
   return (
-    <div className="w-[50%] max-w-5xl mx-auto px-4 py-12">
+    <div className="w-[70%] lg:w-[60%] xl:w-[50%] max-w-5xl mx-auto px-4 py-12">
       <Moving />
     </div>
   );

@@ -16,7 +16,7 @@ export default function TableWrapper({
   children: React.ReactNode;
 }) {
   if (!showWrapper) {
-    return children;
+    return <div className="px-4">{children}</div>;
   }
 
   return (

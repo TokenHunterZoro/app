@@ -93,3 +93,9 @@ _"An Autonomous AI Agent that browses TikTok to help you find the hottest memeco
 **Twitter** | https://x.com/TokenHunterZoro
 
 **Live App** | https://zorox-ai.vercel.app/
+
+---
+
+Made with ❤️ by Gabriel Antony Xaviour
+
+X [@gabrielaxyeth](https://x.com/gabrielaxyeth)

@@ -10,6 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Tooltip as TooltipUI,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   LineChart,
   Line,
   XAxis,
@@ -20,104 +26,144 @@ import {
   ReferenceLine,
   TooltipProps,
 } from "recharts";
-import Image from "next/image";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
 import { TokenData } from "@/lib/types";
 
+interface TradeData {
+  price_usd: number;
+  price_sol: number;
+  trade_at: string;
+}
+
 interface DataPoint {
   timestamp: string;
+  rawTimestamp: number;
   price: number;
-  mentions: number;
-  views: number;
+  popularity: number;
 }
 
 type TimeframeType = "30m" | "1h" | "3h" | "24h" | "7d";
 
-const generateTimeData = (timeframe: TimeframeType): DataPoint[] => {
-  switch (timeframe) {
-    case "30m":
-      return Array.from({ length: 30 }, (_, i) => ({
-        timestamp: `${Math.floor(i * 1)}m`,
-        price: Math.random() * 100,
-        mentions: Math.floor(Math.random() * 1000),
-        views: Math.floor(Math.random() * 10000),
-      }));
-    case "1h":
-      return Array.from({ length: 12 }, (_, i) => ({
-        timestamp: `${i * 5}m`,
-        price: Math.random() * 100,
-        mentions: Math.floor(Math.random() * 1000),
-        views: Math.floor(Math.random() * 10000),
-      }));
-    case "3h":
-      return Array.from({ length: 18 }, (_, i) => ({
-        timestamp: `${i * 10}m`,
-        price: Math.random() * 100,
-        mentions: Math.floor(Math.random() * 1000),
-        views: Math.floor(Math.random() * 10000),
-      }));
-    case "24h":
-      return Array.from({ length: 24 }, (_, i) => ({
-        timestamp: `${String(i).padStart(2, "0")}:00`,
-        price: Math.random() * 100,
-        mentions: Math.floor(Math.random() * 1000),
-        views: Math.floor(Math.random() * 10000),
-      }));
-    case "7d":
-      return Array.from({ length: 7 }, (_, i) => ({
-        timestamp: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
-        price: Math.random() * 100,
-        mentions: Math.floor(Math.random() * 1000),
-        views: Math.floor(Math.random() * 10000),
-      }));
-    default:
-      return [];
-  }
+const formatDateTime = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+function formatFloatingNumber(number: number) {
+  if (number === 0) return "0.000"; // Special case for zero
+
+  const absNumber = Math.abs(number);
+  const decimalPlaces = Math.max(0, 3 - Math.floor(Math.log10(absNumber)));
+
+  // Round the number to the desired precision
+  const rounded = Number(absNumber.toFixed(decimalPlaces));
+
+  // Return the number, keeping the sign
+  return (number < 0 ? -rounded : rounded).toString();
+}
+const processTradeData = (
+  trades: TradeData[],
+  timeframe: TimeframeType
+): DataPoint[] => {
+  const now = Date.now();
+  const timeframeLimit = {
+    "30m": 1000 * 60 * 30,
+    "1h": 1000 * 60 * 60,
+    "3h": 1000 * 60 * 60 * 3,
+    "24h": 1000 * 60 * 60 * 24,
+    "7d": 1000 * 60 * 60 * 24 * 7,
+  }[timeframe];
+
+  const cutoffTime = now - timeframeLimit;
+
+  // Filter trades within the timeframe and sort by timestamp
+  const filteredTrades = trades
+    .filter((trade) => new Date(trade.trade_at).getTime() >= cutoffTime)
+    .sort(
+      (a, b) => new Date(a.trade_at).getTime() - new Date(b.trade_at).getTime()
+    );
+
+  return filteredTrades.map((trade) => {
+    const tradeDate = new Date(trade.trade_at);
+    return {
+      timestamp: formatTimestamp(trade.trade_at, timeframe),
+      rawTimestamp: tradeDate.getTime(), // Store milliseconds timestamp
+      price: trade.price_usd,
+      popularity: 0, // TODO: Show popularity
+    };
+  });
 };
 
+const formatTimestamp = (
+  timestamp: string,
+  timeframe: TimeframeType
+): string => {
+  const date = new Date(timestamp);
+
+  switch (timeframe) {
+    case "30m":
+    case "1h":
+    case "3h":
+      return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
+    case "24h":
+      return `${String(date.getHours()).padStart(2, "0")}:00`;
+    case "7d":
+      return date.toLocaleDateString("en-US", { weekday: "short" });
+    default:
+      return timestamp;
+  }
+};
 function ChartContent({
   data,
   showPrice,
-  showViews,
-  showMentions,
+  showPopularity,
   timeframe,
   startingPrice,
   isPriceUp,
 }: {
   data: DataPoint[];
   showPrice: boolean;
-  showViews: boolean;
-  showMentions: boolean;
+  showPopularity: boolean;
   timeframe: TimeframeType;
   startingPrice: number;
   isPriceUp: boolean;
 }) {
-  const getTickInterval = (): number => {
-    switch (timeframe) {
-      case "24h":
-        return 3;
-      case "7d":
-        return 1;
-      case "3h":
-        return 3;
-      case "1h":
-        return 2;
-      case "30m":
-        return 5;
-      default:
-        return 1;
-    }
+  const maxPrice = Math.max(...data.map((d) => d.price));
+  const minPrice = Math.min(...data.map((d) => d.price));
+  const priceMargin = (maxPrice - minPrice) * 1.5;
+
+  // Get domain for X axis
+  const xDomain = useMemo(() => {
+    if (data.length === 0) return [0, 0];
+    return [
+      Math.min(...data.map((d) => d.rawTimestamp)),
+      Math.max(...data.map((d) => d.rawTimestamp)),
+    ];
+  }, [data]);
+
+  const getTickCount = (): number => {
+    return 7;
   };
 
   return (
-    <CardContent>
-      <div className="h-[400px] w-full">
+    <CardContent className="p-0 sm:p-6">
+      <div className="h-[300px] sm:h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 5, right: 0, left: 20, bottom: 5 }}
+            margin={{
+              top: 20,
+              right: window.innerWidth < 768 ? 10 : 20,
+              left: window.innerWidth < 768 ? 10 : 20,
+              bottom: 5,
+            }}
           >
             <ReferenceLine
               y={startingPrice}
@@ -127,7 +173,6 @@ function ChartContent({
               label={{
                 value: `$${startingPrice.toFixed(2)}`,
                 position: "center",
-
                 fill: "#6B7280",
                 fontSize: 12,
               }}
@@ -139,91 +184,99 @@ function ChartContent({
               stroke="#374151"
             />
             <XAxis
-              dataKey="timestamp"
+              dataKey="rawTimestamp"
+              type="number"
+              domain={xDomain}
+              scale="time"
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp);
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                return `${String(hours).padStart(2, "0")}:${String(
+                  minutes
+                ).padStart(2, "0")}`;
+              }}
               axisLine={{ stroke: "#E5E7EB" }}
-              tick={{ fill: "#6B7280" }}
-              interval={getTickInterval()}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
+              }}
+              interval={Math.floor(data.length / getTickCount())}
             />
             <YAxis
               yAxisId="price"
-              orientation="right"
-              domain={["auto", "auto"]}
+              orientation="left"
+              domain={[minPrice - priceMargin * 0.1, maxPrice]}
+              width={window.innerWidth < 768 ? 40 : 50}
               axisLine={{ stroke: "#E5E7EB" }}
-              tick={{ fill: "#6B7280" }}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
+              }}
+              tickFormatter={(value) => formatFloatingNumber(value)}
             />
-            <Tooltip
-              content={({
-                active,
-                payload,
-                label,
-              }: TooltipProps<number, string>) => {
-                if (!active || !payload || payload.length === 0) return null;
-
-                return (
-                  <div
-                    className="p-4 bg-black border border-gray-700 rounded-lg text-gray-100 shadow-md"
-                    style={{ maxWidth: "200px" }}
-                  >
-                    {payload.map((entry, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span className="font-medium ">{entry.name}:</span>
-                        <span className="ml-5">
-                          {entry.name == "Price"
-                            ? entry.value?.toFixed(4)
-                            : entry.value}
-                        </span>
-                      </div>
-                    ))}
-                    <p className="text-sm font-medium text-gray-400 mt-1 text-center">{`${label}`}</p>
-                  </div>
-                );
+            <YAxis
+              yAxisId="secondary"
+              orientation="right"
+              domain={[0, "auto"]}
+              width={window.innerWidth < 768 ? 40 : 50}
+              axisLine={{ stroke: "#E5E7EB" }}
+              tick={{
+                fill: "#6B7280",
+                fontSize: window.innerWidth < 768 ? 10 : 12,
               }}
             />
-
-            {/* Reference line for starting price */}
 
             {showPrice && (
               <Line
                 yAxisId="price"
-                type="linear"
+                type="monotone"
                 dataKey="price"
                 stroke={isPriceUp ? "#10B981" : "#EF4444"}
                 strokeWidth={2}
                 dot={false}
                 name="Price"
+                connectNulls={true}
               />
             )}
 
-            {showViews && (
+            {showPopularity && (
               <Line
-                yAxisId="price"
-                type="linear"
-                dataKey="views"
+                yAxisId="secondary"
+                type="monotone"
+                dataKey="popularity"
                 stroke="#800080"
                 strokeWidth={2}
                 dot={false}
-                name="Views"
+                name="Popularity"
               />
             )}
 
-            {showMentions && (
-              <Line
-                yAxisId="price"
-                type="linear"
-                dataKey="mentions"
-                stroke="#2563EB"
-                strokeWidth={2}
-                dot={false}
-                name="Mentions"
-              />
-            )}
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="border bg-card p-2">
+                      <p className="font-bold m-0">{formatDateTime(label)}</p>
+                      {payload.map((entry, index) => (
+                        <p key={index} className="m-0">
+                          {entry.name}: {entry.name === "Price" ? "$" : ""}
+                          {formatFloatingNumber(entry.value as number)}
+                        </p>
+                      ))}
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              cursor={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
     </CardContent>
   );
 }
-
 const PaywallOverlay = () => {
   return (
     <div className="absolute inset-0 w-full h-full">
@@ -247,13 +300,14 @@ export default function TimeSeriesChartWithPaywall({
 }) {
   // Lift all state to the parent component
   const [showPrice, setShowPrice] = useState<boolean>(true);
-  const [showViews, setShowViews] = useState<boolean>(true);
-  const [showMentions, setShowMentions] = useState<boolean>(true);
+  const [showPopularity, setShowPopularity] = useState<boolean>(true);
   const [usdOrSolToggle, setUsdOrSolToggle] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<TimeframeType>("24h");
-  const [data, setData] = useState<DataPoint[]>(generateTimeData("24h"));
   const { paid } = useEnvironmentStore((store) => store);
-
+  const data = useMemo(
+    () => processTradeData(tokenData.prices, timeframe),
+    [tokenData.prices, timeframe]
+  );
   const startingPrice = useMemo(() => data[0]?.price || 0, [data]);
   const priceChange = useMemo(() => {
     if (data.length < 2) return "0.000";
@@ -269,42 +323,61 @@ export default function TimeSeriesChartWithPaywall({
 
   const handleTimeframeChange = (newTimeframe: TimeframeType) => {
     setTimeframe(newTimeframe);
-    setData(generateTimeData(newTimeframe));
   };
-
   return (
-    <Card className="w-full sen">
-      <CardHeader>
-        <div className="flex items-center justify-start">
-          <img src={tokenData.image} className="rounded-full mr-2 w-8 h-8" />
-          <CardTitle className="text-xl font-bold text-[#F8D12E] nouns tracking-widest">
-            {tokenData.symbol.toLocaleUpperCase()}
-            <span className="text-muted-foreground text-sm font-medium sen tracking-normal">
-              /{usdOrSolToggle ? "USD" : "SOL"}
-            </span>
-          </CardTitle>
+    <Card className="w-full max-w-[100vw] overflow-hidden sen">
+      <CardHeader className="space-y-4 p-4 sm:p-6">
+        {/* Token Header */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center">
+            <img
+              src={tokenData.image}
+              className="rounded-full mr-2 w-6 h-6 sm:w-8 sm:h-8"
+            />
+            <CardTitle className="text-lg sm:text-xl font-bold text-[#F8D12E] nouns tracking-widest">
+              {tokenData.symbol.toLocaleUpperCase()}
+              <span className="text-muted-foreground text-xs sm:text-sm font-medium sen tracking-normal">
+                /{usdOrSolToggle ? "USD" : "SOL"}
+              </span>
+            </CardTitle>
+          </div>
+
+          <Select value={timeframe} onValueChange={handleTimeframeChange}>
+            <SelectTrigger className="w-24 sm:w-32">
+              <SelectValue placeholder="Timeframe" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="30m">30 Minutes</SelectItem>
+              <SelectItem value="1h">1 Hour</SelectItem>
+              <SelectItem value="3h">3 Hours</SelectItem>
+              <SelectItem value="24h">24 Hours</SelectItem>
+              <SelectItem value="7d">7 Days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex items-center justify-start mb-4">
-          <p className="font-semibold text-3xl">
+        {/* Price Display */}
+        <div className="flex items-center flex-wrap gap-2">
+          <p className="font-semibold text-xl sm:text-3xl">
             {usdOrSolToggle
-              ? tokenData.latest_price_usd.toFixed(10)
-              : tokenData.latest_price_sol.toFixed(10)}
+              ? (tokenData.latest_price_usd || 0).toFixed(10)
+              : (tokenData.latest_price_sol || 0).toFixed(10)}
           </p>
           {isPriceUp ? (
-            <span className="flex items-center text-green-500 ml-2 text-md">
-              <ChevronUp className="text-md w-4 h-4" />
+            <span className="flex items-center text-green-500 text-sm sm:text-md">
+              <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="ml-1">+{priceChange}%</span>
             </span>
           ) : (
-            <span className="flex items-center text-red-500 ml-2">
-              <ChevronDown className="text-xl w-4 h-4" />
+            <span className="flex items-center text-red-500 text-sm sm:text-md">
+              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="ml-1">{priceChange}%</span>
             </span>
           )}
         </div>
 
-        <div className="flex items-center space-x-8">
+        {/* Controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sen">
           <div className="flex items-center space-x-2">
             <Switch
               checked={showPrice}
@@ -313,54 +386,44 @@ export default function TimeSeriesChartWithPaywall({
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
             <div
-              className={`w-4 h-4 rounded-full ${
+              className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${
                 isPriceUp ? "bg-[#10B981]" : "bg-[#EF4444]"
               }`}
             />
-            <Label htmlFor="price-toggle" className="text-sm font-medium">
+            <Label
+              htmlFor="price-toggle"
+              className="text-xs sm:text-sm font-medium"
+            >
               Coin Price
             </Label>
           </div>
 
           <div className="flex items-center space-x-2">
             <Switch
-              checked={showViews}
-              onCheckedChange={setShowViews}
+              checked={showPopularity}
+              onCheckedChange={setShowPopularity}
               id="views-toggle"
               className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
             />
-            <div className="w-4 h-4 rounded-full bg-[#800080]" />
-            <Label htmlFor="views-toggle" className="text-sm font-medium">
-              TikTok Views
+            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#800080]" />
+            <Label
+              htmlFor="popularity-toggle"
+              className="text-xs sm:text-sm font-medium"
+            >
+              TikTok Popularity
             </Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={showMentions}
-              onCheckedChange={setShowMentions}
-              id="mentions-toggle"
-              className="bg-[#F8D12E] data-[state=checked]:bg-[#F8D12E]"
-            />
-            <div className="w-4 h-4 rounded-full bg-[#2563EB]" />
-            <Label htmlFor="mentions-toggle" className="text-sm font-medium">
-              TikTok Mentions
-            </Label>
-          </div>
-
-          <div className="flex-1 flex justify-end">
-            <Select value={timeframe} onValueChange={handleTimeframeChange}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Timeframe" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30m">30 Minutes</SelectItem>
-                <SelectItem value="1h">1 Hour</SelectItem>
-                <SelectItem value="3h">3 Hours</SelectItem>
-                <SelectItem value="24h">24 Hours</SelectItem>
-                <SelectItem value="7d">7 Days</SelectItem>
-              </SelectContent>
-            </Select>
+            <TooltipProvider>
+              <TooltipUI delayDuration={100}>
+                <TooltipTrigger>
+                  <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                </TooltipTrigger>
+                <TooltipContent className="text-center">
+                  Popularity is calculated using views and <br />
+                  mentions of the tickers in the video and <br />
+                  comments.
+                </TooltipContent>
+              </TooltipUI>
+            </TooltipProvider>
           </div>
         </div>
       </CardHeader>
@@ -369,8 +432,7 @@ export default function TimeSeriesChartWithPaywall({
         <ChartContent
           data={data}
           showPrice={showPrice}
-          showViews={showViews}
-          showMentions={showMentions}
+          showPopularity={showPopularity}
           timeframe={timeframe}
           startingPrice={startingPrice}
           isPriceUp={isPriceUp}

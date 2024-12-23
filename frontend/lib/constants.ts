@@ -1,11 +1,4 @@
 import { DocsConfig } from "./types";
-import { createClient } from "@supabase/supabase-js";
-
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_SECRET || ""
-);
 
 const TEST_BONK_TOKEN_MINT_ADDRESS =
   "J5xh6VWTmNmgVmhgGqEd6fgzZunt2hPqLmiXB85C5Wna";
@@ -225,7 +218,12 @@ const pumpfunSample = {
     },
   },
 };
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 20;
+
+const IPFS_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
+const IPFS_GATEWAY_URL_2 = "https://ipfs.io/ipfs/";
+const IPFS_GATEWAY_URL_3 = "https://dweb.link/ipfs/";
+const IPFS_GATEWAY_URL_4 = "https://nftstorage.link/ipfs/";
 
 const DUMMY_HERO_TABLE_DATA = [
   {
@@ -810,5 +808,8 @@ export {
   docsConfig,
   TEST_BONK_TOKEN_MINT_ADDRESS,
   ZOROX_TREASURY_ADDRESS,
-  supabase,
+  IPFS_GATEWAY_URL,
+  IPFS_GATEWAY_URL_2,
+  IPFS_GATEWAY_URL_3,
+  IPFS_GATEWAY_URL_4,
 };

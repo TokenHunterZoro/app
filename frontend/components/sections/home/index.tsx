@@ -11,10 +11,10 @@ export default function Home() {
   const { paid } = useEnvironmentStore((store) => store);
   return (
     <div className="w-full">
-      <p className="text-center nouns tracking-widest font-bold text-3xl text-[#F8D12E] mt-16">
+      <p className="text-center nouns tracking-widest font-bold  text-2xl md:text-3xl text-[#F8D12E] mt-6 md:mt-16">
         The Ultimate TikTok Memecoin Hunter
       </p>
-      <p className="sen text-muted-foreground font-semibold  mt-2 text-center">
+      <p className="sen text-muted-foreground font-semibold  mt-2 text-center text-xs sm:text-sm md:text-base">
         Realtime tiktok analytics for memecoins. <br />
         Hunt the next moonshot 🚀
       </p>
