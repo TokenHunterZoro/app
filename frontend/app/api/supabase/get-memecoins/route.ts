@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
         `
         )
         .eq("prices.is_latest", true)
-        .order("mentions", { ascending: false })
+        .neq("mentions", 0)
+        .order("created_at", { ascending: false })
         .range(start, start + ITEMS_PER_PAGE - 1);
 
       if (error) {

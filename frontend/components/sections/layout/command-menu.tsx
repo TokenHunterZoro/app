@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import { type DialogProps } from "@radix-ui/react-dialog";
@@ -20,6 +20,7 @@ import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
 import { SearchTokenResponse } from "@/lib/types";
 import Image from "next/image";
+import { IPFS_GATEWAY_URL, IPFS_GATEWAY_URL_4 } from "@/lib/constants";
 
 export function CommandMenu({ ...props }: DialogProps) {
   const router = useRouter();
@@ -67,19 +68,12 @@ export function CommandMenu({ ...props }: DialogProps) {
 
       try {
         setSearchState(2);
-        const response = await fetch(
-          `/api/supabase/search-tokens?term=${searchTerm}`
-        );
-        const results = await response.json();
-
-        // Use functional state update to ensure latest state
-        setSearchResults((prevResults) => {
-          console.log("SEARCH RESULTS", results);
-          return results;
-        });
-
-        // Only set search state to 0 if results were found
-        setSearchState(results.length > 0 ? 0 : 1);
+        fetch(`/api/supabase/search-tokens?searchTerm=${searchTerm}`)
+          .then((res) => res.json())
+          .then((data) => {
+            setSearchState(data.length > 0 ? 0 : 1);
+            setSearchResults(data);
+          });
       } catch (error) {
         console.error("Search failed", error);
         setSearchState(1);
@@ -87,6 +81,16 @@ export function CommandMenu({ ...props }: DialogProps) {
     }, 300),
     []
   );
+
+  useEffect(() => {
+    searchResults.forEach((result) => {
+      fetch(IPFS_GATEWAY_URL_4 + result.uri.split("/").at(-1))
+        .then((res) => res.json())
+        .then((data) => {
+          result.image = IPFS_GATEWAY_URL_4 + data.image.split("/").at(-1);
+        });
+    });
+  }, [searchResults]);
   return (
     <>
       <Button
@@ -127,31 +131,40 @@ export function CommandMenu({ ...props }: DialogProps) {
                   : "Loading..."}
               </CommandEmpty>
               <CommandGroup heading="Memecoins">
-                {(searchBarValue == "" ? leaderboard : searchResults).map(
-                  (navItem, id) => (
-                    <CommandItem
-                      key={id}
-                      value={navItem.symbol + id}
-                      onSelect={() => {
-                        runCommand(() => router.push("/token/" + navItem.id));
-                      }}
-                      className="data-[selected='true']:bg-secondary cursor-pointer"
-                    >
-                      <Image
-                        src={navItem.image || "/memecoins/placeholder.png"}
-                        alt={navItem.symbol}
-                        width={24}
-                        height={24}
-                        className="mr-1 rounded-full"
-                      />
-                      <span>{navItem.symbol}</span>
-                      <span className="text-accent">/ SOL</span>
-                      <span className="ml-auto text-muted-foreground">
-                        {navItem.name}
-                      </span>
-                    </CommandItem>
-                  )
-                )}
+                {Array.isArray(
+                  searchBarValue == "" ? leaderboard : searchResults
+                ) &&
+                  (searchBarValue == "" ? leaderboard : searchResults).map(
+                    (navItem, id) => (
+                      <CommandItem
+                        key={id}
+                        value={navItem.symbol + id}
+                        onSelect={() => {
+                          runCommand(() => router.push("/token/" + navItem.id));
+                        }}
+                        className="data-[selected='true']:bg-secondary cursor-pointer"
+                      >
+                        {navItem.image ? (
+                          <img
+                            src={navItem.image}
+                            alt={navItem.symbol}
+                            className="h-4 w-4 mr-1 rounded-full"
+                            onError={(e: any) => {
+                              e.target.onerror = null; // Prevent infinite loop
+                              e.target.src = "/memecoins/placeholder.png";
+                            }}
+                          />
+                        ) : (
+                          <div className="h-4 w-4 mr-1 rounded-full animate-spin border-2 border-transparent border-t-accent"></div>
+                        )}
+                        <span>{navItem.symbol}</span>
+                        <span className="text-accent">/ SOL</span>
+                        <span className="ml-auto text-muted-foreground">
+                          {navItem.name}
+                        </span>
+                      </CommandItem>
+                    )
+                  )}
               </CommandGroup>
 
               <CommandSeparator />
