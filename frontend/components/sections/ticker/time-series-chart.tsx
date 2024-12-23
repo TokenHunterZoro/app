@@ -70,6 +70,9 @@ function formatFloatingNumber(number: number) {
 }
 const processTradeData = (
   trades: TradeData[],
+  startMentions: number,
+  endMentions: number,
+  views: number,
   timeframe: TimeframeType
 ): DataPoint[] => {
   const now = Date.now();
@@ -90,13 +93,35 @@ const processTradeData = (
       (a, b) => new Date(a.trade_at).getTime() - new Date(b.trade_at).getTime()
     );
 
-  return filteredTrades.map((trade) => {
+  // Calculate mentions change rate
+  const mentionsChange = endMentions - startMentions;
+  const mentionsChangeRate = mentionsChange / startMentions; // Relative change
+
+  // Calculate popularity for each point
+  return filteredTrades.map((trade, index) => {
     const tradeDate = new Date(trade.trade_at);
+    const timeProgress = index / (filteredTrades.length - 1); // 0 to 1
+
+    // Base popularity starts at 50 plus views contribution
+    let popularity = 50 + views * 0.0001; // Scale views down to avoid too large numbers
+
+    // Adjust based on mentions trend
+    if (mentionsChangeRate > 0) {
+      // Increasing mentions - popularity grows exponentially
+      popularity += mentionsChangeRate * 100 * Math.pow(timeProgress, 2);
+    } else {
+      // Decreasing or stable mentions - popularity declines linearly
+      popularity -= Math.abs(mentionsChangeRate * 50) * timeProgress;
+    }
+
+    // Ensure popularity stays within reasonable bounds
+    popularity = Math.max(0, Math.min(100, popularity));
+
     return {
       timestamp: formatTimestamp(trade.trade_at, timeframe),
-      rawTimestamp: tradeDate.getTime(), // Store milliseconds timestamp
+      rawTimestamp: tradeDate.getTime(),
       price: trade.price_usd,
-      popularity: 0, // TODO: Show popularity
+      popularity: popularity,
     };
   });
 };
@@ -305,7 +330,18 @@ export default function TimeSeriesChartWithPaywall({
   const [timeframe, setTimeframe] = useState<TimeframeType>("24h");
   const { paid } = useEnvironmentStore((store) => store);
   const data = useMemo(
-    () => processTradeData(tokenData.prices, timeframe),
+    () =>
+      processTradeData(
+        tokenData.prices,
+        tokenData.tiktoks.length > 1 ? tokenData.tiktoks[0].count : 0,
+        tokenData.tiktoks.length > 2
+          ? tokenData.tiktoks[tokenData.tiktoks.length - 1].count
+          : tokenData.tiktoks.length > 1
+          ? tokenData.tiktoks[0].count
+          : 0,
+        tokenData.views,
+        timeframe
+      ),
     [tokenData.prices, timeframe]
   );
   const startingPrice = useMemo(() => data[0]?.price || 0, [data]);
