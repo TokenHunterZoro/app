@@ -27,22 +27,24 @@ export const metadata: Metadata = {
     images: ["/logo.jpg"],
   },
   other: {
+    "twitter:player": "https://zorox-ai.vercel.app",
     "x-frame-options": "ALLOWALL",
     "content-security-policy":
       "frame-ancestors 'self' https://twitter.com https://x.com;",
   },
   twitter: {
     card: "player",
-    site: "@TokenHunterZoro",
+    site: "https://x.com/TokenHunterZoro",
     title: "ZoroX | World's Best Memecoin Hunter",
+    images: ["https://zorox-ai.vercel.app/logo.jpg"],
     description:
       "An autonomous AI agent that hunts for new memecoins in Tiktok.",
     players: [
       {
         playerUrl: "https://zorox-ai.vercel.app",
         streamUrl: "https://zorox-ai.vercel.app",
-        width: 600,
-        height: 400,
+        width: 360,
+        height: 560,
       },
     ],
   },
