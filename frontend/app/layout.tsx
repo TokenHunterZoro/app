@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     images: ["/logo.jpg"],
   },
   other: {
-    "twitter:player": "https://zorox-ai.vercel.app",
+    "twitter:player": "https://zorox-ai.vercel.app/embed",
     "x-frame-options": "ALLOWALL",
     "content-security-policy":
       "frame-ancestors 'self' https://twitter.com https://x.com;",
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
       "An autonomous AI agent that hunts for new memecoins in Tiktok.",
     players: [
       {
-        playerUrl: "https://zorox-ai.vercel.app",
-        streamUrl: "https://zorox-ai.vercel.app",
+        playerUrl: "https://zorox-ai.vercel.app/embed",
+        streamUrl: "https://zorox-ai.vercel.app/embed",
         width: 360,
         height: 560,
       },

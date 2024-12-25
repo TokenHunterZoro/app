@@ -3,12 +3,15 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/embed", // Apply only to the /embed route
         headers: [
-          { key: "X-Frame-Options", value: "ALLOWALL" },
+          {
+            key: "X-Frame-Options",
+            value: "ALLOWALL", // Allow all origins to embed
+          },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://twitter.com https://x.com;",
+            value: "frame-ancestors *;", // Allow iframe embedding
           },
         ],
       },
