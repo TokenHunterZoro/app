@@ -17,17 +17,19 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// export const metadata: Metadata = {
-//   title: "ZoroX | World's Best Memecoin Hunter",
-//   description: "An autonomous AI agent that hunts for new memecoins in Tiktok.",
-// };
 export const metadata: Metadata = {
-  twitter: {
-    card: "summary_large_image",
-    site: "@yourusername",
-    title: "Web3 Transaction Interface",
-    description: "Send ETH directly from Twitter",
+  title: "ZoroX | World's Best Memecoin Hunter",
+  description: "An autonomous AI agent that hunts for new memecoins in Tiktok.",
+  openGraph: {
+    title: "ZoroX | World's Best Memecoin Hunter",
+    description:
+      "An autonomous AI agent that hunts for new memecoins in Tiktok.",
     images: ["/logo.jpg"],
+  },
+  other: {
+    "x-frame-options": "ALLOWALL",
+    "content-security-policy":
+      "frame-ancestors 'self' https://twitter.com https://x.com;",
   },
 };
 
@@ -37,30 +39,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-screen h-screen overflow-hidden">
-      <iframe
-        src="https://zorox-ai.vercel.app"
-        className="w-full h-full border-0"
-      />
-    </div>
+    <EnvironmentStoreProvider>
+      <html lang="en">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          disableTransitionOnChange
+        >
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
+          >
+            <Layout>{children}</Layout>
+            <Toaster />
+          </body>
+        </ThemeProvider>
+      </html>
+    </EnvironmentStoreProvider>
   );
-  // return (
-  //   <EnvironmentStoreProvider>
-  //     <html lang="en">
-  //       <ThemeProvider
-  //         attribute="class"
-  //         defaultTheme="dark"
-  //         forcedTheme="dark"
-  //         disableTransitionOnChange
-  //       >
-  //         <body
-  //           className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
-  //         >
-  //           <Layout>{children}</Layout>
-  //           <Toaster />
-  //         </body>
-  //       </ThemeProvider>
-  //     </html>
-  //   </EnvironmentStoreProvider>
-  // );
 }
