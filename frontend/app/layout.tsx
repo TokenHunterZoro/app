@@ -31,6 +31,21 @@ export const metadata: Metadata = {
     "content-security-policy":
       "frame-ancestors 'self' https://twitter.com https://x.com;",
   },
+  twitter: {
+    card: "player",
+    site: "@TokenHunterZoro",
+    title: "ZoroX | World's Best Memecoin Hunter",
+    description:
+      "An autonomous AI agent that hunts for new memecoins in Tiktok.",
+    players: [
+      {
+        playerUrl: "https://zorox-ai.vercel.app",
+        streamUrl: "https://zorox-ai.vercel.app",
+        width: 600,
+        height: 400,
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
