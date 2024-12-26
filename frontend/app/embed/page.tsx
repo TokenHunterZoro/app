@@ -6,7 +6,7 @@ export default function EmbedPage() {
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: "#000" }}>
       <iframe
-        src="https://zorox-ai.vercel.app/"
+        src="http://localhost:3000/"
         style={{
           width: "100%",
           height: "100%",

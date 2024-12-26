@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import Layout from "@/components/sections/layout";
 import { EnvironmentStoreProvider } from "@/components/context";
 import { Toaster } from "@/components/ui/toaster";
+import SolanaWalletProvider from "@/components/providers/wallet-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -64,12 +66,14 @@ export default function RootLayout({
           forcedTheme="dark"
           disableTransitionOnChange
         >
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
-          >
-            <Layout>{children}</Layout>
-            <Toaster />
-          </body>
+          <SolanaWalletProvider>
+            <body
+              className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
+            >
+              <Layout>{children}</Layout>
+              <Toaster />
+            </body>
+          </SolanaWalletProvider>
         </ThemeProvider>
       </html>
     </EnvironmentStoreProvider>

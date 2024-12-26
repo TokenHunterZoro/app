@@ -333,11 +333,17 @@ export default function TimeSeriesChartWithPaywall({
     () =>
       processTradeData(
         tokenData.prices,
-        tokenData.tiktoks.length > 1 ? tokenData.tiktoks[0].count : 0,
-        tokenData.tiktoks.length > 2
-          ? tokenData.tiktoks[tokenData.tiktoks.length - 1].count
-          : tokenData.tiktoks.length > 1
-          ? tokenData.tiktoks[0].count
+        tokenData.tiktoks
+          ? tokenData.tiktoks.length > 1
+            ? tokenData.tiktoks[0].count
+            : 0
+          : 0,
+        tokenData.tiktoks
+          ? tokenData.tiktoks.length > 2
+            ? tokenData.tiktoks[tokenData.tiktoks.length - 1].count
+            : tokenData.tiktoks.length > 1
+            ? tokenData.tiktoks[0].count
+            : 0
           : 0,
         tokenData.views,
         timeframe
