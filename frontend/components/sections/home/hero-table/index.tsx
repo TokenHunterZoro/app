@@ -269,7 +269,6 @@ export default function HeroTable() {
                       ) || "0.00"}
                     </TableCell>
                     <TableCell>
-                      ◎
                       {getGroupRepresentative(tokens).latest_price_sol?.toFixed(
                         10
                       ) || "0.00"}
@@ -323,7 +322,7 @@ export default function HeroTable() {
                           ${token.latest_price_usd?.toFixed(10) || "0.00"}
                         </TableCell>
                         <TableCell>
-                          ◎{token.latest_price_sol?.toFixed(10) || "0.00"}
+                          {token.latest_price_sol?.toFixed(10) || "0.00"}
                         </TableCell>
                         <TableCell>{getTimeAgo(token.created_at)}</TableCell>
                         <TableCell>{token.views || 0}</TableCell>

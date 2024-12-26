@@ -26,125 +26,22 @@ import {
   ReferenceLine,
   TooltipProps,
 } from "recharts";
-import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import {
+  ArrowUpRightFromSquare,
+  ChevronDown,
+  ChevronUp,
+  Info,
+} from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import UnlockNow from "@/components/unlock-now";
-import { TokenData } from "@/lib/types";
+import { TimeframeType, DataPoint, TokenData } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import {
+  formatDateTime,
+  formatFloatingNumber,
+  processTradeData,
+} from "@/lib/utils";
 
-interface TradeData {
-  price_usd: number;
-  price_sol: number;
-  trade_at: string;
-}
-
-interface DataPoint {
-  timestamp: string;
-  rawTimestamp: number;
-  price: number;
-  popularity: number;
-}
-
-type TimeframeType = "30m" | "1h" | "3h" | "24h" | "7d";
-
-const formatDateTime = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  return date.toLocaleString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
-function formatFloatingNumber(number: number) {
-  if (number === 0) return "0.000"; // Special case for zero
-
-  const absNumber = Math.abs(number);
-  const decimalPlaces = Math.max(0, 3 - Math.floor(Math.log10(absNumber)));
-
-  // Round the number to the desired precision
-  const rounded = Number(absNumber.toFixed(decimalPlaces));
-
-  // Return the number, keeping the sign
-  return (number < 0 ? -rounded : rounded).toString();
-}
-const processTradeData = (
-  trades: TradeData[],
-  startMentions: number,
-  endMentions: number,
-  views: number,
-  timeframe: TimeframeType
-): DataPoint[] => {
-  const now = Date.now();
-  const timeframeLimit = {
-    "30m": 1000 * 60 * 30,
-    "1h": 1000 * 60 * 60,
-    "3h": 1000 * 60 * 60 * 3,
-    "24h": 1000 * 60 * 60 * 24,
-    "7d": 1000 * 60 * 60 * 24 * 7,
-  }[timeframe];
-
-  const cutoffTime = now - timeframeLimit;
-
-  // Filter trades within the timeframe and sort by timestamp
-  const filteredTrades = trades
-    .filter((trade) => new Date(trade.trade_at).getTime() >= cutoffTime)
-    .sort(
-      (a, b) => new Date(a.trade_at).getTime() - new Date(b.trade_at).getTime()
-    );
-
-  // Calculate mentions change rate
-  const mentionsChange = endMentions - startMentions;
-  const mentionsChangeRate = mentionsChange / startMentions; // Relative change
-
-  // Calculate popularity for each point
-  return filteredTrades.map((trade, index) => {
-    const tradeDate = new Date(trade.trade_at);
-    const timeProgress = index / (filteredTrades.length - 1); // 0 to 1
-
-    // Base popularity starts at 50 plus views contribution
-    let popularity = 50 + views * 0.0001; // Scale views down to avoid too large numbers
-
-    // Adjust based on mentions trend
-    if (mentionsChangeRate > 0) {
-      // Increasing mentions - popularity grows exponentially
-      popularity += mentionsChangeRate * 100 * Math.pow(timeProgress, 2);
-    } else {
-      // Decreasing or stable mentions - popularity declines linearly
-      popularity -= Math.abs(mentionsChangeRate * 50) * timeProgress;
-    }
-
-    // Ensure popularity stays within reasonable bounds
-    popularity = Math.max(0, Math.min(100, popularity));
-
-    return {
-      timestamp: formatTimestamp(trade.trade_at, timeframe),
-      rawTimestamp: tradeDate.getTime(),
-      price: trade.price_usd,
-      popularity: popularity,
-    };
-  });
-};
-
-const formatTimestamp = (
-  timestamp: string,
-  timeframe: TimeframeType
-): string => {
-  const date = new Date(timestamp);
-
-  switch (timeframe) {
-    case "30m":
-    case "1h":
-    case "3h":
-      return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
-    case "24h":
-      return `${String(date.getHours()).padStart(2, "0")}:00`;
-    case "7d":
-      return date.toLocaleDateString("en-US", { weekday: "short" });
-    default:
-      return timestamp;
-  }
-};
 function ChartContent({
   data,
   showPrice,
@@ -378,24 +275,45 @@ export default function TimeSeriesChartWithPaywall({
             />
             <CardTitle className="text-lg sm:text-xl font-bold text-[#F8D12E] nouns tracking-widest">
               {tokenData.symbol.toLocaleUpperCase()}
-              <span className="text-muted-foreground text-xs sm:text-sm font-medium sen tracking-normal">
+              <span
+                className="text-muted-foreground text-xs sm:text-sm font-medium sen tracking-normal cursor-pointer"
+                onClick={() => {
+                  setUsdOrSolToggle(!usdOrSolToggle);
+                }}
+              >
                 /{usdOrSolToggle ? "USD" : "SOL"}
               </span>
             </CardTitle>
           </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              className="hidden sm:flex hover:bg-transparent hover:border-[1px] hover:border-secondary transform transition hover:scale-105"
+              onClick={() =>
+                window.open(
+                  `https://solscan.io/token/${tokenData.address}`,
+                  "_blank"
+                )
+              }
+            >
+              {tokenData.address.slice(0, 4)}...{tokenData.address.slice(-4)}
+              <ArrowUpRightFromSquare className="w-3 h-3 ml-1" />
+            </Button>
+            <Select value={timeframe} onValueChange={handleTimeframeChange}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Timeframe" />
+              </SelectTrigger>
 
-          <Select value={timeframe} onValueChange={handleTimeframeChange}>
-            <SelectTrigger className="w-24 sm:w-32">
-              <SelectValue placeholder="Timeframe" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="30m">30 Minutes</SelectItem>
-              <SelectItem value="1h">1 Hour</SelectItem>
-              <SelectItem value="3h">3 Hours</SelectItem>
-              <SelectItem value="24h">24 Hours</SelectItem>
-              <SelectItem value="7d">7 Days</SelectItem>
-            </SelectContent>
-          </Select>
+              {/* Full names for larger screens */}
+              <SelectContent>
+                <SelectItem value="30m">30 Minutes</SelectItem>
+                <SelectItem value="1h">1 Hour</SelectItem>
+                <SelectItem value="3h">3 Hours</SelectItem>
+                <SelectItem value="24h">24 Hours</SelectItem>
+                <SelectItem value="7d">7 Days</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Price Display */}

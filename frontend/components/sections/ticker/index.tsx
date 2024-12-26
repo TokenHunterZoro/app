@@ -55,35 +55,35 @@ export default function Ticker({ params }: { params: { id: string } }) {
         setIsUpdatingPrice(true);
 
         // Initiate long-running update-price API call
-        const updateResponse = await fetch(`/api/supabase/update-price`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tokenId: params.id }),
-        });
-        const updateData = await updateResponse.json();
+        // const updateResponse = await fetch(`/api/supabase/update-price`, {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ tokenId: params.id }),
+        // });
+        // const updateData = await updateResponse.json();
 
-        // Update prices after `update-price` completes
-        if (updateData.success) {
-          setCoinData((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  prices: [...prev.prices, ...updateData.data].sort(
-                    (a, b) =>
-                      new Date(a.trade_at).getTime() -
-                      new Date(b.trade_at).getTime()
-                  ),
-                }
-              : null
-          );
+        // // Update prices after `update-price` completes
+        // if (updateData.success) {
+        //   setCoinData((prev) =>
+        //     prev
+        //       ? {
+        //           ...prev,
+        //           prices: [...prev.prices, ...updateData.data].sort(
+        //             (a, b) =>
+        //               new Date(a.trade_at).getTime() -
+        //               new Date(b.trade_at).getTime()
+        //           ),
+        //         }
+        //       : null
+        //   );
 
-          if (coinData) {
-            setToken(parseInt(params.id), {
-              ...coinData,
-              prices: updateData.data || [],
-            });
-          }
-        }
+        //   if (coinData) {
+        //     setToken(parseInt(params.id), {
+        //       ...coinData,
+        //       prices: updateData.data || [],
+        //     });
+        //   }
+        // }
       } catch (error) {
         console.error("Error fetching coin data:", error);
       } finally {
