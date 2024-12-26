@@ -33,10 +33,8 @@ const setupBrowser = async () => {
         "--disable-gpu",
         "--disable-extensions",
       ],
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-      userDataDir:
-        "C:\\Users\\Gabriel\\AppData\\Local\\Google\\Chrome\\User Data",
+      executablePath: process.env.EXECUTABLE_PATH,
+      userDataDir: process.env.USER_DATA_DIR,
     };
 
     const browser = await puppeteer.launch(options);
@@ -294,17 +292,17 @@ const main = async () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
-    if (allResults.length) {
-      const savedPath = saveCombinedResults(allResults);
-      if (savedPath) {
-        console.log("\nSuccessfully saved all results!");
-      }
-      await addTiktoks(supabase, {
-        extraction_time: new Date().toISOString(),
-        total_searches: allResults.length,
-        results: allResults,
-      });
-    }
+    // if (allResults.length) {
+    //   const savedPath = saveCombinedResults(allResults);
+    //   if (savedPath) {
+    //     console.log("\nSuccessfully saved all results!");
+    //   }
+    //   await addTiktoks(supabase, {
+    //     extraction_time: new Date().toISOString(),
+    //     total_searches: allResults.length,
+    //     results: allResults,
+    //   });
+    // }
 
     console.log("\nAll hashtag terms processed!");
     console.log("Press Enter to close browser...");
