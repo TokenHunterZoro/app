@@ -6,15 +6,15 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/embed", // Apply only to the /embed route
+        source: "/embed/:id*", // Handle /embed and /embed/[id]
         headers: [
           {
             key: "X-Frame-Options",
-            value: "ALLOWALL", // Allow all origins to embed
+            value: "ALLOWALL",
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors *;", // Allow iframe embedding
+            value: "frame-ancestors *;",
           },
         ],
       },

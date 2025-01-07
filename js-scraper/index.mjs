@@ -260,7 +260,7 @@ const saveCombinedResults = (results) => {
 };
 
 const main = async () => {
-  const searchTerms = ["memecoin", "solana", "crypto", "pumpfun"];
+  const searchTerms = ["memecoin", "pumpfun", "solana", "crypto"];
 
   const hashtagTerms = ["memecoin", "solana", "crypto", "pumpfun"];
 
@@ -313,17 +313,17 @@ const main = async () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
-    // if (allResults.length) {
-    //   const savedPath = saveCombinedResults(allResults);
-    //   if (savedPath) {
-    //     console.log("\nSuccessfully saved all results!");
-    //   }
-    //   await addTiktoks(supabase, {
-    //     extraction_time: new Date().toISOString(),
-    //     total_searches: allResults.length,
-    //     results: allResults,
-    //   });
-    // }
+    if (allResults.length) {
+      const savedPath = saveCombinedResults(allResults);
+      if (savedPath) {
+        console.log("\nSuccessfully saved all results!");
+      }
+      await addTiktoks(supabase, {
+        extraction_time: new Date().toISOString(),
+        total_searches: allResults.length,
+        results: allResults,
+      });
+    }
 
     console.log("\nAll hashtag terms processed!");
     console.log("Press Enter to close browser...");

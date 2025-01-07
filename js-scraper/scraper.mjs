@@ -21,11 +21,11 @@ export class VideoScraper {
       console.log(`Time difference: ${timeDiff}`);
 
       console.log(timeDiff);
-      if (timeDiff > 6 * 3600) {
-        // 24 hours in seconds
-        console.log("Video older than 6 hours. Skipping...");
-        return null;
-      }
+      // if (timeDiff > 6 * 3600) {
+      //   // 24 hours in seconds
+      //   console.log("Video older than 6 hours. Skipping...");
+      //   return null;
+      // }
 
       Object.assign(data, timeData);
 

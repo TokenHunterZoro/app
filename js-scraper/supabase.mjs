@@ -135,7 +135,7 @@ function getTiktokId(url) {
 //     process.env.SUPABASE_KEY
 //   );
 //   const data = JSON.parse(
-//     fs.readFileSync("combined_results_2024-12-23T07-57-35-472Z.json", "utf8")
+//     fs.readFileSync("combined_results_2024-12-27T07-22-03-044Z.json", "utf8")
 //   );
 
 //   try {
