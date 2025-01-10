@@ -32,13 +32,16 @@ export async function GET(request: NextRequest) {
       ),
       mentions(
         tiktoks(username, thumbnail, url, created_at, views),
-        count
+        count,
+        mention_at
       ),
       tweets(id, created_at, tweet, tweet_id)
     `
       )
       .eq("id", parseInt(tokenId))
       .order("trade_at", { foreignTable: "prices", ascending: true })
+      .order("mention_at", { foreignTable: "mentions", ascending: true })
+      .order("created_at", { foreignTable: "tweets", ascending: false })
       .single();
 
     if (error) {

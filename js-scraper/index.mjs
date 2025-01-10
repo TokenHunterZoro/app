@@ -2,6 +2,8 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import fs from "fs";
+import os from "os";
+import path from "path";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import { extractComments, VideoScraper } from "./scraper.mjs";
@@ -25,21 +27,38 @@ const setupBrowser = async () => {
   try {
     puppeteer.use(StealthPlugin());
 
+    const userDataDir = path.join(
+      os.homedir(),
+      "Library/Application Support/Google/Chrome/Profile 3"
+    );
+
     const options = {
       headless: false,
+      ignoreDefaultArgs: ["--enable-automation"],
       args: [
-        "--no-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--disable-extensions",
+        "--disable-blink-features=AutomationControlled",
+        "--disable-features=IsolateOrigins,site-per-process",
+        "--no-sandbox",
+        "--start-maximized",
       ],
       executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-      userDataDir:
-        "C:\\Users\\Gabriel\\AppData\\Local\\Google\\Chrome\\User Data",
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      userDataDir: userDataDir,
     };
 
     const browser = await puppeteer.launch(options);
+    const page = await browser.newPage();
+
+    // Remove automation flags
+    await page.evaluateOnNewDocument(() => {
+      delete Object.getPrototypeOf(navigator).webdriver;
+      window.navigator.chrome = { runtime: {} };
+      Object.defineProperty(navigator, "plugins", {
+        get: () => [1, 2, 3, 4, 5],
+      });
+    });
+
     return browser;
   } catch (e) {
     logger.error(`Failed to create browser: ${e}`);
@@ -241,7 +260,7 @@ const saveCombinedResults = (results) => {
 };
 
 const main = async () => {
-  const searchTerms = ["memecoin", "solana", "crypto", "pumpfun"];
+  const searchTerms = ["memecoin", "pumpfun", "solana", "crypto"];
 
   const hashtagTerms = ["memecoin", "solana", "crypto", "pumpfun"];
 

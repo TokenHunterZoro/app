@@ -64,6 +64,21 @@ export interface DocsConfig {
   sidebarNav: any[];
   chartsNav: any[];
 }
+
+interface TradeData {
+  price_usd: number;
+  price_sol: number;
+  trade_at: string;
+}
+
+interface DataPoint {
+  timestamp: string;
+  rawTimestamp: number;
+  price: number;
+  popularity: number;
+}
+
+type TimeframeType = "30m" | "1h" | "3h" | "24h" | "7d";
 export type {
   TokenData,
   Price,
@@ -73,4 +88,7 @@ export type {
   SortableTableHeaderProps,
   SearchTokenResponse,
   LeaderboardData,
+  TradeData,
+  DataPoint,
+  TimeframeType,
 };

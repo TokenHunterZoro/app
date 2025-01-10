@@ -1,7 +1,10 @@
 "use client";
+
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { HandHelping } from "lucide-react";
 import { useEnvironmentStore } from "@/components/context";
 import { CommandMenu } from "./command-menu";
 import { useRouter } from "next/navigation";
@@ -17,6 +20,8 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { setVisible } = useWalletModal();
+  const { disconnect, connected, publicKey } = useWallet();
   const { walletAddress, setAddress, setPaid, setBalances } =
     useEnvironmentStore((store) => store);
   const router = useRouter();
@@ -68,7 +73,7 @@ export default function Layout({
             variant="ghost"
             className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
             onClick={async () => {
-              if (walletAddress == "") {
+              if (!connected) {
                 toast({
                   title: "Please connect your wallet first",
                   description:
@@ -119,46 +124,22 @@ export default function Layout({
 
           <Button
             className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-            onClick={async () => {
-              if (walletAddress) {
-                try {
-                  const { solana } = (window as any).phantom;
-
-                  if (solana) {
-                    await solana.disconnect();
-                    setAddress("");
-                  }
-                } catch (error) {
-                  console.error(
-                    "Error disconnecting from Phantom wallet:",
-                    error
-                  );
-                }
-              } else {
-                try {
-                  const { solana } = (window as any).phantom;
-
-                  if (solana) {
-                    const response = await solana.connect();
-                    setAddress(response.publicKey.toString());
-                  }
-                } catch (error) {
-                  console.error("Error connecting to Phantom wallet:", error);
-                }
-              }
+            onClick={() => {
+              if (!connected) setVisible(true);
+              else disconnect();
             }}
           >
             <Image
-              src={"/phantom.jpg"}
+              src={"/solana.png"}
               width={25}
               height={25}
               className="rounded-full"
               alt="phantom"
             />
             <p className="sen text-sm sm:text-md font-bold">
-              {walletAddress == ""
-                ? "Connect Phantom"
-                : shortenAddress(walletAddress)}
+              {!connected
+                ? "Connect Wallet"
+                : shortenAddress(publicKey?.toString() ?? "")}
             </p>
           </Button>
         </div>
@@ -168,7 +149,7 @@ export default function Layout({
           variant="ghost"
           className="hover:bg-transparent hover:border-[1px] hover:border-white transform transition hover:scale-105"
           onClick={async () => {
-            if (walletAddress == "") {
+            if (!connected) {
               toast({
                 title: "Please connect your wallet first",
                 description:
@@ -219,46 +200,22 @@ export default function Layout({
 
         <Button
           className="bg-[#F8D12E] hover:bg-[#F8D12E] transform transition hover:scale-105"
-          onClick={async () => {
-            if (walletAddress) {
-              try {
-                const { solana } = (window as any).phantom;
-
-                if (solana) {
-                  await solana.disconnect();
-                  setAddress("");
-                }
-              } catch (error) {
-                console.error(
-                  "Error disconnecting from Phantom wallet:",
-                  error
-                );
-              }
-            } else {
-              try {
-                const { solana } = (window as any).phantom;
-
-                if (solana) {
-                  const response = await solana.connect();
-                  setAddress(response.publicKey.toString());
-                }
-              } catch (error) {
-                console.error("Error connecting to Phantom wallet:", error);
-              }
-            }
+          onClick={() => {
+            if (!connected) setVisible(true);
+            else disconnect();
           }}
         >
           <Image
-            src={"/phantom.jpg"}
+            src={"/solana.png"}
             width={25}
             height={25}
             className="rounded-full"
             alt="phantom"
           />
           <p className="sen text-sm sm:text-md font-bold">
-            {walletAddress == ""
-              ? "Connect Phantom"
-              : shortenAddress(walletAddress)}
+            {!connected
+              ? "Connect Wallet"
+              : shortenAddress(publicKey?.toString() ?? "")}
           </p>
         </Button>
       </div>

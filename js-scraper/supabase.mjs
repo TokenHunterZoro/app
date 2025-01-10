@@ -129,19 +129,19 @@ function getTiktokId(url) {
   return match ? match[1] : null;
 }
 
-(async () => {
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-  );
-  const data = JSON.parse(
-    fs.readFileSync("combined_results_2024-12-23T07-57-35-472Z.json", "utf8")
-  );
+// (async () => {
+//   const supabase = createClient(
+//     process.env.SUPABASE_URL,
+//     process.env.SUPABASE_KEY
+//   );
+//   const data = JSON.parse(
+//     fs.readFileSync("combined_results_2024-12-27T07-22-03-044Z.json", "utf8")
+//   );
 
-  try {
-    const response = await addTiktoks(supabase, data);
-    console.log(response);
-  } catch (error) {
-    console.error("Unexpected error:", error);
-  }
-})();
+//   try {
+//     const response = await addTiktoks(supabase, data);
+//     console.log(response);
+//   } catch (error) {
+//     console.error("Unexpected error:", error);
+//   }
+// })();

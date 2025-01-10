@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { DataPoint, TimeframeType, TradeData } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -177,3 +178,133 @@ export function getQuery(
 }`;
   }
 }
+
+export const processTradeData = (
+  trades: TradeData[],
+  startMentions: number,
+  endMentions: number,
+  views: number,
+  timeframe: TimeframeType
+): DataPoint[] => {
+  const now = Date.now();
+  const timeframeLimit = {
+    "30m": 1000 * 60 * 30,
+    "1h": 1000 * 60 * 60,
+    "3h": 1000 * 60 * 60 * 3,
+    "24h": 1000 * 60 * 60 * 24,
+    "7d": 1000 * 60 * 60 * 24 * 7,
+  }[timeframe];
+
+  const cutoffTime = now - timeframeLimit;
+  // Filter trades within the timeframe and sort by timestamp
+  const filteredTrades = trades
+    .filter((trade) => new Date(trade.trade_at).getTime() >= cutoffTime)
+    .sort(
+      (a, b) => new Date(a.trade_at).getTime() - new Date(b.trade_at).getTime()
+    );
+
+  const returnData = filteredTrades.map((trade, index) => {
+    const tradeDate = new Date(trade.trade_at);
+
+    return {
+      timestamp: formatTimestamp(trade.trade_at, timeframe),
+      rawTimestamp: tradeDate.getTime(),
+      price: trade.price_usd,
+      popularity: calculatePopularityAtTimestamp(
+        startMentions,
+        new Date(filteredTrades[0].trade_at).getTime(),
+        endMentions,
+        new Date(filteredTrades[filteredTrades.length - 1].trade_at).getTime(),
+        views,
+        tradeDate.getTime()
+      ),
+    };
+  });
+  console.log("RETURN DATA");
+  console.log(returnData);
+  // Calculate popularity for each point
+  return returnData;
+};
+
+export function calculatePopularityAtTimestamp(
+  mentionsStart: number,
+  timestampStart: number,
+  mentionsEnd: number,
+  timestampEnd: number,
+  views: number,
+  targetTimestamp: number,
+  weightMentions: number = 0.7,
+  weightViews: number = 0.3,
+  decayRate: number = 0.00001
+): number {
+  // Calculate time-based metrics
+  const timeElapsed = targetTimestamp - timestampStart;
+  const totalTimespan = timestampEnd - timestampStart;
+
+  // Calculate mentions rate and interpolation
+  const mentionsRate = (mentionsEnd - mentionsStart) / totalTimespan;
+  const interpolatedMentions = mentionsStart + mentionsRate * timeElapsed;
+
+  // Normalize views (cap at 10M)
+  const normalizedViews = Math.min(views / 10000000, 1);
+
+  // Calculate base popularity
+  let popularity =
+    interpolatedMentions * weightMentions + normalizedViews * weightViews;
+
+  // Apply gradual decay
+  const decayFactor = 1 / (1 + decayRate * timeElapsed);
+  popularity *= decayFactor;
+
+  // Boost for increasing mentions
+  if (mentionsRate > 0) {
+    const growthFactor = 1 + Math.min(mentionsRate * 100, 0.5); // Cap growth at 50%
+    popularity *= growthFactor;
+  }
+
+  // Ensure minimum value
+  return Math.max(popularity, 0.01);
+}
+
+export const formatDateTime = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+export function formatFloatingNumber(number: number) {
+  if (number === 0) return "0.000"; // Special case for zero
+
+  const absNumber = Math.abs(number);
+  const decimalPlaces = Math.max(0, 3 - Math.floor(Math.log10(absNumber)));
+
+  // Round the number to the desired precision
+  const rounded = Number(absNumber.toFixed(decimalPlaces));
+
+  // Return the number, keeping the sign
+  return (number < 0 ? -rounded : rounded).toString();
+}
+
+export const formatTimestamp = (
+  timestamp: string,
+  timeframe: TimeframeType
+): string => {
+  const date = new Date(timestamp);
+
+  switch (timeframe) {
+    case "30m":
+    case "1h":
+    case "3h":
+      return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
+    case "24h":
+      return `${String(date.getHours()).padStart(2, "0")}:00`;
+    case "7d":
+      return date.toLocaleDateString("en-US", { weekday: "short" });
+    default:
+      return timestamp;
+  }
+};

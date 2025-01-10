@@ -139,7 +139,9 @@ export default function Ticker({ params }: { params: { id: string } }) {
       <Tweets
         symbol={coinData.symbol}
         tweets={coinData.tweets}
-        growth={coinData.tweets.length > 0 ? "1.5" : "0"}
+        growth={
+          coinData.tweets ? (coinData.tweets.length > 0 ? "1.5" : "0") : "0"
+        }
       />
       <Tiktoks symbol={coinData.symbol} tiktoks={coinData.tiktoks} />
     </div>
