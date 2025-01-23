@@ -311,8 +311,8 @@ export async function extractComments(postId) {
   while (true) {
     try {
       const rawData = await makeRequest(cursor);
-      console.log("Tiktok API response");
       const commentData = rawData.comments;
+      console.log(commentData);
       if (!commentData) break;
       for (const cm of commentData) {
         const responseData = {};
