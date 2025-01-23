@@ -92,6 +92,8 @@ _"An Autonomous AI Agent that browses TikTok to help you find the hottest memeco
 
 **Twitter** | https://x.com/TokenHunterZoro
 
+**Dexscreener** | https://dexscreener.com/solana/a9wxjtzgkvz12xtqex4jufhmermi7tfwrp1nujkh8lyq
+
 **Live App** | https://zorox-ai.vercel.app/
 
 ---
