@@ -17,10 +17,10 @@ const logger = {
 
 const processedUrls = new Set();
 
-const setupBrowserr = async () => {
+const setupBrowser = async () => {
   try {
     const browser = await puppeteer.connect({
-      browserWSEndpoint: 'ws://localhost:9222/devtools/browser/299aedd5-383f-4259-8d11-aa837a5f7ea2',
+      browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/7f8828d2-0700-4161-bbe3-944e8abd8e85',
       defaultViewport: null
     });
     return browser;
@@ -29,41 +29,44 @@ const setupBrowserr = async () => {
     return null;
   }
 };
-const setupBrowser = async () => {
-  try {
-    const userDataDir = path.join(
-      os.homedir(),
-      "snap/brave/468/.config/BraveSoftware/Brave-Browser"
-    );
 
-    const options = {
-      headless: false,
-      ignoreDefaultArgs: ['--enable-automation'],
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        `--user-data-dir=${userDataDir}`,
-        '--profile-directory=Profile 2',
-        '--remote-debugging-port=9222'
-      ],
-      executablePath: '/snap/bin/brave',
-      defaultViewport: null
-    };
+// const setupBrowser = async () => {
+//   try {
+//     const userDataDir = path.join(
+//       os.homedir(),
+//       "snap/brave/468/.config/BraveSoftware/Brave-Browser"
+//     );
 
-    const browser = await puppeteer.launch(options);
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Small delay
-    return browser;
-  } catch (e) {
-    logger.error(`Failed to create browser: ${e.message}`);
-    process.exit(1); // Exit if browser fails to launch
-  }
-};
+//     const options = {
+//       headless: false,
+//       ignoreDefaultArgs: ['--enable-automation'],
+//       args: [
+//         '--no-sandbox',
+//         '--disable-setuid-sandbox',
+//         `--user-data-dir=${userDataDir}`,
+//         '--profile-directory=Profile 2',
+//         '--remote-debugging-port=9222'
+//       ],
+//       executablePath: '/snap/bin/brave',
+//       defaultViewport: null
+//     };
+
+//     const browser = await puppeteer.launch(options);
+//     await new Promise(resolve => setTimeout(resolve, 3000)); // Small delay
+//     return browser;
+//   } catch (e) {
+//     logger.error(`Failed to create browser: ${e.message}`);
+//     process.exit(1); // Exit if browser fails to launch
+//   }
+// };
 
 const verifyPageLoaded = async (page, url, timeout = 60000) => {
   try {
     logger.info(`Loading ${url}...`);
-    await page.goto(url, { waitUntil: "networkidle0", timeout });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout });
+    console.log('waiting for body')
     await page.waitForSelector("body");
+    console.log('waiting for timeout')
     await new Promise((resolve) => setTimeout(resolve, 5000));
     logger.info(`Successfully loaded ${url}`);
     return true;
@@ -75,7 +78,6 @@ const verifyPageLoaded = async (page, url, timeout = 60000) => {
 const extractVideoData = async (element) => {
   try {
     const videoData = await VideoScraper.extractVideoData(element);
-    console.log(videoData);
     return videoData;
   } catch (e) {
     return null;
@@ -83,7 +85,7 @@ const extractVideoData = async (element) => {
 };
 
 const processSearchTerm = async (page, keyword, maxResults = 50) => {
-  const searchUrl = `https://www.tiktok.com/search?q=${keyword}`;
+  const searchUrl = `https://www.tiktok.com/search/video?q=${keyword}`;
   const results = [];
   const scrollPauseTime = 2000;
 
@@ -106,7 +108,8 @@ const processSearchTerm = async (page, keyword, maxResults = 50) => {
           continue;
         }
 
-        console.log(videoElements.length);
+        console.log("Count of Video elements")
+        console.log(videoElements.length)
 
         for (const element of videoElements) {
           if (results.length >= maxResults) break;
@@ -122,6 +125,7 @@ const processSearchTerm = async (page, keyword, maxResults = 50) => {
             );
 
             const postId = videoData.video_url.split("/").pop();
+            console.log("Extracting Comments")
             videoData.comments = await extractComments(postId);
             console.log(`Found ${videoData.comments.count} comments`);
 
@@ -164,6 +168,8 @@ const processHashtagTerm = async (page, keyword, maxResults = 50) => {
   const results = [];
   const scrollPauseTime = 2000;
 
+
+
   try {
     console.log(`\nProcessing hashtag term: ${keyword}`);
     console.log(`Navigating to: ${hashtagUrl}`);
@@ -179,7 +185,8 @@ const processHashtagTerm = async (page, keyword, maxResults = 50) => {
           await new Promise((resolve) => setTimeout(resolve, 5000));
           continue;
         }
-
+        console.log("Count of Video elements")
+        console.log(videoElements.length)
         for (const element of videoElements) {
           if (results.length >= maxResults) break;
 
@@ -252,7 +259,7 @@ const saveCombinedResults = (results) => {
 };
 
 const main = async () => {
-  const searchTerms = ["memecoin"];
+  const searchTerms = ["memecoin", "solana", "crypto", "pumpfun"];
 
   const hashtagTerms = ["memecoin", "solana", "crypto", "pumpfun"];
 
@@ -262,7 +269,7 @@ const main = async () => {
 
   try {
     logger.info("Starting Chrome with profile...");
-    browser = await setupBrowserr();
+    browser = await setupBrowser();
 
     if (!browser) {
       logger.error("Failed to create Chrome browser");
@@ -276,7 +283,7 @@ const main = async () => {
     const allResults = [];
 
     for (const search of searchTerms) {
-      const results = await processSearchTerm(page, search, 100);
+      const results = await processSearchTerm(page, search, 200);
       if (results.length) {
         allResults.push({
           search,
@@ -291,7 +298,6 @@ const main = async () => {
     }
 
     console.log("\nAll search terms processed!");
-    return;
     for (const hashtag of hashtagTerms) {
       const results = await processHashtagTerm(page, hashtag, 200);
       if (results.length) {
@@ -312,11 +318,11 @@ const main = async () => {
       if (savedPath) {
         console.log("\nSuccessfully saved all results!");
       }
-      await addTiktoks(supabase, {
-        extraction_time: new Date().toISOString(),
-        total_searches: allResults.length,
-        results: allResults,
-      });
+      // await addTiktoks(supabase, {
+      //   extraction_time: new Date().toISOString(),
+      //   total_searches: allResults.length,
+      //   results: allResults,
+      // });
     }
 
     console.log("\nAll hashtag terms processed!");

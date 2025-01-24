@@ -11,16 +11,9 @@ export class VideoScraper {
       }
 
       const currentTimestamp = Date.now() / 1000;
-      console.log("Current timestamp");
-      console.log(currentTimestamp);
       const videoTimestamp = timeData.posted_timestamp;
-      console.log("Video timestamp");
-      console.log(videoTimestamp);
 
       const timeDiff = currentTimestamp - videoTimestamp;
-      console.log(`Time difference: ${timeDiff}`);
-
-      console.log(timeDiff);
       // if (timeDiff > 6 * 3600) {
       //   // 24 hours in seconds
       //   console.log("Video older than 6 hours. Skipping...");
@@ -37,6 +30,8 @@ export class VideoScraper {
       Object.assign(data, await VideoScraper._extractViews(videoElement));
 
       data.extracted_time = new Date().toISOString();
+      console.log("Extracted Video Data...")
+      console.log(data)
       return data;
     } catch (e) {
       console.log(`Error extracting video data: ${e}`);
@@ -65,10 +60,6 @@ export class VideoScraper {
           continue;
         }
       }
-
-      console.log("RECEIVED DATA");
-      console.log(postedTime);
-      console.log(postedDatetime);
 
       if (!postedTime) {
         postedTime = "1s";
@@ -224,81 +215,41 @@ export class VideoScraper {
 export async function extractComments(postId) {
   const comments = [];
   const seenComments = new Set(); // Track unique user-comment combinations
-  const tickerCounts = {};
   let cursor = 0;
+  const mentions = {}
+
 
   const findCryptoTickers = (text) => {
-    let cleanedString = text.replace(/\$([^\s,]+)/g, "$1");
-    cleanedString = cleanedString.replace(/[\s,]+/g, " ").trim();
+    const mentions = {};
 
-    cleanedString = cleanedString.replace(
-      /[!"#\$%&\'\(\)\*\+,\-\.\/\:;<=>\?@\[\\\]\^_`\{\|\}\~\u00A0-\u10FFFF]/g,
-      ""
-    );
+    // Split text into words
+    const words = text.split(/[\s,]+/).map(word => word.trim());
 
-    const words = cleanedString.toLowerCase().split(" ");
+    const ignoreWords = ['solana', 'pump', 'ai', 'btc', 'eth', 'xrp', 'sol', 'doge', 'pepe', 'go', 'ui', 'coin', 'to', 'the', 'best', 'is', 'okx', 'a', 'omg', 'market', 'cap', 'low', 'high', 'usd', 'dm', 'easy', 'made', 'crazy', 'going']
 
-    const ignoreWords = [
-      "ALL",
-      "BEFORE",
-      "HERE",
-      "JUST",
-      "SOLANA",
-      "MEMECOIN",
-      "CRYPTO",
-      "AI",
-      "AFTER",
-      "A",
-      "WHAT",
-      "DO",
-      "YOU",
-      "I",
-      "AND",
-      "THE",
-      "VIDEO",
-      "ON",
-      "TILL",
-      "MEME",
-      "CAN",
-      "MAKE",
-      "ME",
-      "FROM",
-      "CTO",
-      "IVE",
-      "1000X",
-      "100X",
-      "REALLY",
-      "BEST",
-      "THINK",
-      "IS",
-      "ARE",
-      "WAS",
-      "WERE",
-      "BE",
-      "THIS",
-      "THAT",
-      "IT",
-      "LOL",
-      "OMG",
-      "BUY",
-      "TO",
-      "PUMP",
-      "NEW",
-      "ITS",
-      "MOON",
-      "LFG",
-      "HODL",
-      "SOON",
-      "ABOUT",
-    ];
-    const filteredWords = words.filter(
-      (word) => !ignoreWords.includes(word.toUpperCase())
-    );
 
-    return filteredWords.reduce((acc, word) => {
-      acc[word] = (acc[word] || 0) + 1;
-      return acc;
-    }, {});
+    for (const word of words) {
+      if (ignoreWords.includes(word.toLowerCase())) continue;
+      if (
+        /0x[a-fA-F0-9]{40}/i.test(word) ||
+        /[1-9A-HJ-NP-Za-km-z]{32,44}/.test(word)
+      ) {
+        mentions[word] = { count: (mentions[word]?.count || 0) + 1, isTicker: false };
+        continue;
+      }
+
+      if (
+        /^\$[A-Za-z][A-Za-z0-9]{1,9}$/i.test(word) ||  // Cashtags
+        /^#[A-Za-z][A-Za-z0-9]{1,9}$/i.test(word) ||   // Hashtags
+        /^[A-Z][A-Z0-9]{1,9}$/.test(word)              // UPPERCASE words
+      ) {
+        console.log(word)
+        const ticker = word.startsWith('$') || word.startsWith('#')
+          ? word.substring(1)
+          : word;
+        mentions[ticker] = { count: (mentions[ticker]?.count || 0) + 1, isTicker: true };
+      }
+    }
   };
 
   const makeRequest = async (cursor) => {
@@ -312,7 +263,6 @@ export async function extractComments(postId) {
     try {
       const rawData = await makeRequest(cursor);
       const commentData = rawData.comments;
-      console.log(commentData);
       if (!commentData) break;
       for (const cm of commentData) {
         const responseData = {};
@@ -330,14 +280,15 @@ export async function extractComments(postId) {
         seenComments.add(commentIdentifier);
         comments.push(responseData);
 
-        const tickers = findCryptoTickers(responseData.data);
-        for (const [ticker, count] of Object.entries(tickers)) {
-          tickerCounts[ticker] = (tickerCounts[ticker] || 0) + count;
-        }
+        findCryptoTickers(responseData.data);
+
       }
 
       if (rawData.has_more === 1) {
+        console.log("more comments available");
         cursor += 20;
+        console.log("Cursor at ", cursor);
+
       } else {
         console.log("no more comments available");
         break;
@@ -352,6 +303,6 @@ export async function extractComments(postId) {
 
   return {
     count: comments.length,
-    tickers: tickerCounts,
+    mentions,
   };
 }

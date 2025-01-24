@@ -70,7 +70,9 @@ const verifyPageLoaded = async (page, url, timeout = 60000) => {
   try {
     logger.info(`Loading ${url}...`);
     await page.goto(url, { waitUntil: "networkidle0", timeout });
+    console.log('waiting for body')
     await page.waitForSelector("body");
+    console.log('waiting for timeout')
     await new Promise((resolve) => setTimeout(resolve, 5000));
     logger.info(`Successfully loaded ${url}`);
     return true;
@@ -114,6 +116,7 @@ const processSearchTerm = async (page, keyword, maxResults = 50) => {
           continue;
         }
 
+        console.log("Count of Video elements")
         console.log(videoElements.length);
 
         for (const element of videoElements) {
