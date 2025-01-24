@@ -15,7 +15,7 @@ const logger = {
     console.error(new Date().toISOString(), "ERROR:", ...args),
 };
 
-const processedUrls = new Set();
+const processedTiktokIds = new Set();
 
 const setupBrowser = async () => {
   try {
@@ -115,22 +115,24 @@ const processSearchTerm = async (page, keyword, maxResults = 50) => {
           if (results.length >= maxResults) break;
 
           const videoData = await extractVideoData(element);
+          const postId = videoData.video_url.split("/").pop();
           if (
             videoData &&
             videoData?.video_url &&
-            !processedUrls.has(videoData.video_url)
+            !processedTiktokIds.has(postId)
           ) {
             console.log(
               `Found video ${results.length}/${maxResults}: ${videoData.video_url}`
             );
 
-            const postId = videoData.video_url.split("/").pop();
             console.log("Extracting Comments")
             videoData.comments = await extractComments(postId);
             console.log(`Found ${videoData.comments.count} comments`);
 
-            processedUrls.add(videoData.video_url);
+            processedTiktokIds.add(postId);
             results.push(videoData);
+          } else {
+            console.log("Video is Already processed")
           }
         }
 
@@ -191,16 +193,16 @@ const processHashtagTerm = async (page, keyword, maxResults = 50) => {
           if (results.length >= maxResults) break;
 
           const videoData = await extractVideoData(element);
-          if (videoData?.video_url && !processedUrls.has(videoData.video_url)) {
+          const postId = videoData.video_url.split("/").pop();
+          if (videoData && videoData?.video_url && !processedTiktokIds.has(postId)) {
             console.log(
               `Found video ${results.length}/${maxResults}: ${videoData.video_url}`
             );
 
-            const postId = videoData.video_url.split("/").pop();
             videoData.comments = await extractComments(postId);
             console.log(`Found ${videoData.comments.count} comments`);
 
-            processedUrls.add(videoData.video_url);
+            processedTiktokIds.add(postId);
             results.push(videoData);
           }
         }

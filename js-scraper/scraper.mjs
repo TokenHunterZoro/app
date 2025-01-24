@@ -219,13 +219,14 @@ export async function extractComments(postId) {
   const mentions = {}
 
 
-  const findCryptoTickers = (text) => {
+  const findCryptoTickers = (responseData) => {
+    const { data: text, timestamp } = responseData
     const mentions = {};
 
     // Split text into words
     const words = text.split(/[\s,]+/).map(word => word.trim());
 
-    const ignoreWords = ['solana', 'pump', 'ai', 'btc', 'eth', 'xrp', 'sol', 'doge', 'pepe', 'go', 'ui', 'coin', 'to', 'the', 'best', 'is', 'okx', 'a', 'omg', 'market', 'cap', 'low', 'high', 'usd', 'dm', 'easy', 'made', 'crazy', 'going']
+    const ignoreWords = ['solana', '#solana', '#nft', 'pump', 'ai', 'nft', 'crypto', 'hold', 'hodl', 'btc', 'eth', 'xrp', 'xrpl', 'sol', 'doge', 'pepe', 'go', 'ui', 'coin', 'to', 'fix', 'guys', 'in', 'its', 'too', 'late', 'sui', 'account', 'join', 'official', 'ca', 'you', 'page', 'telegram', 'calls', 'the', 'best', 'is', 'okx', 'a', 'omg', 'market', 'cap', 'low', 'high', 'usd', 'dm', 'easy', 'made', 'crazy', 'going', 'asap', 'come', 'on', 'been', 'today', 'usdc', 'usdt', 'no', 'period', 'math', 'will', 'moon', 'lfg', 'cto', 'tg', 'my', 'last', 'free', 'buy', 'sell', 'but', 'bitcoin', 'ethereum', 'and', 'what', 'think', 'about', 'not', 'trade', 'mev', 'cyber', 'support', 'lmao', 'lol', 'many',]
 
 
     for (const word of words) {
@@ -234,7 +235,7 @@ export async function extractComments(postId) {
         /0x[a-fA-F0-9]{40}/i.test(word) ||
         /[1-9A-HJ-NP-Za-km-z]{32,44}/.test(word)
       ) {
-        mentions[word] = { count: (mentions[word]?.count || 0) + 1, isTicker: false };
+        mentions[word] = { count: (mentions[word]?.count || 0) + 1, isTicker: false, timestamp };
         continue;
       }
 
@@ -247,7 +248,7 @@ export async function extractComments(postId) {
         const ticker = word.startsWith('$') || word.startsWith('#')
           ? word.substring(1)
           : word;
-        mentions[ticker] = { count: (mentions[ticker]?.count || 0) + 1, isTicker: true };
+        mentions[ticker] = { count: (mentions[ticker]?.count || 0) + 1, isTicker: true, timestamp };
       }
     }
   };
@@ -280,7 +281,7 @@ export async function extractComments(postId) {
         seenComments.add(commentIdentifier);
         comments.push(responseData);
 
-        findCryptoTickers(responseData.data);
+        findCryptoTickers(responseData);
 
       }
 
