@@ -1,14 +1,12 @@
-// Place these at the very top of the file, before any other imports
 import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import fs from "fs";
-import os from "os";
-import path from "path";
+// import os from "os";
+// import path from "path";
 import dotenv from "dotenv";
-import { extractComments, VideoScraper } from "../scraper.mjs";
+import { extractComments, VideoScraper } from "./scraper.mjs";
 dotenv.config();
 
-// Configure logging
 const logger = {
   info: (...args) => console.log(new Date().toISOString(), "INFO:", ...args),
   error: (...args) =>
@@ -20,7 +18,7 @@ const processedTiktokIds = new Set();
 const setupBrowser = async () => {
   try {
     const browser = await puppeteer.connect({
-      browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/7f8828d2-0700-4161-bbe3-944e8abd8e85',
+      browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/55e1b99f-7888-4846-b28c-8f6aa7e77b99',
       defaultViewport: null
     });
     return browser;
