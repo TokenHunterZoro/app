@@ -18,7 +18,7 @@ const processedTiktokIds = new Set();
 const setupBrowser = async () => {
   try {
     const browser = await puppeteer.connect({
-      browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/55e1b99f-7888-4846-b28c-8f6aa7e77b99',
+      browserWSEndpoint: 'ws://127.0.0.1:9222/devtools/browser/792a4ed4-c99a-422a-9914-4c03e08fe5a2',
       defaultViewport: null
     });
     return browser;
@@ -259,9 +259,9 @@ const saveCombinedResults = (results) => {
 };
 
 const main = async () => {
-  const searchTerms = ["memecoin", "solana", "crypto", "pumpfun"];
+  const searchTerms = ["memecoin", "solana", "crypto", "pumpfun", 'trading', "degen", 'crypto%20signals'];
 
-  const hashtagTerms = ["memecoin", "solana", "crypto", "pumpfun"];
+  const hashtagTerms = [];
 
   const selectedProfile = "Profile 2";
   logger.info(`Using Chrome profile: ${selectedProfile}`);

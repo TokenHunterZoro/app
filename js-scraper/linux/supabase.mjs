@@ -108,7 +108,6 @@ async function main() {
             for (const [mention, value] of Object.entries(mentions)) {
                 const { count, isTicker } = value;
                 mentionsInputData.push({
-                    id: `${tiktok_id}_${mention}_${value.count}`,
                     mention: mention.startsWith('https://') ? mention.split('/').pop() : mention,
                     tiktok_id,
                     is_ticker: isTicker,
@@ -119,7 +118,8 @@ async function main() {
         }
     }
     console.log(`Prepared ${tiktoksInputData.length} tiktok entries and ${mentionsInputData.length} mention entries.`);
-    await upsertTiktoks(tiktoksInputData);
+    // await upsertTiktoks(tiktoksInputData);
+    console.log(mentionsInputData[0])
     await upsertMentionsInChunks(mentionsInputData);
     console.log('Data processing completed.');
 }
