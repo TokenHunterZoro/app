@@ -118,7 +118,7 @@ async function main() {
         }
     }
     console.log(`Prepared ${tiktoksInputData.length} tiktok entries and ${mentionsInputData.length} mention entries.`);
-    // await upsertTiktoks(tiktoksInputData);
+    await upsertTiktoks(tiktoksInputData);
     console.log(mentionsInputData[0])
     await upsertMentionsInChunks(mentionsInputData);
     console.log('Data processing completed.');

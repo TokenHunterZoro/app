@@ -1,0 +1,554 @@
+{
+  "extraction_time": "2025-01-31T00:41:16.124Z",
+  "total_searches": 4,
+  "results": [
+    {
+      "search": "memecoin",
+      "total_videos": 3,
+      "videos": [
+        {
+          "posted_time": "40m ago",
+          "posted_timestamp": 1738281568.582,
+          "video_url": "https://www.tiktok.com/@cryptot0k/video/7465862320271543584",
+          "thumbnail_url": "https://p16-sign-useast2a.tiktokcdn.com/obj/tos-useast2a-p-0037-euttp/ocA9EioDE50EBEBwRTdZcmEBX1RwOlRlTIiPl?lk3s=b59d6b55&x-expires=1738454400&x-signature=fZSeuv6BYA2z%2Fe9z493SAzK1Uew%3D&shp=b59d6b55&shcp=-",
+          "hashtags": [
+            "#Memecoin",
+            "#Solana",
+            "#crypto"
+          ],
+          "author": "cryptot0k",
+          "views": "0",
+          "extracted_time": "2025-01-31T00:39:28.599Z",
+          "comments": {
+            "count": 0,
+            "mentions": {}
+          }
+        },
+        {
+          "posted_time": "3h ago",
+          "posted_timestamp": 1738273171.722,
+          "video_url": "https://www.tiktok.com/@memesgo2moon/video/7465819372787862806",
+          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/a1bfb8e586c3da91a2974b44279a4d7c~c5_100x100.jpeg?lk3s=a5d48078&nonce=94556&refresh_token=ccc882e107afffb6c077bc64637dda6d&x-expires=1738454400&x-signature=0WJksUIfqCOWcvskSdIfIGAUiSs%3D&shp=a5d48078&shcp=b59d6b55",
+          "hashtags": [
+            "#memecoin",
+            "#meme",
+            "#crypto",
+            "#cryptocurrency",
+            "#foryou",
+            "#SOL",
+            "#ETH",
+            "#btc",
+            "#XRP"
+          ],
+          "author": "memesgo2moon",
+          "views": "11",
+          "extracted_time": "2025-01-31T00:39:31.731Z",
+          "comments": {
+            "count": 0,
+            "mentions": {}
+          }
+        },
+        {
+          "posted_time": "1d ago",
+          "posted_timestamp": 1738197575.451,
+          "video_url": "https://www.tiktok.com/@trenchmaxing/video/7465392461884525846",
+          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/1572c7535d85a8cf2d75eda3528da131~c5_100x100.jpeg?lk3s=a5d48078&nonce=73406&refresh_token=3bd00524ad3824bd11b0e63de0fb87a1&x-expires=1738454400&x-signature=BO0%2BwxjgQyNC%2Be%2Fr%2FBVrT36wh5I%3D&shp=a5d48078&shcp=b59d6b55",
+          "hashtags": [
+            "#memecoins",
+            "#rich",
+            "#millionaire",
+            "#solana",
+            "#trump",
+            "#bullx",
+            "#dexscreener"
+          ],
+          "author": "trenchmaxing",
+          "views": "19",
+          "extracted_time": "2025-01-31T00:39:35.464Z",
+          "comments": {
+            "count": 6,
+            "mentions": {
+              "rzntine": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1738263854
+              },
+              "sithcat": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1738251456
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "search": "pumpfun",
+      "total_videos": 1,
+      "videos": [
+        {
+          "posted_time": "2024-6-22",
+          "posted_timestamp": 1738284012.708,
+          "video_url": "https://www.tiktok.com/@theblockchainboy/video/7383366015876336927",
+          "thumbnail_url": "https://p16-sign.tiktokcdn-us.com/obj/tos-useast8-p-0068-tx2/ooGAIeLCGdU1gTWtQDGAQd21GqZAfFzRPfICeU?lk3s=b59d6b55&x-expires=1738454400&x-signature=vOcrKaXoiVifsDf19wcDaZXEzmE%3D&shp=b59d6b55&shcp=-",
+          "hashtags": [
+            "#crypto",
+            "#blockchainboy",
+            "#pumpfun",
+            "#solana"
+          ],
+          "author": "theblockchainboy",
+          "views": "425",
+          "extracted_time": "2025-01-31T00:40:12.726Z",
+          "comments": {
+            "count": 55,
+            "mentions": {
+              "ANITH": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1733035044
+              },
+              "SHIB": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719099106
+              },
+              "COMP": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719099106
+              },
+              "OG": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719092440
+              },
+              "SOLTANIC": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732176786
+              },
+              "C5sB7juhVqqP3jbydRfVFexQRGJQxTPdv1GxD2n5pump": {
+                "count": 1,
+                "isTicker": false,
+                "timestamp": 1732176786
+              },
+              "ICP": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719115365
+              },
+              "APE": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719075049
+              },
+              "fukuku": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719077196
+              },
+              "SOFKA": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1733667075
+              },
+              "WORK": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732987013
+              },
+              "chili": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732987013
+              },
+              "PBRN": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1719963607
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "search": "trading",
+      "total_videos": 4,
+      "videos": [
+        {
+          "posted_time": "1-23",
+          "posted_timestamp": 1738284027.786,
+          "video_url": "https://www.tiktok.com/@gabbymifsud/video/7462869916664859922",
+          "thumbnail_url": "https://p16-sign-sg.tiktokcdn.com/obj/tos-alisg-p-0037/oQ7J5Pw81qcAiRCAUEAAZBLEl3AIYujBicEwF?lk3s=b59d6b55&x-expires=1738454400&x-signature=nD%2Ffd4lVxgSBOEAOwvpQyEhbLZ8%3D&shp=b59d6b55&shcp=-",
+          "hashtags": [
+            "#memecoin",
+            "#daytrading",
+            "#crypto"
+          ],
+          "author": "gabbymifsud",
+          "views": "3809",
+          "extracted_time": "2025-01-31T00:40:27.809Z",
+          "comments": {
+            "count": 100,
+            "mentions": {
+              "alice": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737753935
+              },
+              "IF": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737664860
+              },
+              "DISCORD": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737664860
+              },
+              "LINK": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737664860
+              },
+              "ISNT": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737664860
+              },
+              "FOMO": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737593076
+              },
+              "MEME": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737586149
+              },
+              "GMGN": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737588291
+              },
+              "TITCOIN": {
+                "count": 4,
+                "isTicker": true,
+                "timestamp": 1737638763
+              },
+              "QFS": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737804371
+              },
+              "Titcoin": {
+                "count": 4,
+                "isTicker": true,
+                "timestamp": 1737638811
+              },
+              "wef6900": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737723082
+              },
+              "DYOR": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737723082
+              },
+              "MONA": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737723082
+              },
+              "titcoin": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737638969
+              },
+              "fatcoin": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737638969
+              },
+              "TITcoin": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1737639307
+              }
+            }
+          }
+        },
+        {
+          "posted_time": "2024-4-25",
+          "posted_timestamp": 1738284029.673,
+          "video_url": "https://www.tiktok.com/@cryptocomix/video/7361835773068332293",
+          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/eb434e5a66940dc64648769179ba5f6e~c5_100x100.jpeg?lk3s=a5d48078&nonce=21973&refresh_token=3be4bac7c6a3e889a122762615ec837b&x-expires=1738454400&x-signature=q3e2LVULIQChLEVRlZ2uobkGId0%3D&shp=a5d48078&shcp=b59d6b55",
+          "hashtags": [
+            "#solana",
+            "#memecoins",
+            "#crypto",
+            "#trading",
+            "#greenscreen"
+          ],
+          "author": "cryptocomix",
+          "views": "33.6K",
+          "extracted_time": "2025-01-31T00:40:29.690Z",
+          "comments": {
+            "count": 295,
+            "mentions": {
+              "WAAAAYYYY": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732105095
+              },
+              "TOOOO": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732105095
+              },
+              "RIZZGUY": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732805839
+              },
+              "DAVID": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732342442
+              },
+              "FRUG": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1734774394
+              },
+              "winterarc": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732336817
+              },
+              "VIBE": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732367661
+              },
+              "GUY": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732367661
+              },
+              "GUYSSSS": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732367661
+              },
+              "TRUSTTTT": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732848416
+              },
+              "DK": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732381341
+              },
+              "CHILL": {
+                "count": 2,
+                "isTicker": true,
+                "timestamp": 1732309881
+              },
+              "RICH": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732236413
+              },
+              "DNA": {
+                "count": 3,
+                "isTicker": true,
+                "timestamp": 1732432242
+              },
+              "STEVE": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732309881
+              },
+              "STRSGUY": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732569521
+              },
+              "https://pump.fun/coin/3ccyjpHMwJGW8GgL9ztTaq41R1rq3tmhA75C7eA6pump": {
+                "count": 1,
+                "isTicker": false,
+                "timestamp": 1733006123
+              },
+              "MNC": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732563493
+              },
+              "NMSKKKKKKK": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1738259311
+              },
+              "LETS": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1738259311
+              },
+              "THX": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1732463783
+              },
+              "FWOGMAS": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1733949033
+              }
+            }
+          }
+        },
+        {
+          "posted_time": "1-8",
+          "posted_timestamp": 1738284034.709,
+          "video_url": "https://www.tiktok.com/@tjr_glazer/video/7457298651375734039",
+          "thumbnail_url": "https://p16-sign-useast2a.tiktokcdn.com/tos-useast2a-avt-0068-euttp/695e13866b27a710a3780dfe8802de4f~c5_100x100.jpeg?lk3s=a5d48078&nonce=52457&refresh_token=f02f12caa5f445ec00018ea0a6856b69&x-expires=1738454400&x-signature=NM4rSNk3KSYV35vy0mTpHU1wwxg%3D&shp=a5d48078&shcp=b59d6b55",
+          "hashtags": [
+            "#tjr",
+            "#tjrtrades",
+            "#daytrader",
+            "#daytrading",
+            "#trader",
+            "#daytrader",
+            "#mentor",
+            "#tradingtips",
+            "#traderecap",
+            "#innercircletrader",
+            "#smctrading",
+            "#edit"
+          ],
+          "author": "tjr_glazer",
+          "views": "34.3K",
+          "extracted_time": "2025-01-31T00:40:34.722Z",
+          "comments": {
+            "count": 100,
+            "mentions": {
+              "ISM": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736327558
+              },
+              "UP": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736311331
+              },
+              "MONDAY": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736311331
+              },
+              "SIBI": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736367273
+              },
+              "AFTER": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736457719
+              },
+              "FVG": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736325860
+              },
+              "ICT": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1736325860
+              }
+            }
+          }
+        },
+        {
+          "posted_time": "2024-12-27",
+          "posted_timestamp": 1738284038.558,
+          "video_url": "https://www.tiktok.com/@dreamsignal001/video/7452969141436189958",
+          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/obj/tos-maliva-p-0068/oArcaO9MQfCIAXs75ASIQgChrpo3CeMbIQ98jf?lk3s=b59d6b55&x-expires=1738454400&x-signature=o%2F1lbuJmgzH6S6OTgrO9ZqSMQ4g%3D&shp=b59d6b55&shcp=-",
+          "hashtags": [
+            "#stylevớiáonỉuniqlo",
+            "#pppppppppppppppp",
+            "#foryoupagе",
+            "#tradingbot",
+            "#fyp",
+            "#trading",
+            "#foryou",
+            "#viral",
+            "#trending"
+          ],
+          "author": "dreamsignal001",
+          "views": "3009",
+          "extracted_time": "2025-01-31T00:40:38.568Z",
+          "comments": {
+            "count": 59,
+            "mentions": {}
+          }
+        }
+      ]
+    },
+    {
+      "search": "degen",
+      "total_videos": 2,
+      "videos": [
+        {
+          "posted_time": "2024-12-12",
+          "posted_timestamp": 1738284055.619,
+          "video_url": "https://www.tiktok.com/@cryptopancakeaiofficial/video/7447242878574857478",
+          "thumbnail_url": "https://p16-sign-va.tiktokcdn.com/obj/tos-maliva-p-0068/ogibEPqsgvqjAInfOHQ6uVFrIgCzSef1ChB0DV?lk3s=b59d6b55&x-expires=1738454400&x-signature=827F%2FrIjngMzwQ1bkKjwgxJiv1w%3D&shp=b59d6b55&shcp=-",
+          "hashtags": [
+            "#blockchaingaming"
+          ],
+          "author": "cryptopancakeaiofficial",
+          "views": "63",
+          "extracted_time": "2025-01-31T00:40:55.635Z",
+          "comments": {
+            "count": 1,
+            "mentions": {}
+          }
+        },
+        {
+          "posted_time": "2021-11-16",
+          "posted_timestamp": 1738284056.468,
+          "video_url": "https://www.tiktok.com/@cryptobanter/video/7030894498028866817",
+          "thumbnail_url": "https://p16-sign-sg.tiktokcdn.com/aweme/100x100/tos-alisg-avt-0068/07031d21cb7507c5d6cf35af641ac410.jpeg?lk3s=a5d48078&nonce=1008&refresh_token=44399a43d54550197a8d6efe6ff6b604&x-expires=1738454400&x-signature=CeBkokhm5UliHKlmgO3YxLyz48o%3D&shp=a5d48078&shcp=b59d6b55",
+          "hashtags": [
+            "#cryptocurrency",
+            "#cryptocommunity",
+            "#cryptobanter",
+            "#questionsandawnsers",
+            "#degen"
+          ],
+          "author": "cryptobanter",
+          "views": "121",
+          "extracted_time": "2025-01-31T00:40:56.483Z",
+          "comments": {
+            "count": 7,
+            "mentions": {
+              "DEGEN": {
+                "count": 1,
+                "isTicker": true,
+                "timestamp": 1712115277
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

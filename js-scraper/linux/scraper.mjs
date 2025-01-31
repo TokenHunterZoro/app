@@ -14,11 +14,11 @@ export class VideoScraper {
       const videoTimestamp = timeData.posted_timestamp;
 
       const timeDiff = currentTimestamp - videoTimestamp;
-      // if (timeDiff > 6 * 3600) {
-      //   // 24 hours in seconds
-      //   console.log("Video older than 6 hours. Skipping...");
-      //   return null;
-      // }
+      if (timeDiff > 48 * 3600) {
+        // 24 hours in seconds
+        console.log("Video older than 2 days. Skipping...");
+        return null;
+      }
 
       Object.assign(data, timeData);
 
@@ -225,8 +225,7 @@ export async function extractComments(postId) {
     // Split text into words
     const words = text.split(/[\s,]+/).map(word => word.trim());
 
-    const ignoreWords = ['solana', '#solana', '#nft', 'pump', 'dev', 'tokens', 'token', 'every', 'big', 'of', 'month', 'doing', 'burning', 'ai', 'nft', 'crypto', 'hold', 'hodl', 'btc', 'eth', 'xrp', 'xrpl', 'sol', 'doge', 'pepe', 'go', 'ui', 'coin', 'to', 'fix', 'guys', 'in', 'its', 'too', 'late', 'sui', 'account', 'join', 'official', 'ca', 'you', 'page', 'telegram', 'calls', 'the', 'best', 'is', 'okx', 'a', 'omg', 'market', 'cap', 'low', 'high', 'usd', 'dm', 'easy', 'made', 'crazy', 'going', 'asap', 'come', 'on', 'been', 'today', 'usdc', 'usdt', 'no', 'period', 'math', 'will', 'moon', 'lfg', 'cto', 'tg', 'my', 'last', 'free', 'buy', 'sell', 'but', 'bitcoin', 'ethereum', 'and', 'what', 'think', 'about', 'not', 'trade', 'mev', 'cyber', 'support', 'lmao', 'lol', 'many',]
-
+    const ignoreWords = ['solana', '#solana', '#nft', 'pump', 'dev', 'tokens', 'token', 'every', 'this', 'their', 'WTTTTFFFFF', 'released', 'payment', 'new', 'just', 'trades', 'nfa', 'dyor', 'big', 'of', 'month', 'doing', 'burning', 'ai', 'nft', 'crypto', 'hold', 'hodl', 'btc', 'eth', 'xrp', 'xrpl', 'sol', 'doge', 'pepe', 'go', 'ui', 'coin', 'to', 'fix', 'guys', 'in', 'its', 'too', 'late', 'sui', 'account', 'join', 'official', 'ca', 'you', 'page', 'telegram', 'calls', 'the', 'best', 'is', 'okx', 'a', 'omg', 'market', 'cap', 'low', 'high', 'usd', 'dm', 'easy', 'made', 'crazy', 'going', 'asap', 'come', 'on', 'been', 'today', 'usdc', 'usdt', 'no', 'period', 'math', 'will', 'moon', 'lfg', 'cto', 'tg', 'my', 'last', 'free', 'buy', 'sell', 'but', 'bitcoin', 'ethereum', 'and', 'what', 'think', 'about', 'not', 'trade', 'mev', 'cyber', 'support', 'lmao', 'lol', 'many', 'now']
 
     for (const word of words) {
       if (ignoreWords.includes(word.toLowerCase())) continue;
