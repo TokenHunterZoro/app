@@ -91,6 +91,20 @@ const getTrendingMentions = async () => {
   }
 };
 
+const getAggregatedMentions = async () => {
+  try {
+    const { data, error } = await supabase
+      .rpc('get_aggregated_mentions');
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error getting trending mentions:', error);
+    throw error;
+  }
+};
+
+
 // Usage
 // fetchAndFormatTokenData('BOTIFY', process.env.BIRDEYE_API_KEY || '')
 //   .then(tokens => {
@@ -188,10 +202,12 @@ function analyzeTokenHealth(tokenData) {
 }
 
 
+
 async function main() {
   // Fetch dead filtered latest mentions from supabase.
 
   const mentions = await getTrendingMentions();
+  // const mentions = await getAggregatedMentions();
   console.log(mentions)
   const tokens = await Promise.all(
     mentions.map(async mention => {
